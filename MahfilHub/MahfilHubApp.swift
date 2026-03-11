@@ -24,36 +24,54 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+enum AppScreen {
+    case splash
+    case onboarding
+    case main
+}
+
 // MARK: - App
 @main
 struct MahfilHubApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @State private var showSplash = true
+    @State private var currentScreen: AppScreen = .splash
 
     var body: some Scene {
         WindowGroup {
             ZStack {
-                // ── Layer 0: absolute bottom  ─────────────────────────────────
-                // This is the VERY FIRST pixel SwiftUI commits to the screen.
-                // It fills the entire window (incl. safe areas) with teal so
-                // there is literally zero opportunity for white to appear,
-                // even if UIWindow.appearance() is ignored on this OS version.
+                // Layer 0: absolute bottom
                 kSplashTealSUI
                     .ignoresSafeArea()
 
-                // ── Layer 1: real content (hidden while splash is up) ─────────
-                ContentView()
-                    .opacity(showSplash ? 0 : 1)
-
-                // ── Layer 2: splash screen ────────────────────────────────────
-                if showSplash {
+                // Layer 1: Navigation
+                if currentScreen == .splash {
                     SplashView {
-                        withAnimation(.easeIn(duration: 0.15)) {
-                            showSplash = false
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            currentScreen = .onboarding
                         }
                     }
+                    // Splash only gets removed (slides out to the left)
+                    .transition(.asymmetric(insertion: .identity, removal: .move(edge: .leading)))
+                    .zIndex(2)
+                }
+
+                if currentScreen == .onboarding {
+                    OnboardingView(onFinished: {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            currentScreen = .main
+                        }
+                    })
+                    // Onboarding enters from right, exits to left
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                     .zIndex(1)
+                }
+
+                if currentScreen == .main {
+                    HomeView()
+                        // Main enters from right
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .identity))
+                        .zIndex(0)
                 }
             }
         }
