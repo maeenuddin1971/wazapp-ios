@@ -20,15 +20,31 @@ struct HomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Scrollable content
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 0) {
-                    HomeHeader()
-                    QuickActionsSection()
-                    UpcomingEventsSection()
-                    FeaturedMaulanaSection()
-                    RecentActivitySection()
-                    Spacer().frame(height: 16)
+            // Switch content based on selected tab
+            switch selectedTab {
+            case 0:
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        HomeHeader()
+                        QuickActionsSection()
+                        UpcomingEventsSection()
+                        FeaturedMaulanaSection()
+                        RecentActivitySection()
+                        Spacer().frame(height: 16)
+                    }
+                }
+            case 1:
+                EventsView()
+            default:
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        HomeHeader()
+                        QuickActionsSection()
+                        UpcomingEventsSection()
+                        FeaturedMaulanaSection()
+                        RecentActivitySection()
+                        Spacer().frame(height: 16)
+                    }
                 }
             }
 
