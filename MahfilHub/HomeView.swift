@@ -35,6 +35,8 @@ struct HomeView: View {
                 }
             case 1:
                 EventsView()
+            case 2:
+                MaulanaView()
             default:
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
