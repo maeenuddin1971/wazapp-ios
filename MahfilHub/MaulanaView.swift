@@ -617,3 +617,13 @@ private struct MaulanaEmptyPlaceholder: View {
         .frame(maxWidth: .infinity)
     }
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// MARK: - Previews
+// ══════════════════════════════════════════════════════════════════════════
+
+#Preview {
+    MaulanaView()
+        //.preferredColorScheme(.dark)
+}
+

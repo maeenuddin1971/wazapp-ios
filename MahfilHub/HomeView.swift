@@ -37,6 +37,8 @@ struct HomeView: View {
                 EventsView()
             case 2:
                 MaulanaView()
+            case 3:
+                ProfileView()
             default:
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
@@ -639,3 +641,13 @@ private struct HomeBottomNavBar: View {
         )
     }
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// MARK: - Previews
+// ══════════════════════════════════════════════════════════════════════════
+
+#Preview {
+    HomeView()
+         //.preferredColorScheme(.dark)
+}
+

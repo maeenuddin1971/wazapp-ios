@@ -516,3 +516,13 @@ private struct EmptyEventsPlaceholder: View {
         .frame(maxWidth: .infinity)
     }
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// MARK: - Previews
+// ══════════════════════════════════════════════════════════════════════════
+
+#Preview {
+    EventsView()
+        //.preferredColorScheme(.dark)
+}
+
