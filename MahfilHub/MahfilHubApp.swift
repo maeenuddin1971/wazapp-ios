@@ -27,6 +27,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 enum AppScreen {
     case splash
     case onboarding
+    case login
+    case register
     case main
 }
 
@@ -44,32 +46,73 @@ struct MahfilHubApp: App {
                 kSplashTealSUI
                     .ignoresSafeArea()
 
-                // Layer 1: Navigation
+                // Layer 1: Splash
                 if currentScreen == .splash {
                     SplashView {
                         withAnimation(.easeInOut(duration: 0.4)) {
                             currentScreen = .onboarding
                         }
                     }
-                    // Splash only gets removed (slides out to the left)
                     .transition(.asymmetric(insertion: .identity, removal: .move(edge: .leading)))
-                    .zIndex(2)
+                    .zIndex(4)
                 }
 
+                // Layer 2: Onboarding
                 if currentScreen == .onboarding {
                     OnboardingView(onFinished: {
                         withAnimation(.easeInOut(duration: 0.4)) {
-                            currentScreen = .main
+                            currentScreen = .login
                         }
                     })
-                    // Onboarding enters from right, exits to left
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    .zIndex(3)
+                }
+
+                // Layer 3: Login
+                if currentScreen == .login {
+                    LoginView(
+                        onLoginSuccess: {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                currentScreen = .main
+                            }
+                        },
+                        onNavigateToRegister: {
+                            print("App Level: Navigate to register triggered")
+                            withAnimation(.easeInOut(duration: 0.35)) {
+                                currentScreen = .register
+                            }
+                        },
+                        onGuestMode: {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                currentScreen = .main
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    .zIndex(2)
+                }
+
+                // Layer 4: Register
+                if currentScreen == .register {
+                    RegisterView(
+                        onRegisterSuccess: {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                currentScreen = .main
+                            }
+                        },
+                        onNavigateToLogin: {
+                            withAnimation(.easeInOut(duration: 0.35)) {
+                                currentScreen = .login
+                            }
+                        }
+                    )
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                     .zIndex(1)
                 }
 
+                // Layer 5: Main (Home)
                 if currentScreen == .main {
                     HomeView()
-                        // Main enters from right
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .identity))
                         .zIndex(0)
                 }
