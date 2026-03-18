@@ -297,7 +297,7 @@ private struct MaulanaStatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(16)
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(14)
         .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
     }
@@ -563,7 +563,7 @@ private struct MaulanaProfileCard: View {
 
             Spacer().frame(height: 8)
         }
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
         .onTapGesture { onTap() }

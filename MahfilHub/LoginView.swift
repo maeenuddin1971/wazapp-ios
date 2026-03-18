@@ -1,19 +1,19 @@
 import SwiftUI
 
-// MARK: - Islamic Auth Colors
-private let islamicDark1  = Color(red: 0x08/255.0, green: 0x1C/255.0, blue: 0x15/255.0)
-private let islamicDark2  = Color(red: 0x0B/255.0, green: 0x3D/255.0, blue: 0x2E/255.0)
-private let islamicDark3  = Color(red: 0x05/255.0, green: 0x2E/255.0, blue: 0x22/255.0)
-private let islamicGold     = Color(red: 0xD4/255.0, green: 0xA9/255.0, blue: 0x53/255.0)
-private let islamicGoldLight = Color(red: 0xE8/255.0, green: 0xC9/255.0, blue: 0x75/255.0)
-private let islamicGoldMuted = islamicGold.opacity(0.25)
-private let glassBorder     = Color.white.opacity(0.16)
-private let glassBackground = Color.white.opacity(0.08)
-private let inputBackground = Color.white.opacity(0.11)
-private let inputBorder     = Color.white.opacity(0.19)
-private let inputBorderFocus = Color(red: 0x4D/255.0, green: 0xB6/255.0, blue: 0xAC/255.0)
-private let subtleText      = Color.white.opacity(0.6)
-private let mutedText       = Color.white.opacity(0.33)
+// MARK: - Islamic Auth Colors (Asset Catalog backed)
+private let islamicDark1      = Color.appIslamicDark1
+private let islamicDark2      = Color.appIslamicDark2
+private let islamicDark3      = Color.appIslamicDark3
+private let islamicGold       = Color.appIslamicGold
+private let islamicGoldLight  = Color.appIslamicGoldLight
+private let islamicGoldMuted  = Color.appIslamicGoldMuted
+private let glassBorder       = Color.appGlassBorder
+private let glassBackground   = Color.appGlassBackground
+private let inputBackground   = Color.appInputBackground
+private let inputBorder       = Color.appInputBorder
+private let inputBorderFocus  = Color.appInputBorderFocus
+private let subtleText        = Color.appSubtleText
+private let mutedText         = Color.appMutedText
 
 // MARK: - LoginView
 struct LoginView: View {
@@ -118,8 +118,8 @@ struct LoginView: View {
 
                 // ── Social Login ─────────────────────────────────
                 HStack(spacing: 14) {
-                    SocialGlassButton(title: "Google", iconName: "g.circle.fill", iconColor: Color(red: 0xDB/255, green: 0x44/255, blue: 0x37/255))
-                    SocialGlassButton(title: "Facebook", iconName: "person.crop.square.fill", iconColor: Color(red: 0x18/255, green: 0x77/255, blue: 0xF2/255))
+                    SocialGlassButton(title: "Google", iconName: "g.circle.fill", iconColor: .appGoogleRed)
+                    SocialGlassButton(title: "Facebook", iconName: "person.crop.square.fill", iconColor: .appFacebookBlue)
                 }
 
                 Spacer().frame(height: 14)

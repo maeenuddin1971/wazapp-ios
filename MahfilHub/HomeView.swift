@@ -1,15 +1,15 @@
 import SwiftUI
 
-// MARK: - Additional Colors (matching Android Color.kt)
-let colorPrimaryTealLight = Color(red: 0x4D/255.0, green: 0xB6/255.0, blue: 0xAC/255.0)
-let colorSecondaryGreen   = Color(red: 0x66/255.0, green: 0xBB/255.0, blue: 0x6A/255.0)
-let colorInfoBlue         = Color(red: 0x21/255.0, green: 0x96/255.0, blue: 0xF3/255.0)
-let colorSuccessGreen     = Color(red: 0x4C/255.0, green: 0xAF/255.0, blue: 0x50/255.0)
-let colorErrorRed         = Color(red: 0xF4/255.0, green: 0x43/255.0, blue: 0x36/255.0)
-let colorVerifiedBadge    = Color(red: 0x19/255.0, green: 0x76/255.0, blue: 0xD2/255.0)
-let colorBackgroundCream  = Color(red: 0xF5/255.0, green: 0xF5/255.0, blue: 0xF0/255.0)
-let colorTextSecondary    = Color(red: 0x75/255.0, green: 0x75/255.0, blue: 0x75/255.0)
-let colorTextPrimary      = Color(red: 0x21/255.0, green: 0x21/255.0, blue: 0x21/255.0)
+// MARK: - Extended Colors (aliases to Asset Catalog)
+let colorPrimaryTealLight = Color.appPrimaryTealLight
+let colorSecondaryGreen   = Color.appSecondaryGreen
+let colorInfoBlue         = Color.appInfoBlue
+let colorSuccessGreen     = Color.appSuccessGreen
+let colorErrorRed         = Color.appErrorRed
+let colorVerifiedBadge    = Color.appVerifiedBadge
+let colorBackgroundCream  = Color.appBackgroundCream
+let colorTextSecondary    = Color.appTextSecondary
+let colorTextPrimary      = Color.appTextPrimary
 
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - HomeView
@@ -443,7 +443,7 @@ private struct EventCard: View {
             .padding(.top, 8)
         }
                 .frame(width: 280)
-                .background(Color.white)
+                .background(Color.appCardSurface)
                 .cornerRadius(16)
                 .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
         }
@@ -538,7 +538,7 @@ private struct MaulanaChip: View {
             }
             .frame(width: 160)
             .padding(16)
-            .background(Color.white)
+            .background(Color.appCardSurface)
             .cornerRadius(16)
             .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
         }
@@ -675,7 +675,7 @@ private struct HomeBottomNavBar: View {
         .padding(.top, 8)
         .padding(.bottom, 6)
         .background(
-            Color.white
+            Color.appCardSurface
                 .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: -2)
         )
     }

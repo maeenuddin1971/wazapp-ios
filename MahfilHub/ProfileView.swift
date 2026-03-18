@@ -294,7 +294,7 @@ private struct ProfileStatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(16)
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(14)
         .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
     }
@@ -346,7 +346,7 @@ private struct ProfileMenuGroup: View {
                 }
             }
         }
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.04), radius: 1, x: 0, y: 1)
         .padding(.horizontal, 16)

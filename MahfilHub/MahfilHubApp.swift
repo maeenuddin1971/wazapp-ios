@@ -6,9 +6,9 @@
 import SwiftUI
 import UIKit
 
-// MARK: - Splash teal colour (shared constant)
-let kSplashTeal = UIColor(red: 0, green: 137 / 255.0, blue: 123 / 255.0, alpha: 1)
-let kSplashTealSUI = Color(red: 0, green: 137 / 255.0, blue: 123 / 255.0)
+// MARK: - Splash teal colour (Asset Catalog backed)
+let kSplashTeal = UIColor.appSplashTeal
+let kSplashTealSUI = Color.appSplashTeal
 
 // MARK: - AppDelegate
 class AppDelegate: NSObject, UIApplicationDelegate {

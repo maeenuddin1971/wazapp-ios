@@ -158,7 +158,7 @@ struct MaulanaDetailView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
-                    .background(Color.white)
+                    .background(Color.appCardSurface)
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                     .padding(.horizontal, 16)
@@ -186,7 +186,7 @@ struct MaulanaDetailView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(32)
-                        .background(Color.white)
+                        .background(Color.appCardSurface)
                         .cornerRadius(16)
                         .padding(.horizontal, 16)
                     } else {
@@ -237,7 +237,7 @@ struct MaulanaDetailView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                Color.white
+                Color.appCardSurface
                     .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: -2)
             )
         }
@@ -267,7 +267,7 @@ private struct MaulanaStatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(14)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
@@ -366,7 +366,7 @@ private struct MaulanaEventMiniCard: View {
                     .foregroundColor(colorTextSecondary.opacity(0.4))
             }
             .padding(14)
-            .background(Color.white)
+            .background(Color.appCardSurface)
             .cornerRadius(14)
             .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
         }

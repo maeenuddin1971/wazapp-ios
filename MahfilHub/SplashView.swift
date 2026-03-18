@@ -1,11 +1,11 @@
 import SwiftUI
 
-// MARK: - Brand Colors
-let colorPrimaryTeal = Color(red: 0, green: 0x89/255.0, blue: 0x7B/255.0)
-let colorPrimaryTealDark = Color(red: 0, green: 0x69/255.0, blue: 0x5C/255.0)
-let colorDeepTeal = Color(red: 0, green: 0x4D/255.0, blue: 0x40/255.0)
-let colorAccentOrange = Color(red: 1.0, green: 0x98/255.0, blue: 0)
-let colorWhite = Color.white
+// MARK: - Brand Colors (aliases to Asset Catalog)
+let colorPrimaryTeal     = Color.appPrimaryTeal
+let colorPrimaryTealDark = Color.appPrimaryTealDark
+let colorDeepTeal        = Color.appDeepTeal
+let colorAccentOrange    = Color.appAccentOrange
+let colorWhite           = Color.white
 
 struct SplashView: View {
     var onFinished: () -> Void

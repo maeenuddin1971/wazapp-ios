@@ -11,7 +11,7 @@ struct EventDetailView: View {
 
     private var heroColors: [Color] {
         event.isLive
-            ? [Color(red: 0xF4/255, green: 0x43/255, blue: 0x36/255), Color(red: 0xC6/255, green: 0x28/255, blue: 0x28/255)]
+            ? [colorErrorRed, colorErrorRed.opacity(0.85)]
             : [colorPrimaryTeal, colorPrimaryTealDark]
     }
 
@@ -57,7 +57,7 @@ struct EventDetailView: View {
                                     Button(action: { isSaved.toggle() }) {
                                         Image(systemName: isSaved ? "heart.fill" : "heart")
                                             .font(.system(size: 17))
-                                            .foregroundColor(isSaved ? Color(red: 0xF4/255, green: 0x43/255, blue: 0x36/255) : .white)
+                                            .foregroundColor(isSaved ? colorErrorRed : .white)
                                             .frame(width: 40, height: 40)
                                             .background(Color.white.opacity(0.15))
                                             .clipShape(Circle())
@@ -157,7 +157,7 @@ struct EventDetailView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
-                    .background(Color.white)
+                    .background(Color.appCardSurface)
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                     .padding(.horizontal, 16)
@@ -263,7 +263,7 @@ struct EventDetailView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                Color.white
+                Color.appCardSurface
                     .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: -2)
             )
             .padding(.bottom, 0)
@@ -322,7 +322,7 @@ private struct EventInfoCard: View {
                 .foregroundColor(colorTextSecondary.opacity(0.4))
         }
         .padding(16)
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
@@ -355,7 +355,7 @@ private struct EventQuickStatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(14)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }

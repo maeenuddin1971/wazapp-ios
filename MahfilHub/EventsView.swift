@@ -460,7 +460,7 @@ private struct EventListCard: View {
             }
             .padding(16)
         }
-        .background(Color.white)
+        .background(Color.appCardSurface)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
         .onTapGesture { onTap() }

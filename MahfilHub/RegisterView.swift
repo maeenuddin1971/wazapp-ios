@@ -10,19 +10,19 @@ struct RegisterView: View {
     @State private var isSecure = true
     @State private var agreeTerms = false
 
-    // Re-use the same colour tokens defined in LoginView.swift
-    private let dark1  = Color(red: 0x08/255.0, green: 0x1C/255.0, blue: 0x15/255.0)
-    private let dark2  = Color(red: 0x0B/255.0, green: 0x3D/255.0, blue: 0x2E/255.0)
-    private let dark3  = Color(red: 0x05/255.0, green: 0x2E/255.0, blue: 0x22/255.0)
-    private let gold     = Color(red: 0xD4/255.0, green: 0xA9/255.0, blue: 0x53/255.0)
-    private let goldLight = Color(red: 0xE8/255.0, green: 0xC9/255.0, blue: 0x75/255.0)
-    private let goldMuted = Color(red: 0xD4/255.0, green: 0xA9/255.0, blue: 0x53/255.0).opacity(0.25)
-    private let subtle   = Color.white.opacity(0.6)
-    private let muted    = Color.white.opacity(0.33)
-    private let glassBg  = Color.white.opacity(0.08)
-    private let glassBdr = Color.white.opacity(0.16)
-    private let inpBg    = Color.white.opacity(0.11)
-    private let inpBdr   = Color.white.opacity(0.19)
+    // Color tokens (Asset Catalog backed)
+    private let dark1    = Color.appIslamicDark1
+    private let dark2    = Color.appIslamicDark2
+    private let dark3    = Color.appIslamicDark3
+    private let gold     = Color.appIslamicGold
+    private let goldLight = Color.appIslamicGoldLight
+    private let goldMuted = Color.appIslamicGoldMuted
+    private let subtle   = Color.appSubtleText
+    private let muted    = Color.appMutedText
+    private let glassBg  = Color.appGlassBackground
+    private let glassBdr = Color.appGlassBorder
+    private let inpBg    = Color.appInputBackground
+    private let inpBdr   = Color.appInputBorder
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -176,7 +176,7 @@ struct RegisterView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "g.circle.fill")
                             .font(.system(size: 18))
-                            .foregroundColor(Color(red: 0xDB/255, green: 0x44/255, blue: 0x37/255))
+                            .foregroundColor(.appGoogleRed)
                         Text("Sign up with Google")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.white)
