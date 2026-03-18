@@ -11,7 +11,6 @@ struct OnboardingView: View {
 
     @State private var isEnglish = true
     @State private var currentPage = 0
-    @State private var navigateToLogin = false
 
     // Animation state
     @State private var floatAnim: CGFloat = 0.0
@@ -34,116 +33,94 @@ struct OnboardingView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Background Gradient
-                LinearGradient(
-                    colors: [colorPrimaryTeal, colorPrimaryTealDark, colorDeepTeal],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+        ZStack {
+            LinearGradient(
+                colors: [colorPrimaryTeal, colorPrimaryTealDark, colorDeepTeal],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            OnboardingBackgroundDecorations(rotation: bgRotation)
                 .ignoresSafeArea()
 
-                // Background Decorations
-                OnboardingBackgroundDecorations(rotation: bgRotation)
-                    .ignoresSafeArea()
-
-                VStack(spacing: 0) {
-                    // Top Bar
-                    HStack {
-                        if currentPage < pages.count - 1 {
-                            Button(action: onFinished) {
-                                Text(isEnglish ? "Skip" : "এড়িয়ে যান")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(colorWhite.opacity(0.8))
-                            }
-                        } else {
-                            Spacer()
-                                .frame(width: 40)
+            VStack(spacing: 0) {
+                HStack {
+                    if currentPage < pages.count - 1 {
+                        Button(action: onFinished) {
+                            Text(isEnglish ? "Skip" : "এড়িয়ে যান")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(colorWhite.opacity(0.8))
                         }
-
-                        Spacer()
-
-                        LanguageToggle(isEnglish: $isEnglish)
+                    } else {
+                        Spacer().frame(width: 40)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
+                    Spacer()
+                    LanguageToggle(isEnglish: $isEnglish)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
 
-                    // Pager
-                    TabView(selection: $currentPage) {
-                        ForEach(0..<pages.count, id: \.self) { index in
-                            OnboardingPageContent(
-                                page: pages[index],
-                                floatAnim: floatAnim
-                            )
+                TabView(selection: $currentPage) {
+                    ForEach(0..<pages.count, id: \.self) { index in
+                        OnboardingPageContent(page: pages[index], floatAnim: floatAnim)
                             .tag(index)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .animation(.easeInOut, value: currentPage)
+
+                VStack(spacing: 32) {
+                    HStack(spacing: 8) {
+                        ForEach(0..<pages.count, id: \.self) { index in
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(index == currentPage ? colorAccentOrange : colorWhite.opacity(0.4))
+                                .frame(width: index == currentPage ? 32 : 10, height: 10)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: currentPage)
                         }
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .animation(.easeInOut, value: currentPage)
 
-                    // Bottom Section
-                    VStack(spacing: 32) {
-                        // Custom Indicators
-                        HStack(spacing: 8) {
-                            ForEach(0..<pages.count, id: \.self) { index in
-                                RoundedRectangle(cornerRadius: 5)
-                                    .fill(index == currentPage ? colorAccentOrange : colorWhite.opacity(0.4))
-                                    .frame(width: index == currentPage ? 32 : 10, height: 10)
-                                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: currentPage)
-                            }
+                    if currentPage == pages.count - 1 {
+                        Button(action: { onFinished() }) {
+                            Text(isEnglish ? "Get Started" : "শুরু করুন")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(colorWhite)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 56)
+                                .background(colorAccentOrange)
+                                .cornerRadius(28)
+                                .shadow(color: colorAccentOrange.opacity(0.3), radius: 8, x: 0, y: 4)
                         }
-
-                        // Action Button
-                        if currentPage == pages.count - 1 {
-                            Button(action: { navigateToLogin = true }) {
-                                Text(isEnglish ? "Get Started" : "শুরু করুন")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(colorWhite)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 56)
-                                    .background(colorAccentOrange)
-                                    .cornerRadius(28)
-                                    .shadow(color: colorAccentOrange.opacity(0.3), radius: 8, x: 0, y: 4)
-                            }
-                            .transition(.opacity)
-                        } else {
-                            Button(action: {
-                                withAnimation {
-                                    currentPage += 1
-                                }
-                            }) {
-                                Text(isEnglish ? "Next" : "পরবর্তী")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(colorWhite)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 56)
-                                    .background(colorWhite.opacity(0.2))
-                                    .cornerRadius(28)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 28)
-                                            .stroke(colorWhite.opacity(0.4), lineWidth: 1)
-                                    )
-                            }
-                            .transition(.opacity)
+                        .transition(.opacity)
+                    } else {
+                        Button(action: {
+                            withAnimation { currentPage += 1 }
+                        }) {
+                            Text(isEnglish ? "Next" : "পরবর্তী")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(colorWhite)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 56)
+                                .background(colorWhite.opacity(0.2))
+                                .cornerRadius(28)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 28)
+                                        .stroke(colorWhite.opacity(0.4), lineWidth: 1)
+                                )
                         }
+                        .transition(.opacity)
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 32)
                 }
+                .padding(.horizontal, 32)
+                .padding(.bottom, 32)
             }
-            .onAppear {
-                // Floating animation
-                withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
-                    floatAnim = 1.0
-                }
-                // Background rotation
-                withAnimation(.linear(duration: 60).repeatForever(autoreverses: false)) {
-                    bgRotation = 360.0
-                }
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
+                floatAnim = 1.0
             }
-            .navigationDestination(isPresented: $navigateToLogin) {
-                LoginView()
+            withAnimation(.linear(duration: 60).repeatForever(autoreverses: false)) {
+                bgRotation = 360.0
             }
         }
     }

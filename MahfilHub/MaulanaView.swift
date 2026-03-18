@@ -64,6 +64,7 @@ private func formatFollowers(_ count: Int) -> String {
 struct MaulanaView: View {
     @State private var selectedFilter = "All"
     @State private var searchQuery = ""
+    var onMaulanaClick: ((MaulanaItemModel) -> Void)? = nil
 
     private let filters = ["All", "Popular", "New", "Verified"]
 
@@ -116,7 +117,7 @@ struct MaulanaView: View {
                     MaulanaEmptyPlaceholder()
                 } else {
                     ForEach(filteredMaulanas) { maulana in
-                        MaulanaProfileCard(maulana: maulana)
+                        MaulanaProfileCard(maulana: maulana, onTap: { onMaulanaClick?(maulana) })
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
                     }
@@ -362,6 +363,7 @@ private struct MaulanaFilterChips: View {
 
 private struct MaulanaProfileCard: View {
     let maulana: MaulanaItemModel
+    var onTap: () -> Void = {}
 
     private var initial: String {
         let parts = maulana.name.split(separator: " ")
@@ -524,7 +526,7 @@ private struct MaulanaProfileCard: View {
             // Action buttons
             HStack(spacing: 8) {
                 // View Details button
-                Button(action: {}) {
+                Button(action: { onTap() }) {
                     HStack(spacing: 6) {
                         Image(systemName: "person")
                             .font(.system(size: 13))
@@ -564,6 +566,7 @@ private struct MaulanaProfileCard: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+        .onTapGesture { onTap() }
     }
 }
 

@@ -17,48 +17,88 @@ let colorTextPrimary      = Color(red: 0x21/255.0, green: 0x21/255.0, blue: 0x21
 
 struct HomeView: View {
     @State private var selectedTab = 0
+    @State private var selectedEvent: EventItemModel? = nil
+    @State private var selectedMaulana: MaulanaItemModel? = nil
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Switch content based on selected tab
-            switch selectedTab {
-            case 0:
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        HomeHeader()
-                        QuickActionsSection()
-                        UpcomingEventsSection()
-                        FeaturedMaulanaSection()
-                        RecentActivitySection()
-                        Spacer().frame(height: 16)
+        ZStack {
+            // ── Main tabbed content ──────────────────────────────────
+            VStack(spacing: 0) {
+                switch selectedTab {
+                case 0:
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            HomeHeader()
+                            QuickActionsSection()
+                            UpcomingEventsSection(onEventClick: { event in
+                                withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+                            })
+                            FeaturedMaulanaSection(onMaulanaClick: { maulana in
+                                withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = maulana }
+                            })
+                            RecentActivitySection()
+                            Spacer().frame(height: 16)
+                        }
+                    }
+                case 1:
+                    EventsView(onEventClick: { event in
+                        withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+                    })
+                case 2:
+                    MaulanaView(
+                        onMaulanaClick: { maulana in
+                            withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = maulana }
+                        }
+                    )
+                case 3:
+                    ProfileView()
+                default:
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            HomeHeader()
+                            QuickActionsSection()
+                            UpcomingEventsSection()
+                            FeaturedMaulanaSection()
+                            RecentActivitySection()
+                            Spacer().frame(height: 16)
+                        }
                     }
                 }
-            case 1:
-                EventsView()
-            case 2:
-                MaulanaView()
-            case 3:
-                ProfileView()
-            default:
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        HomeHeader()
-                        QuickActionsSection()
-                        UpcomingEventsSection()
-                        FeaturedMaulanaSection()
-                        RecentActivitySection()
-                        Spacer().frame(height: 16)
+                HomeBottomNavBar(selectedTab: $selectedTab)
+            }
+            .background(colorBackgroundCream)
+            .ignoresSafeArea(.container, edges: .top)
+
+            // ── Event Detail overlay ─────────────────────────────────
+            if let event = selectedEvent {
+                EventDetailView(
+                    event: event,
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = nil }
                     }
-                }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                .zIndex(10)
             }
 
-            // Bottom Navigation Bar
-            HomeBottomNavBar(selectedTab: $selectedTab)
+            // ── Maulana Detail overlay ───────────────────────────────
+            if let maulana = selectedMaulana {
+                MaulanaDetailView(
+                    maulana: maulana,
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = nil }
+                    },
+                    onEventClick: { event in
+                        withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                .zIndex(11)
+            }
         }
-        .background(colorBackgroundCream)
-        .ignoresSafeArea(.container, edges: .top)
     }
 }
+
 
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - Header
@@ -234,9 +274,10 @@ private struct QuickActionItem: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct UpcomingEventsSection: View {
+    var onEventClick: ((EventItemModel) -> Void)? = nil
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Section header
             HStack {
                 Text("Upcoming")
                     .font(.system(size: 16, weight: .bold))
@@ -248,33 +289,19 @@ private struct UpcomingEventsSection: View {
             }
             .padding(.horizontal, 16)
 
-            // Horizontal scrolling event cards
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
-                    EventCard(
-                        title: "Friday Waz Mahfil",
-                        maulana: "Maulana Abdul Karim",
-                        location: "Dhaka Central Mosque",
-                        date: "Mar 14, 2026",
-                        time: "After Jummah",
-                        isLive: false
-                    )
-                    EventCard(
-                        title: "Tafseer Al-Quran",
-                        maulana: "Maulana Tariq Jameel",
-                        location: "Baitul Mukarram",
-                        date: "Mar 15, 2026",
-                        time: "After Maghrib",
-                        isLive: true
-                    )
-                    EventCard(
-                        title: "Seerah Conference",
-                        maulana: "Maulana Hassan",
-                        location: "Chittagong Grand Masjid",
-                        date: "Mar 18, 2026",
-                        time: "10:00 AM",
-                        isLive: false
-                    )
+                    ForEach(sampleEventsPublic.prefix(5)) { event in
+                        EventCard(
+                            title: event.title,
+                            maulana: event.maulana,
+                            location: event.location,
+                            date: event.date,
+                            time: event.time,
+                            isLive: event.isLive,
+                            onClick: { onEventClick?(event) }
+                        )
+                    }
                 }
                 .padding(.horizontal, 16)
             }
@@ -290,11 +317,13 @@ private struct EventCard: View {
     let date: String
     let time: String
     let isLive: Bool
+    var onClick: () -> Void = {}
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Top accent strip
-            ZStack(alignment: .topTrailing) {
+        Button(action: onClick) {
+            VStack(spacing: 0) {
+                // Top accent strip
+                ZStack(alignment: .topTrailing) {
                 // Gradient background with Islamic arch patterns
                 ZStack {
                     LinearGradient(
@@ -413,10 +442,12 @@ private struct EventCard: View {
             .padding(16)
             .padding(.top, 8)
         }
-        .frame(width: 280)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
+                .frame(width: 280)
+                .background(Color.white)
+                .cornerRadius(16)
+                .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -425,6 +456,8 @@ private struct EventCard: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct FeaturedMaulanaSection: View {
+    var onMaulanaClick: ((MaulanaItemModel) -> Void)? = nil
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -440,10 +473,14 @@ private struct FeaturedMaulanaSection: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
-                    MaulanaChip(name: "Maulana Abdul Karim", eventCount: "120 Events", isVerified: true)
-                    MaulanaChip(name: "Maulana Tariq Jameel", eventCount: "85 Events", isVerified: true)
-                    MaulanaChip(name: "Maulana Hassan Ali", eventCount: "64 Events", isVerified: false)
-                    MaulanaChip(name: "Maulana Ibrahim", eventCount: "42 Events", isVerified: false)
+                    ForEach(sampleMaulanasPublic.prefix(5)) { maulana in
+                        MaulanaChip(
+                            name: maulana.name,
+                            eventCount: "\(maulana.totalEvents) Events",
+                            isVerified: maulana.isVerified,
+                            onClick: { onMaulanaClick?(maulana) }
+                        )
+                    }
                 }
                 .padding(.horizontal, 16)
             }
@@ -456,6 +493,7 @@ private struct MaulanaChip: View {
     let name: String
     let eventCount: String
     let isVerified: Bool
+    var onClick: () -> Void = {}
 
     private var displayName: String {
         let parts = name.split(separator: " ")
@@ -463,47 +501,48 @@ private struct MaulanaChip: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
-            // Avatar
-            ZStack {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [colorPrimaryTealLight, colorPrimaryTeal],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+        Button(action: onClick) {
+            VStack(spacing: 8) {
+                // Avatar
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [colorPrimaryTealLight, colorPrimaryTeal],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                    .frame(width: 56, height: 56)
+                        .frame(width: 56, height: 56)
 
-                Text(String(name.prefix(1)))
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(.white)
-            }
-
-            // Name + verified badge
-            HStack(spacing: 4) {
-                Text(displayName)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(colorTextPrimary)
-                    .lineLimit(1)
-
-                if isVerified {
-                    Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(colorVerifiedBadge)
+                    Text(String(name.prefix(1)))
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(.white)
                 }
-            }
 
-            Text(eventCount)
-                .font(.system(size: 12))
-                .foregroundColor(colorTextSecondary)
+                HStack(spacing: 4) {
+                    Text(displayName)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(colorTextPrimary)
+                        .lineLimit(1)
+                    if isVerified {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(colorVerifiedBadge)
+                    }
+                }
+
+                Text(eventCount)
+                    .font(.system(size: 12))
+                    .foregroundColor(colorTextSecondary)
+            }
+            .frame(width: 160)
+            .padding(16)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
         }
-        .frame(width: 160)
-        .padding(16)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
+        .buttonStyle(.plain)
     }
 }
 

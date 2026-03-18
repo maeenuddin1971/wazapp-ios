@@ -17,166 +17,167 @@ private let mutedText       = Color.white.opacity(0.33)
 
 // MARK: - LoginView
 struct LoginView: View {
+    @Binding var currentScreen: AppScreen
     @State private var email = ""
     @State private var password = ""
     @State private var isSecure = true
-    @State private var isLoggingIn = false
     @State private var showPasswordReset = false
 
-    var onLoginSuccess: () -> Void = {}
-    var onNavigateToRegister: () -> Void = {}
-    var onGuestMode: () -> Void = {}
-
     var body: some View {
-        ZStack {
-            // ── Background gradient ─────────────────────────────────
-            LinearGradient(
-                colors: [islamicDark1, islamicDark2, islamicDark3],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
+                Spacer().frame(height: 50)
 
-            // ── Decorative orbs + mosque ─────────────────────────────
-            IslamicBackgroundCanvas()
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
+                // ── Crescent Moon + Star ─────────────────────────
+                CrescentMoonView(size: 80)
 
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 0) {
-                    Spacer().frame(height: 50)
+                Spacer().frame(height: 12)
 
-                    // ── Crescent Moon + Star ─────────────────────────
-                    CrescentMoonView(size: 80)
+                // ── Bismillah ────────────────────────────────────
+                Text("بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ")
+                    .font(.system(size: 20))
+                    .foregroundColor(islamicGold)
+                    .multilineTextAlignment(.center)
 
-                    Spacer().frame(height: 12)
+                Spacer().frame(height: 24)
 
-                    // ── Bismillah ────────────────────────────────────
-                    Text("بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ")
-                        .font(.system(size: 20))
-                        .foregroundColor(islamicGold)
-                        .multilineTextAlignment(.center)
+                Text("Assalamu Alaikum")
+                    .font(.system(size: 26, weight: .bold))
+                    .foregroundColor(.white)
 
-                    Spacer().frame(height: 24)
+                Spacer().frame(height: 4)
 
-                    Text("Assalamu Alaikum")
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(.white)
+                Text("Sign in to discover Islamic events near you")
+                    .font(.system(size: 14))
+                    .foregroundColor(subtleText)
+                    .multilineTextAlignment(.center)
 
-                    Spacer().frame(height: 4)
+                Spacer().frame(height: 36)
 
-                    Text("Sign in to discover Islamic events near you")
-                        .font(.system(size: 14))
-                        .foregroundColor(subtleText)
-                        .multilineTextAlignment(.center)
+                // ── Email Field ──────────────────────────────────
+                IslamicTextField(
+                    label: "Email Address",
+                    placeholder: "Enter your email",
+                    icon: "envelope",
+                    text: $email
+                )
 
-                    Spacer().frame(height: 36)
+                Spacer().frame(height: 16)
 
-                    // ── Email Field ──────────────────────────────────
-                    IslamicTextField(
-                        label: "Email Address",
-                        placeholder: "Enter your email",
-                        icon: "envelope",
-                        text: $email
-                    )
+                // ── Password Field ───────────────────────────────
+                IslamicPasswordField(
+                    label: "Password",
+                    placeholder: "Enter password",
+                    text: $password,
+                    isSecure: $isSecure
+                )
 
-                    Spacer().frame(height: 16)
-
-                    // ── Password Field ───────────────────────────────
-                    IslamicPasswordField(
-                        label: "Password",
-                        placeholder: "Enter password",
-                        text: $password,
-                        isSecure: $isSecure
-                    )
-
-                    // Forgot Password
-                    HStack {
-                        Spacer()
-                        Button("Forgot password?") {
-                            showPasswordReset = true
-                        }
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(islamicGoldLight)
+                // Forgot Password
+                HStack {
+                    Spacer()
+                    Button("Forgot password?") {
+                        showPasswordReset = true
                     }
-                    .padding(.top, 8)
-
-                    Spacer().frame(height: 28)
-
-                    // ── Login Button ─────────────────────────────────
-                    Button(action: { login() }) {
-                        ZStack {
-                            LinearGradient(
-                                colors: [colorPrimaryTeal, colorPrimaryTealLight],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                            .cornerRadius(14)
-
-                            if isLoggingIn {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                    .tint(.white)
-                            } else {
-                                Text("Sign In")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .tracking(0.5)
-                            }
-                        }
-                        .frame(height: 54)
-                    }
-                    .disabled(!isFormValid || isLoggingIn)
-                    .opacity(!isFormValid || isLoggingIn ? 0.6 : 1)
-
-                    Spacer().frame(height: 28)
-
-                    // ── OR Divider with Islamic star ─────────────────
-                    IslamicDivider()
-
-                    Spacer().frame(height: 28)
-
-                    // ── Social Login ─────────────────────────────────
-                    HStack(spacing: 14) {
-                        SocialGlassButton(title: "Google", iconName: "g.circle.fill", iconColor: Color(red: 0xDB/255, green: 0x44/255, blue: 0x37/255))
-                        SocialGlassButton(title: "Facebook", iconName: "person.crop.square.fill", iconColor: Color(red: 0x18/255, green: 0x77/255, blue: 0xF2/255))
-                    }
-
-                    Spacer().frame(height: 14)
-
-                    // Guest Mode
-                    Button(action: { onGuestMode() }) {
-                        Text("Continue as Guest")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(mutedText)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                    }
-
-                    Spacer().frame(height: 20)
-
-                    // ── Sign Up Link ─────────────────────────────────
-                    Button(action: {
-                        print("Register clicked!")
-                        onNavigateToRegister()
-                    }) {
-                        HStack(spacing: 4) {
-                            Text("Don't have an account?")
-                                .font(.system(size: 14))
-                                .foregroundColor(subtleText)
-                            Text("Register")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(islamicGoldLight)
-                        }
-                        .padding(.vertical, 14)
-                        .padding(.horizontal, 20)
-                        .contentShape(Rectangle())
-                    }
-                    .padding(.bottom, 16)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(islamicGoldLight)
                 }
-                .padding(.horizontal, 28)
+                .padding(.top, 8)
+
+                Spacer().frame(height: 28)
+
+                // ── Login Button ─────────────────────────────────
+                Button {
+                    print("Sign In tapped! Setting currentScreen = .main")
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        currentScreen = .main
+                    }
+                } label: {
+                    ZStack {
+                        LinearGradient(
+                            colors: [colorPrimaryTeal, colorPrimaryTealLight],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .cornerRadius(14)
+
+                        Text("Sign In")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .tracking(0.5)
+                    }
+                    .frame(height: 54)
+                    .contentShape(Rectangle())
+                }
+
+                Spacer().frame(height: 28)
+
+                // ── OR Divider with Islamic star ─────────────────
+                IslamicDivider()
+
+                Spacer().frame(height: 28)
+
+                // ── Social Login ─────────────────────────────────
+                HStack(spacing: 14) {
+                    SocialGlassButton(title: "Google", iconName: "g.circle.fill", iconColor: Color(red: 0xDB/255, green: 0x44/255, blue: 0x37/255))
+                    SocialGlassButton(title: "Facebook", iconName: "person.crop.square.fill", iconColor: Color(red: 0x18/255, green: 0x77/255, blue: 0xF2/255))
+                }
+
+                Spacer().frame(height: 14)
+
+                // Guest Mode
+                Button {
+                    print("Guest mode tapped! Setting currentScreen = .main")
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        currentScreen = .main
+                    }
+                } label: {
+                    Text("Continue as Guest")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(mutedText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .contentShape(Rectangle())
+                }
+
+                Spacer().frame(height: 20)
+
+                // ── Sign Up Link ─────────────────────────────────
+                Button {
+                    print("Register clicked! Setting currentScreen = .register")
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        currentScreen = .register
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Don't have an account?")
+                            .font(.system(size: 14))
+                            .foregroundColor(subtleText)
+                        Text("Register")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(islamicGoldLight)
+                    }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 20)
+                    .contentShape(Rectangle())
+                }
+                .padding(.bottom, 16)
             }
+            .padding(.horizontal, 28)
         }
+        .background(
+            ZStack {
+                LinearGradient(
+                    colors: [islamicDark1, islamicDark2, islamicDark3],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+
+                IslamicBackgroundCanvas()
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
+        )
         .sheet(isPresented: $showPasswordReset) {
             PasswordResetSheet()
         }
@@ -184,14 +185,6 @@ struct LoginView: View {
 
     private var isFormValid: Bool {
         !email.trimmingCharacters(in: .whitespaces).isEmpty && !password.isEmpty
-    }
-
-    private func login() {
-        isLoggingIn = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            isLoggingIn = false
-            onLoginSuccess()
-        }
     }
 }
 
@@ -514,5 +507,5 @@ private struct PasswordResetSheet: View {
 }
 
 #Preview {
-    LoginView()
+    LoginView(currentScreen: .constant(.login))
 }

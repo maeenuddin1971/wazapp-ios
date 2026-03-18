@@ -32,17 +32,6 @@ struct EventItemModel: Identifiable {
     }
 }
 
-private let sampleEvents = [
-    EventItemModel(id: 1, title: "Friday Waz Mahfil", maulana: "Maulana Abdul Karim", location: "Dhaka Central Mosque, Motijheel", date: "Mar 14, 2026", time: "After Jummah", isLive: true, isFeatured: true, attendees: 245, category: "Today"),
-    EventItemModel(id: 2, title: "Tafseer Al-Quran", maulana: "Maulana Tariq Jameel", location: "Baitul Mukarram National Mosque", date: "Mar 15, 2026", time: "After Maghrib", isFeatured: true, attendees: 180, category: "This Week"),
-    EventItemModel(id: 3, title: "Seerah Conference", maulana: "Maulana Hassan Ali", location: "Chittagong Grand Masjid", date: "Mar 18, 2026", time: "10:00 AM", attendees: 320, category: "This Week"),
-    EventItemModel(id: 4, title: "Youth Islamic Seminar", maulana: "Maulana Ibrahim Khalil", location: "Sylhet Central Eidgah", date: "Mar 20, 2026", time: "3:00 PM", attendees: 150, category: "This Month"),
-    EventItemModel(id: 5, title: "Quran Recitation Night", maulana: "Qari Muhammad Yusuf", location: "Rajshahi City Mosque", date: "Mar 22, 2026", time: "After Isha", attendees: 95, category: "This Month"),
-    EventItemModel(id: 6, title: "Islamic Finance Workshop", maulana: "Mufti Abdul Rahman", location: "BICC, Dhaka", date: "Mar 25, 2026", time: "9:00 AM", attendees: 75, category: "This Month"),
-    EventItemModel(id: 7, title: "Milad-un-Nabi Program", maulana: "Maulana Shah Ahmed", location: "Khulna Boro Masjid", date: "Mar 28, 2026", time: "After Asr", isFeatured: true, attendees: 400, category: "This Month"),
-    EventItemModel(id: 8, title: "Dua & Zikr Evening", maulana: "Maulana Noor Islam", location: "Comilla Central Mosque", date: "Mar 14, 2026", time: "After Maghrib", attendees: 60, category: "Today")
-]
-
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - EventsView
 // ══════════════════════════════════════════════════════════════════════════
@@ -50,11 +39,12 @@ private let sampleEvents = [
 struct EventsView: View {
     @State private var selectedFilter = "All"
     @State private var searchQuery = ""
+    var onEventClick: ((EventItemModel) -> Void)? = nil
 
     private let filters = ["All", "Today", "This Week", "This Month"]
 
     private var filteredEvents: [EventItemModel] {
-        sampleEvents.filter { event in
+        sampleEventsPublic.filter { event in
             let matchesFilter = selectedFilter == "All" || event.category == selectedFilter
             let matchesSearch = searchQuery.isEmpty ||
                 event.title.localizedCaseInsensitiveContains(searchQuery) ||
@@ -67,27 +57,17 @@ struct EventsView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 0) {
-                // ── Header ─────────────────────────────────────────
                 EventsHeader(searchQuery: $searchQuery)
-
-                // ── Filter Chips ───────────────────────────────────
-                EventsFilterChips(
-                    filters: filters,
-                    selectedFilter: $selectedFilter
-                )
-
-                // ── Stats Bar ──────────────────────────────────────
+                EventsFilterChips(filters: filters, selectedFilter: $selectedFilter)
                 EventsStatsBar(
                     totalEvents: filteredEvents.count,
                     liveCount: filteredEvents.filter { $0.isLive }.count
                 )
-
-                // ── Event Cards ────────────────────────────────────
                 if filteredEvents.isEmpty {
                     EmptyEventsPlaceholder()
                 } else {
                     ForEach(filteredEvents) { event in
-                        EventListCard(event: event)
+                        EventListCard(event: event, onTap: { onEventClick?(event) })
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
                     }
@@ -297,6 +277,7 @@ private struct EventsStatsBar: View {
 
 private struct EventListCard: View {
     let event: EventItemModel
+    var onTap: () -> Void = {}
 
     private var dateParts: [String] {
         event.date.split(separator: " ").map(String.init)
@@ -482,6 +463,7 @@ private struct EventListCard: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+        .onTapGesture { onTap() }
     }
 }
 
