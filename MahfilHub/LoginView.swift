@@ -88,6 +88,7 @@ struct LoginView: View {
                 // ── Login Button ─────────────────────────────────
                 Button {
                     print("Sign In tapped! Setting currentScreen = .main")
+                    SessionManager.shared.login(name: "Bipul Ahmed", email: "bipul@mahfilhub.com")
                     withAnimation(.easeInOut(duration: 0.35)) {
                         currentScreen = .main
                     }
@@ -127,6 +128,7 @@ struct LoginView: View {
                 // Guest Mode
                 Button {
                     print("Guest mode tapped! Setting currentScreen = .main")
+                    SessionManager.shared.login(name: "Guest User", email: "guest@mahfilhub.com")
                     withAnimation(.easeInOut(duration: 0.35)) {
                         currentScreen = .main
                     }

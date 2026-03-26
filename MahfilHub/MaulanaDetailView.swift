@@ -70,7 +70,7 @@ struct MaulanaDetailView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.top, 8)
+                            .padding(.top, 54)
 
                             Spacer().frame(height: 12)
 

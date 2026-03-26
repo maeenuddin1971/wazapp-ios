@@ -88,7 +88,11 @@ struct AppRootView: View {
             if currentScreen == .splash {
                 SplashView {
                     withAnimation(.easeInOut(duration: 0.35)) {
-                        currentScreen = .onboarding
+                        if SessionManager.shared.isLoggedIn {
+                            currentScreen = .main
+                        } else {
+                            currentScreen = .onboarding
+                        }
                     }
                 }
                 .transition(.asymmetric(insertion: .identity, removal: .move(edge: .leading)))

@@ -133,6 +133,7 @@ struct RegisterView: View {
                 // ── Create Account Button ───────────────────────
                 Button {
                     print("Create Account tapped! Setting currentScreen = .main")
+                    SessionManager.shared.login(name: "New User", email: "newuser@mahfilhub.com")
                     withAnimation(.easeInOut(duration: 0.35)) {
                         currentScreen = .main
                     }
