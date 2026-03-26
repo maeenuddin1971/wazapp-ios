@@ -78,7 +78,7 @@ struct HomeView: View {
                     }
                 )
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                .zIndex(10)
+                .zIndex(12)
             }
 
             // ── Maulana Detail overlay ───────────────────────────────

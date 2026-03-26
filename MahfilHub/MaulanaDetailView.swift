@@ -134,7 +134,7 @@ struct MaulanaDetailView: View {
                         MaulanaStatCard(value: formatMaulanaFollowers(maulana.followers), label: "Followers", color: colorInfoBlue)
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, 0)
+                    .padding(.top, 16)
 
                     Spacer().frame(height: 20)
 
