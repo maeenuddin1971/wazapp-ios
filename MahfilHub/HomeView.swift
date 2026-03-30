@@ -19,6 +19,8 @@ struct HomeView: View {
     @State private var selectedTab = 0
     @State private var selectedEvent: EventItemModel? = nil
     @State private var selectedMaulana: MaulanaItemModel? = nil
+    @State private var showNotificationList = false
+    @State private var selectedNotification: NotificationItemModel? = nil
 
     var body: some View {
         ZStack {
@@ -28,7 +30,9 @@ struct HomeView: View {
                 case 0:
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 0) {
-                            HomeHeader()
+                            HomeHeader(onNotificationTap: {
+                                withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = true }
+                            })
                             QuickActionsSection()
                             UpcomingEventsSection(onEventClick: { event in
                                 withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
@@ -55,7 +59,9 @@ struct HomeView: View {
                 default:
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 0) {
-                            HomeHeader()
+                            HomeHeader(onNotificationTap: {
+                                withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = true }
+                            })
                             QuickActionsSection()
                             UpcomingEventsSection()
                             FeaturedMaulanaSection()
@@ -95,6 +101,37 @@ struct HomeView: View {
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
                 .zIndex(11)
             }
+
+            // ── Notification List overlay ────────────────────────────
+            if showNotificationList {
+                NotificationListView(
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = false }
+                    },
+                    onNotificationClick: { notification in
+                        withAnimation(.easeInOut(duration: 0.3)) { selectedNotification = notification }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                .zIndex(13)
+            }
+
+            // ── Notification Detail overlay ──────────────────────────
+            if let notification = selectedNotification {
+                NotificationDetailView(
+                    notification: notification,
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.3)) { selectedNotification = nil }
+                    },
+                    onEventClick: { eventId in
+                        if let event = sampleEventsPublic.first(where: { $0.id == eventId }) {
+                            withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+                        }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                .zIndex(14)
+            }
         }
     }
 }
@@ -105,6 +142,7 @@ struct HomeView: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct HomeHeader: View {
+    var onNotificationTap: () -> Void = {}
     var body: some View {
         ZStack {
             // Gradient background
@@ -153,7 +191,7 @@ private struct HomeHeader: View {
                     Spacer()
 
                     // Notification bell with badge
-                    Button(action: {}) {
+                    Button(action: onNotificationTap) {
                         ZStack(alignment: .topTrailing) {
                             Circle()
                                 .fill(Color.white.opacity(0.15))
