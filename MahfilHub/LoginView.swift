@@ -35,20 +35,20 @@ struct LoginView: View {
 
                 // ── Bismillah ────────────────────────────────────
                 Text("بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ")
-                    .font(.system(size: 20))
+                    .font(.title3)
                     .foregroundColor(islamicGold)
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 24)
 
                 Text("Assalamu Alaikum")
-                    .font(.system(size: 26, weight: .bold))
+                    .font(.title.bold())
                     .foregroundColor(.white)
 
                 Spacer().frame(height: 4)
 
                 Text("Sign in to discover Islamic events near you")
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(subtleText)
                     .multilineTextAlignment(.center)
 
@@ -78,7 +78,7 @@ struct LoginView: View {
                     Button("Forgot password?") {
                         showPasswordReset = true
                     }
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundColor(islamicGoldLight)
                 }
                 .padding(.top, 8)
@@ -102,7 +102,7 @@ struct LoginView: View {
                         .cornerRadius(14)
 
                         Text("Sign In")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.callout.bold())
                             .foregroundColor(.white)
                             .tracking(0.5)
                     }
@@ -134,7 +134,7 @@ struct LoginView: View {
                     }
                 } label: {
                     Text("Continue as Guest")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.subheadline)
                         .foregroundColor(mutedText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -152,10 +152,10 @@ struct LoginView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundColor(subtleText)
                         Text("Register")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.subheadline.bold())
                             .foregroundColor(islamicGoldLight)
                     }
                     .padding(.vertical, 14)
@@ -202,14 +202,14 @@ private struct IslamicTextField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundColor(subtleText)
                 .padding(.leading, 4)
 
             HStack(spacing: 10) {
                 Image(systemName: icon)
                     .foregroundColor(islamicGold)
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .frame(width: 20)
                 TextField("", text: $text, prompt: Text(placeholder).foregroundColor(mutedText))
                     .foregroundColor(.white)
@@ -237,14 +237,14 @@ private struct IslamicPasswordField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundColor(subtleText)
                 .padding(.leading, 4)
 
             HStack(spacing: 10) {
                 Image(systemName: "lock")
                     .foregroundColor(islamicGold)
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .frame(width: 20)
                 Group {
                     if isSecure {
@@ -258,7 +258,7 @@ private struct IslamicPasswordField: View {
                 Button(action: { isSecure.toggle() }) {
                     Image(systemName: isSecure ? "eye.slash" : "eye")
                         .foregroundColor(mutedText)
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                 }
             }
             .padding(14)
@@ -282,10 +282,10 @@ private struct SocialGlassButton: View {
         Button(action: {}) {
             HStack(spacing: 8) {
                 Image(systemName: iconName)
-                    .font(.system(size: 18))
+                    .font(.body)
                     .foregroundColor(iconColor)
                 Text(title)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.subheadline)
                     .foregroundColor(.white)
             }
             .frame(maxWidth: .infinity)
@@ -466,7 +466,7 @@ private struct PasswordResetSheet: View {
 
                 VStack(spacing: 16) {
                     Text("Enter your email to reset your password.")
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(subtleText)
                         .frame(maxWidth: .infinity, alignment: .leading)
 

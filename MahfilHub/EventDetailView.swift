@@ -44,7 +44,7 @@ struct EventDetailView: View {
                             HStack {
                                 Button(action: onBack) {
                                     Image(systemName: "arrow.left")
-                                        .font(.system(size: 17, weight: .semibold))
+                                        .font(.headline)
                                         .foregroundColor(.white)
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
@@ -56,7 +56,7 @@ struct EventDetailView: View {
                                 HStack(spacing: 8) {
                                     Button(action: { isSaved.toggle() }) {
                                         Image(systemName: isSaved ? "heart.fill" : "heart")
-                                            .font(.system(size: 17))
+                                            .font(.body)
                                             .foregroundColor(isSaved ? colorErrorRed : .white)
                                             .frame(width: 40, height: 40)
                                             .background(Color.white.opacity(0.15))
@@ -64,7 +64,7 @@ struct EventDetailView: View {
                                     }
                                     Button(action: {}) {
                                         Image(systemName: "square.and.arrow.up")
-                                            .font(.system(size: 17))
+                                            .font(.body)
                                             .foregroundColor(.white)
                                             .frame(width: 40, height: 40)
                                             .background(Color.white.opacity(0.15))
@@ -91,7 +91,7 @@ struct EventDetailView: View {
                             Spacer().frame(height: 12)
 
                             Text(event.title)
-                                .font(.system(size: 26, weight: .bold))
+                                .font(.title.bold())
                                 .foregroundColor(.white)
                                 .lineLimit(2)
                                 .padding(.horizontal, 16)
@@ -100,10 +100,10 @@ struct EventDetailView: View {
 
                             HStack(spacing: 6) {
                                 Image(systemName: "person.fill")
-                                    .font(.system(size: 13))
+                                    .font(.footnote)
                                     .foregroundColor(.white.opacity(0.8))
                                 Text("\(event.attendees) attending")
-                                    .font(.system(size: 14))
+                                    .font(.subheadline)
                                     .foregroundColor(.white.opacity(0.8))
                             }
                             .padding(.horizontal, 16)
@@ -147,11 +147,11 @@ struct EventDetailView: View {
                     // ── About ────────────────────────────────────────
                     VStack(alignment: .leading, spacing: 12) {
                         Text("About This Event")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.headline)
                             .foregroundColor(colorTextPrimary)
 
                         Text("Join us for an enlightening session of \(event.title) led by \(event.maulana). This event brings together the Muslim community for spiritual growth, knowledge sharing, and strengthening of faith. Everyone is welcome to attend and benefit from this blessed gathering.\n\nThe program will include recitation of the Holy Quran, an insightful lecture, and a Q&A session. Light refreshments will be provided after the event.")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundColor(colorTextSecondary)
                             .lineSpacing(6)
                     }
@@ -194,9 +194,9 @@ struct EventDetailView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "info.circle")
                                 .foregroundColor(colorPrimaryTeal)
-                                .font(.system(size: 18))
+                                .font(.body)
                             Text("Event Guidelines")
-                                .font(.system(size: 16, weight: .bold))
+                                .font(.callout.bold())
                                 .foregroundColor(colorPrimaryTeal)
                         }
 
@@ -209,10 +209,10 @@ struct EventDetailView: View {
                         ForEach(guidelines, id: \.self) { g in
                             HStack(alignment: .top, spacing: 8) {
                                 Text("•")
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(.subheadline.bold())
                                     .foregroundColor(colorPrimaryTeal)
                                 Text(g)
-                                    .font(.system(size: 13))
+                                    .font(.footnote)
                                     .foregroundColor(colorTextSecondary)
                                     .lineSpacing(4)
                             }
@@ -233,9 +233,9 @@ struct EventDetailView: View {
                 Button(action: {}) {
                     HStack(spacing: 6) {
                         Image(systemName: "bell")
-                            .font(.system(size: 15))
+                            .font(.subheadline)
                         Text("Remind Me")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.subheadline.weight(.semibold))
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
@@ -249,9 +249,9 @@ struct EventDetailView: View {
                 Button(action: {}) {
                     HStack(spacing: 6) {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 15))
+                            .font(.subheadline)
                         Text("Attend")
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.subheadline.bold())
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
@@ -279,7 +279,7 @@ private struct EventBadge: View {
     let text: String; let bg: Color; let fg: Color
     var body: some View {
         Text(text)
-            .font(.system(size: 11, weight: .bold))
+            .font(.caption.bold())
             .foregroundColor(fg)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
@@ -302,23 +302,23 @@ private struct EventInfoCard: View {
                     .fill(iconColor.opacity(0.1))
                     .frame(width: 48, height: 48)
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.title3)
                     .foregroundColor(iconColor)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundColor(colorTextSecondary)
                 Text(primaryText)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundColor(colorTextPrimary)
                 Text(secondaryText)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.caption)
                     .foregroundColor(iconColor)
             }
             Spacer()
             Image(systemName: "chevron.right")
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(colorTextSecondary.opacity(0.4))
         }
         .padding(16)
@@ -341,16 +341,16 @@ private struct EventQuickStatCard: View {
                     .fill(color.opacity(0.12))
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .foregroundColor(color)
             }
             Text(value)
-                .font(.system(size: 13, weight: .bold))
+                .font(.footnote.bold())
                 .foregroundColor(colorTextPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.system(size: 11))
+                .font(.caption)
                 .foregroundColor(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)

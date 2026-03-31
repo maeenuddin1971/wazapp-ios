@@ -49,7 +49,7 @@ struct OnboardingView: View {
                     if currentPage < pages.count - 1 {
                         Button(action: onFinished) {
                             Text(isEnglish ? "Skip" : "এড়িয়ে যান")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.callout.weight(.semibold))
                                 .foregroundColor(colorWhite.opacity(0.8))
                         }
                     } else {
@@ -83,7 +83,7 @@ struct OnboardingView: View {
                     if currentPage == pages.count - 1 {
                         Button(action: { onFinished() }) {
                             Text(isEnglish ? "Get Started" : "শুরু করুন")
-                                .font(.system(size: 18, weight: .bold))
+                                .font(.headline)
                                 .foregroundColor(colorWhite)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 56)
@@ -97,7 +97,7 @@ struct OnboardingView: View {
                             withAnimation { currentPage += 1 }
                         }) {
                             Text(isEnglish ? "Next" : "পরবর্তী")
-                                .font(.system(size: 18, weight: .semibold))
+                                .font(.headline)
                                 .foregroundColor(colorWhite)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 56)
@@ -159,7 +159,7 @@ struct OnboardingPageContent: View {
 
             // Title
             Text(page.title)
-                .font(.system(size: 24, weight: .bold))
+                .font(.title2.bold())
                 .foregroundColor(colorWhite)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
@@ -169,7 +169,7 @@ struct OnboardingPageContent: View {
 
             // Description
             Text(page.description)
-                .font(.system(size: 16))
+                .font(.callout)
                 .foregroundColor(colorWhite.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -244,7 +244,8 @@ struct LanguageToggle: View {
         HStack(spacing: 0) {
             // English Option
             Text("English")
-                .font(.system(size: 14, weight: isEnglish ? .bold : .regular))
+                .font(.subheadline)
+                .fontWeight(isEnglish ? .bold : .regular)
                 .foregroundColor(isEnglish ? colorWhite : colorWhite.opacity(0.6))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -256,7 +257,8 @@ struct LanguageToggle: View {
 
             // Bangla Option
             Text("বাংলা")
-                .font(.system(size: 14, weight: !isEnglish ? .bold : .regular))
+                .font(.subheadline)
+                .fontWeight(!isEnglish ? .bold : .regular)
                 .foregroundColor(!isEnglish ? colorWhite : colorWhite.opacity(0.6))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)

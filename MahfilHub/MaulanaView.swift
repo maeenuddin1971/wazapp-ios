@@ -102,11 +102,11 @@ struct MaulanaView: View {
                 // ── Results Count ──────────────────────────────
                 HStack {
                     Text("\(filteredMaulanas.count) scholars found")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorTextSecondary)
                     Spacer()
                     Text("\(sampleMaulanas.filter { $0.isVerified }.count) Verified")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundColor(colorVerifiedBadge)
                 }
                 .padding(.horizontal, 16)
@@ -179,10 +179,10 @@ private struct MaulanaHeader: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Maulana")
-                            .font(.system(size: 24, weight: .bold))
+                            .font(.title2.bold())
                             .foregroundColor(.white)
                         Text("Find renowned Islamic scholars")
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundColor(Color.white.opacity(0.7))
                     }
 
@@ -195,7 +195,7 @@ private struct MaulanaHeader: View {
                             .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: "list.bullet")
-                                    .font(.system(size: 16))
+                                    .font(.callout)
                                     .foregroundColor(.white)
                             )
                     }
@@ -207,19 +207,19 @@ private struct MaulanaHeader: View {
                 // Search bar
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 16))
+                        .font(.callout)
                         .foregroundColor(Color.white.opacity(0.7))
 
                     TextField("", text: $searchQuery, prompt: Text("Search scholars…")
                         .foregroundColor(Color.white.opacity(0.5)))
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(.white)
                         .tint(.white)
 
                     if !searchQuery.isEmpty {
                         Button(action: { searchQuery = "" }) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 16))
+                                .font(.callout)
                                 .foregroundColor(Color.white.opacity(0.7))
                         }
                     }
@@ -285,14 +285,14 @@ private struct MaulanaStatCard: View {
                     .fill(color.opacity(0.12))
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundColor(color)
             }
             Text(value)
-                .font(.system(size: 22, weight: .bold))
+                .font(.title2.bold())
                 .foregroundColor(colorTextPrimary)
             Text(label)
-                .font(.system(size: 11))
+                .font(.caption)
                 .foregroundColor(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -325,11 +325,12 @@ private struct MaulanaFilterChips: View {
                         HStack(spacing: 6) {
                             if filter == "Verified" {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 12))
+                                    .font(.caption)
                                     .foregroundColor(isSelected ? .white : colorTextPrimary)
                             }
                             Text(filter)
-                                .font(.system(size: 14, weight: isSelected ? .bold : .regular))
+                                .font(.subheadline)
+                                .fontWeight(isSelected ? .bold : .regular)
                                 .foregroundColor(isSelected ? .white : colorTextPrimary)
                         }
                         .padding(.horizontal, 14)
@@ -406,10 +407,10 @@ private struct MaulanaProfileCard: View {
                         if maulana.isVerified {
                             HStack(spacing: 4) {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 10))
+                                    .font(.caption2)
                                     .foregroundColor(.white)
                                 Text("Verified")
-                                    .font(.system(size: 10, weight: .bold))
+                                    .font(.caption2.bold())
                                     .foregroundColor(.white)
                             }
                             .padding(.horizontal, 8)
@@ -421,10 +422,10 @@ private struct MaulanaProfileCard: View {
                         // Rating badge
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
-                                .font(.system(size: 10))
+                                .font(.caption2)
                                 .foregroundColor(.white)
                             Text(String(format: "%.1f", maulana.rating))
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.caption2.bold())
                                 .foregroundColor(.white)
                         }
                         .padding(.horizontal, 8)
@@ -453,7 +454,7 @@ private struct MaulanaProfileCard: View {
                         .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
 
                     Text(initial)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.title2.bold())
                         .foregroundColor(.white)
                 }
                 .offset(y: -24)
@@ -461,12 +462,12 @@ private struct MaulanaProfileCard: View {
                 // Details
                 VStack(alignment: .leading, spacing: 4) {
                     Text(maulana.name)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.callout.bold())
                         .foregroundColor(colorTextPrimary)
                         .lineLimit(1)
 
                     Text(maulana.title)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.caption)
                         .foregroundColor(colorPrimaryTeal)
 
                     Spacer().frame(height: 2)
@@ -474,10 +475,10 @@ private struct MaulanaProfileCard: View {
                     // Specialization
                     HStack(spacing: 4) {
                         Image(systemName: "info.circle")
-                            .font(.system(size: 11))
+                            .font(.caption)
                             .foregroundColor(colorAccentOrange)
                         Text(maulana.specialization)
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundColor(colorTextSecondary)
                             .lineLimit(1)
                     }
@@ -485,10 +486,10 @@ private struct MaulanaProfileCard: View {
                     // Location
                     HStack(spacing: 4) {
                         Image(systemName: "mappin")
-                            .font(.system(size: 11))
+                            .font(.caption)
                             .foregroundColor(colorSecondaryGreen)
                         Text(maulana.location)
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundColor(colorTextSecondary)
                             .lineLimit(1)
                     }
@@ -529,9 +530,9 @@ private struct MaulanaProfileCard: View {
                 Button(action: { onTap() }) {
                     HStack(spacing: 6) {
                         Image(systemName: "person")
-                            .font(.system(size: 13))
+                            .font(.footnote)
                         Text("View Details")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.footnote.weight(.semibold))
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 38)
@@ -544,9 +545,9 @@ private struct MaulanaProfileCard: View {
                 Button(action: {}) {
                     HStack(spacing: 6) {
                         Image(systemName: maulana.isFollowing ? "heart.fill" : "heart")
-                            .font(.system(size: 13))
+                            .font(.footnote)
                         Text(maulana.isFollowing ? "Following" : "Follow")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.footnote.weight(.semibold))
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 38)
@@ -578,10 +579,10 @@ private struct MaulanaInlineStat: View {
     var body: some View {
         VStack(spacing: 2) {
             Text(value)
-                .font(.system(size: 16, weight: .bold))
+                .font(.callout.bold())
                 .foregroundColor(color)
             Text(label)
-                .font(.system(size: 11))
+                .font(.caption)
                 .foregroundColor(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -603,16 +604,16 @@ private struct MaulanaEmptyPlaceholder: View {
                     .fill(colorPrimaryTeal.opacity(0.1))
                     .frame(width: 80, height: 80)
                 Image(systemName: "person")
-                    .font(.system(size: 36))
+                    .font(.largeTitle)
                     .foregroundColor(colorPrimaryTeal)
             }
 
             Text("No results found")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .foregroundColor(colorTextPrimary)
 
             Text("Try adjusting your search or filters")
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(colorTextSecondary)
 
             Spacer().frame(height: 40)

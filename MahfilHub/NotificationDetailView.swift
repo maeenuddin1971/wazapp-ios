@@ -66,7 +66,7 @@ struct NotificationDetailView: View {
                         // Message Card
                         detailCard(title: "Message") {
                             Text(notification.message)
-                                .font(.system(size: 14))
+                                .font(.subheadline)
                                 .foregroundColor(Color.appTextSecondary)
                                 .lineSpacing(6)
                         }
@@ -141,7 +141,7 @@ struct NotificationDetailView: View {
             // ── Back button (always visible) ──────────────────────────
             Button(action: onBack) {
                 Image(systemName: "arrow.left")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.headline)
                     .foregroundColor(.white)
                     .frame(width: 40, height: 40)
                     .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
@@ -155,7 +155,7 @@ struct NotificationDetailView: View {
                 Spacer()
                 Button(action: {}) {
                     Image(systemName: "trash")
-                        .font(.system(size: 17))
+                        .font(.body)
                         .foregroundColor(.white)
                         .frame(width: 40, height: 40)
                         .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
@@ -168,7 +168,7 @@ struct NotificationDetailView: View {
             
             // ── Animated Title ────────────────────────────────────────
             Text(notification.title)
-                .font(.system(size: lerp(22, 18, collapseProgress), weight: .bold))
+                .font(collapseProgress > 0.5 ? .headline : .title2.bold())
                 .foregroundColor(.white)
                 .lineLimit(collapseProgress > 0.5 ? 1 : 2)
                 .padding(.leading, lerp(16, 56, collapseProgress))
@@ -181,7 +181,7 @@ struct NotificationDetailView: View {
                     .fill(Color.white.opacity(0.2))
                     .frame(width: 56, height: 56)
                 Image(systemName: notificationIcon(for: notification.type))
-                    .font(.system(size: 24))
+                    .font(.title2)
                     .foregroundColor(.white)
             }
             .padding(.top, 108)
@@ -191,14 +191,14 @@ struct NotificationDetailView: View {
             // ── Expanded-only: time + type badge at bottom ────────────
             HStack(spacing: 8) {
                 Image(systemName: "clock")
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundColor(Color.white.opacity(0.7))
                 Text(notification.time)
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(Color.white.opacity(0.7))
                 
                 Text(notification.type.displayName)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -219,7 +219,7 @@ struct NotificationDetailView: View {
     private func detailCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.system(size: 16, weight: .bold))
+                .font(.callout.bold())
                 .foregroundColor(Color.appTextPrimary)
             content()
         }
@@ -262,9 +262,9 @@ struct NotificationDetailView: View {
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: actionIcon)
-                        .font(.system(size: 16))
+                        .font(.callout)
                     Text(text)
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.subheadline.bold())
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
@@ -297,15 +297,15 @@ private struct DetailInfoRow: View {
                     .fill(color.opacity(0.1))
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundColor(color)
             }
             VStack(alignment: .leading, spacing: 1) {
                 Text(label)
-                    .font(.system(size: 11))
+                    .font(.caption)
                     .foregroundColor(Color.appTextSecondary)
                 Text(value)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.subheadline)
                     .foregroundColor(Color.appTextPrimary)
             }
             Spacer()

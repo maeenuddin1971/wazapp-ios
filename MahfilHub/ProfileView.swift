@@ -104,7 +104,7 @@ struct ProfileView: View {
 
                 // ── Version ────────────────────────────────────
                 Text("MahfilHub v1.0.0")
-                    .font(.system(size: 11))
+                    .font(.caption)
                     .foregroundColor(colorTextSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -163,7 +163,7 @@ private struct ProfileHeader: View {
                 // Title row with settings
                 HStack {
                     Text("Profile")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.title2.bold())
                         .foregroundColor(.white)
 
                     Spacer()
@@ -174,7 +174,7 @@ private struct ProfileHeader: View {
                             .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: "gearshape")
-                                    .font(.system(size: 16))
+                                    .font(.callout)
                                     .foregroundColor(.white)
                             )
                     }
@@ -198,7 +198,7 @@ private struct ProfileHeader: View {
                             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
 
                         Text("A")
-                            .font(.system(size: 36, weight: .bold))
+                            .font(.largeTitle.bold())
                             .foregroundColor(.white)
                     }
 
@@ -210,7 +210,7 @@ private struct ProfileHeader: View {
                             .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
 
                         Image(systemName: "pencil")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.caption.bold())
                             .foregroundColor(.white)
                     }
                     .offset(x: -2, y: -2)
@@ -220,14 +220,14 @@ private struct ProfileHeader: View {
 
                 // Name
                 Text("Abdullah Ahmed")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.title3.bold())
                     .foregroundColor(.white)
 
                 Spacer().frame(height: 4)
 
                 // Email
                 Text("abdullah.ahmed@email.com")
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(Color.white.opacity(0.7))
 
                 Spacer().frame(height: 8)
@@ -235,10 +235,10 @@ private struct ProfileHeader: View {
                 // Member badge
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorAccentOrange)
                     Text("Premium Member")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.caption.bold())
                         .foregroundColor(colorAccentOrange)
                 }
                 .padding(.horizontal, 12)
@@ -282,14 +282,14 @@ private struct ProfileStatCard: View {
                     .fill(color.opacity(0.12))
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundColor(color)
             }
             Text(value)
-                .font(.system(size: 22, weight: .bold))
+                .font(.title2.bold())
                 .foregroundColor(colorTextPrimary)
             Text(label)
-                .font(.system(size: 11))
+                .font(.caption)
                 .foregroundColor(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -309,7 +309,7 @@ private struct ProfileSectionTitle: View {
 
     var body: some View {
         Text(title)
-            .font(.system(size: 13, weight: .bold))
+            .font(.footnote.bold())
             .foregroundColor(colorTextSecondary)
             .tracking(0.5)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -366,17 +366,17 @@ private struct ProfileMenuRow: View {
                         .frame(width: 40, height: 40)
 
                     Image(systemName: item.icon)
-                        .font(.system(size: 17))
+                        .font(.body)
                         .foregroundColor(item.color)
                 }
 
                 // Text content
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.title)
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.subheadline)
                         .foregroundColor(colorTextPrimary)
                     Text(item.subtitle)
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorTextSecondary)
                 }
 
@@ -385,7 +385,7 @@ private struct ProfileMenuRow: View {
                 // Badge
                 if let badge = item.badge {
                     Text(badge)
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.caption.bold())
                         .foregroundColor(item.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -395,7 +395,7 @@ private struct ProfileMenuRow: View {
 
                 // Chevron
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.footnote)
                     .foregroundColor(colorTextSecondary.opacity(0.5))
             }
             .padding(.horizontal, 16)
@@ -413,9 +413,9 @@ private struct ProfileLogoutButton: View {
         Button(action: {}) {
             HStack(spacing: 8) {
                 Image(systemName: "rectangle.portrait.and.arrow.right")
-                    .font(.system(size: 16))
+                    .font(.callout)
                 Text("Logout")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
             }
             .frame(maxWidth: .infinity)
             .frame(height: 48)

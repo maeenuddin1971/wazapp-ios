@@ -198,7 +198,7 @@ struct NotificationListView: View {
             // ── Back button (always visible) ──────────────────────────
             Button(action: onBack) {
                 Image(systemName: "arrow.left")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.headline)
                     .foregroundColor(.white)
                     .frame(width: 40, height: 40)
                     .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
@@ -209,7 +209,7 @@ struct NotificationListView: View {
             
             // ── Animated Title ────────────────────────────────────────
             Text("Notifications")
-                .font(.system(size: lerp(24, 18, collapseProgress), weight: .bold))
+                .font(collapseProgress > 0.5 ? .headline : .title2.bold())
                 .foregroundColor(.white)
                 .padding(.leading, lerp(16, 56, collapseProgress))
                 .padding(.top, lerp(160, 58, collapseProgress))
@@ -217,7 +217,7 @@ struct NotificationListView: View {
             // ── Badge (fades out) ─────────────────────────────────────
             if unreadCount > 0 {
                 Text("\(unreadCount) new")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.caption.bold())
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
@@ -232,12 +232,12 @@ struct NotificationListView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("Stay updated with events & community")
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(Color.white.opacity(0.7))
                     Spacer()
                     Button(action: {}) {
                         Text("Mark all read")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.footnote)
                             .foregroundColor(Color.white.opacity(0.8))
                     }
                 }
@@ -247,7 +247,7 @@ struct NotificationListView: View {
                     ForEach(filters, id: \.self) { filter in
                         Button(action: { selectedFilter = filter }) {
                             Text(filter)
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.footnote)
                                 .foregroundColor(filter == selectedFilter ? colorPrimaryTealDark : .white)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 7)
@@ -285,14 +285,14 @@ private struct NotificationRow: View {
                     .fill(notificationColor(for: notification.type).opacity(0.12))
                     .frame(width: 44, height: 44)
                 Image(systemName: notificationIcon(for: notification.type))
-                    .font(.system(size: 18))
+                    .font(.body)
                     .foregroundColor(notificationColor(for: notification.type))
             }
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(notification.title)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundColor(Color.appTextPrimary)
                         .lineLimit(1)
                     Spacer()
@@ -304,12 +304,12 @@ private struct NotificationRow: View {
                 }
                 
                 Text(notification.message)
-                    .font(.system(size: 13))
+                    .font(.footnote)
                     .foregroundColor(Color.appTextSecondary)
                     .lineLimit(2)
                 
                 Text(notification.time)
-                    .font(.system(size: 11))
+                    .font(.caption)
                     .foregroundColor(Color.appTextSecondary.opacity(0.7))
                     .padding(.top, 2)
             }

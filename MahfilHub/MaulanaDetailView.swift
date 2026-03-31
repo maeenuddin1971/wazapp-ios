@@ -53,7 +53,7 @@ struct MaulanaDetailView: View {
                             HStack {
                                 Button(action: onBack) {
                                     Image(systemName: "arrow.left")
-                                        .font(.system(size: 17, weight: .semibold))
+                                        .font(.headline)
                                         .foregroundColor(.white)
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
@@ -62,7 +62,7 @@ struct MaulanaDetailView: View {
                                 Spacer()
                                 Button(action: {}) {
                                     Image(systemName: "square.and.arrow.up")
-                                        .font(.system(size: 17))
+                                        .font(.body)
                                         .foregroundColor(.white)
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
@@ -82,7 +82,7 @@ struct MaulanaDetailView: View {
                                     endPoint: .bottomTrailing
                                 )
                                 Text(initial)
-                                    .font(.system(size: 36, weight: .bold))
+                                    .font(.largeTitle.bold())
                                     .foregroundColor(.white)
                             }
                             .frame(width: 96, height: 96)
@@ -93,17 +93,17 @@ struct MaulanaDetailView: View {
                             // ── Name + Verified ──────────────────────
                             HStack(spacing: 6) {
                                 Text(maulana.name)
-                                    .font(.system(size: 22, weight: .bold))
+                                    .font(.title2.bold())
                                     .foregroundColor(.white)
                                 if maulana.isVerified {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.white)
-                                        .font(.system(size: 18))
+                                        .font(.body)
                                 }
                             }
 
                             Text(maulana.title)
-                                .font(.system(size: 14))
+                                .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.8))
 
                             Spacer().frame(height: 6)
@@ -111,10 +111,10 @@ struct MaulanaDetailView: View {
                             // ── Rating badge ─────────────────────────
                             HStack(spacing: 4) {
                                 Image(systemName: "star.fill")
-                                    .font(.system(size: 12))
+                                    .font(.caption)
                                     .foregroundColor(colorAccentOrange)
                                 Text(String(format: "%.1f", maulana.rating))
-                                    .font(.system(size: 13, weight: .bold))
+                                    .font(.footnote.bold())
                                     .foregroundColor(colorAccentOrange)
                             }
                             .padding(.horizontal, 10)
@@ -141,7 +141,7 @@ struct MaulanaDetailView: View {
                     // ── About Card ───────────────────────────────────
                     VStack(alignment: .leading, spacing: 12) {
                         Text("About")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.headline)
                             .foregroundColor(colorTextPrimary)
 
                         MaulanaInfoRow(icon: "info.circle", label: "Specialization", value: maulana.specialization, color: colorAccentOrange)
@@ -152,7 +152,7 @@ struct MaulanaDetailView: View {
                         Spacer().frame(height: 4)
 
                         Text("\(maulana.name) is a renowned Islamic scholar specializing in \(maulana.specialization). Based in \(maulana.location), they have conducted \(maulana.totalEvents) events and have a community of \(formatMaulanaFollowers(maulana.followers)) devoted followers. Known for their eloquent delivery and deep knowledge, they continue to inspire and educate communities across the region.")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundColor(colorTextSecondary)
                             .lineSpacing(6)
                     }
@@ -167,7 +167,7 @@ struct MaulanaDetailView: View {
 
                     // ── Events by Maulana ────────────────────────────
                     Text("Events by \(maulana.name.split(separator: " ").last.map(String.init) ?? maulana.name)")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.headline)
                         .foregroundColor(colorTextPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 16)
@@ -178,10 +178,10 @@ struct MaulanaDetailView: View {
                         // Empty state
                         VStack(spacing: 8) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 36))
+                                .font(.largeTitle)
                                 .foregroundColor(colorPrimaryTeal.opacity(0.5))
                             Text("No upcoming events")
-                                .font(.system(size: 14))
+                                .font(.subheadline)
                                 .foregroundColor(colorTextSecondary)
                         }
                         .frame(maxWidth: .infinity)
@@ -206,10 +206,10 @@ struct MaulanaDetailView: View {
                 Button(action: { isFollowing.toggle() }) {
                     HStack(spacing: 6) {
                         Image(systemName: isFollowing ? "heart.fill" : "heart")
-                            .font(.system(size: 15))
+                            .font(.subheadline)
                             .foregroundColor(isFollowing ? colorErrorRed : colorTextPrimary)
                         Text(isFollowing ? "Following" : "Follow")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.subheadline.weight(.semibold))
                             .foregroundColor(isFollowing ? colorPrimaryTeal : colorTextPrimary)
                     }
                     .frame(maxWidth: .infinity)
@@ -223,9 +223,9 @@ struct MaulanaDetailView: View {
                 Button(action: {}) {
                     HStack(spacing: 6) {
                         Image(systemName: "envelope.fill")
-                            .font(.system(size: 15))
+                            .font(.subheadline)
                         Text("Contact")
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.subheadline.bold())
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
@@ -259,10 +259,10 @@ private struct MaulanaStatCard: View {
     var body: some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.system(size: 22, weight: .bold))
+                .font(.title2.bold())
                 .foregroundColor(color)
             Text(label)
-                .font(.system(size: 11))
+                .font(.caption)
                 .foregroundColor(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -282,15 +282,15 @@ private struct MaulanaInfoRow: View {
                     .fill(color.opacity(0.1))
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundColor(color)
             }
             VStack(alignment: .leading, spacing: 1) {
                 Text(label)
-                    .font(.system(size: 11))
+                    .font(.caption)
                     .foregroundColor(colorTextSecondary)
                 Text(value)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.subheadline)
                     .foregroundColor(colorTextPrimary)
             }
             Spacer()
@@ -313,10 +313,10 @@ private struct MaulanaEventMiniCard: View {
 
                 VStack(spacing: 0) {
                     Text(day)
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.headline)
                         .foregroundColor(colorPrimaryTeal)
                     Text(month)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.caption2.weight(.semibold))
                         .foregroundColor(colorPrimaryTeal)
                 }
                 .padding(.horizontal, 10)
@@ -327,12 +327,12 @@ private struct MaulanaEventMiniCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         Text(event.title)
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.subheadline.bold())
                             .foregroundColor(colorTextPrimary)
                             .lineLimit(1)
                         if event.isLive {
                             Text("LIVE")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.caption2.bold())
                                 .foregroundColor(colorErrorRed)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 2)
@@ -342,19 +342,19 @@ private struct MaulanaEventMiniCard: View {
                     }
                     HStack(spacing: 4) {
                         Image(systemName: "location.fill")
-                            .font(.system(size: 11))
+                            .font(.caption)
                             .foregroundColor(colorAccentOrange)
                         Text(event.location)
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundColor(colorTextSecondary)
                             .lineLimit(1)
                     }
                     HStack(spacing: 4) {
                         Image(systemName: "clock")
-                            .font(.system(size: 11))
+                            .font(.caption)
                             .foregroundColor(colorSecondaryGreen)
                         Text(event.time)
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundColor(colorTextSecondary)
                     }
                 }
@@ -362,7 +362,7 @@ private struct MaulanaEventMiniCard: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(colorTextSecondary.opacity(0.4))
             }
             .padding(14)

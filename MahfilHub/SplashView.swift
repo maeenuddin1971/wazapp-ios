@@ -60,12 +60,13 @@ struct SplashView: View {
                 // Branding Text
                 VStack(spacing: 8) {
                     Text("MahfilHub")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .font(.largeTitle.bold())
+                        .fontDesign(.rounded)
                         .foregroundColor(colorWhite)
                         .tracking(2.0)
 
                     Text("Your Islamic Events Compass") // Matches Android strings_bn fallback or splash_tagline
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(colorWhite.opacity(0.7))
                 }
                 .opacity(brandingAlpha)

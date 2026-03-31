@@ -36,20 +36,20 @@ struct RegisterView: View {
 
                 // ── Bismillah ────────────────────────────────────
                 Text("بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ")
-                    .font(.system(size: 17))
+                    .font(.body)
                     .foregroundColor(gold)
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 16)
 
                 Text("Join the Ummah")
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.title2.bold())
                     .foregroundColor(.white)
 
                 Spacer().frame(height: 4)
 
                 Text("Create your account to explore Islamic events")
-                    .font(.system(size: 13))
+                    .font(.footnote)
                     .foregroundColor(subtle)
                     .multilineTextAlignment(.center)
 
@@ -78,14 +78,14 @@ struct RegisterView: View {
                 // ── Password ─────────────────────────────────────
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Password")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.footnote.weight(.semibold))
                         .foregroundColor(subtle)
                         .padding(.leading, 4)
 
                     HStack(spacing: 10) {
                         Image(systemName: "lock")
                             .foregroundColor(gold)
-                            .font(.system(size: 16))
+                            .font(.callout)
                             .frame(width: 20)
                         Group {
                             if isSecure {
@@ -99,7 +99,7 @@ struct RegisterView: View {
                         Button(action: { isSecure.toggle() }) {
                             Image(systemName: isSecure ? "eye.slash" : "eye")
                                 .foregroundColor(muted)
-                                .font(.system(size: 14))
+                                .font(.subheadline)
                         }
                     }
                     .padding(14)
@@ -118,10 +118,10 @@ struct RegisterView: View {
                     Button(action: { agreeTerms.toggle() }) {
                         Image(systemName: agreeTerms ? "checkmark.square.fill" : "square")
                             .foregroundColor(agreeTerms ? colorPrimaryTealLight : muted)
-                            .font(.system(size: 20))
+                            .font(.title3)
                     }
                     Text("I agree to the Terms of Service and Privacy Policy")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(subtle)
                         .lineSpacing(2)
                         .onTapGesture { agreeTerms.toggle() }
@@ -149,7 +149,7 @@ struct RegisterView: View {
                         .cornerRadius(14)
 
                         Text("Create Account")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.callout.bold())
                             .foregroundColor(agreeTerms ? .white : Color.white.opacity(0.4))
                             .tracking(0.5)
                     }
@@ -176,10 +176,10 @@ struct RegisterView: View {
                 Button(action: {}) {
                     HStack(spacing: 10) {
                         Image(systemName: "g.circle.fill")
-                            .font(.system(size: 18))
+                            .font(.body)
                             .foregroundColor(.appGoogleRed)
                         Text("Sign up with Google")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.subheadline)
                             .foregroundColor(.white)
                     }
                     .frame(maxWidth: .infinity)
@@ -203,10 +203,10 @@ struct RegisterView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Text("Already have an account?")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundColor(subtle)
                         Text("Sign In")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.subheadline.bold())
                             .foregroundColor(goldLight)
                     }
                     .padding(.vertical, 14)
@@ -244,14 +244,14 @@ struct RegisterView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundColor(subtle)
                 .padding(.leading, 4)
 
             HStack(spacing: 10) {
                 Image(systemName: icon)
                     .foregroundColor(gold)
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .frame(width: 20)
                 TextField("", text: text, prompt: Text(placeholder).foregroundColor(muted))
                     .foregroundColor(.white)

@@ -181,10 +181,10 @@ private struct HomeHeader: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Assalamu Alaikum")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundColor(Color.white.opacity(0.8))
                         Text("Welcome Back 👋")
-                            .font(.system(size: 24, weight: .bold))
+                            .font(.title2.bold())
                             .foregroundColor(.white)
                     }
 
@@ -198,13 +198,13 @@ private struct HomeHeader: View {
                                 .frame(width: 44, height: 44)
                                 .overlay(
                                     Image(systemName: "bell")
-                                        .font(.system(size: 18))
+                                        .font(.body)
                                         .foregroundColor(.white)
                                 )
 
                             // Badge
                             Text("3")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.caption2.bold())
                                 .foregroundColor(.white)
                                 .frame(width: 18, height: 18)
                                 .background(colorAccentOrange)
@@ -221,10 +221,10 @@ private struct HomeHeader: View {
                 // Search bar
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 16))
+                        .font(.callout)
                         .foregroundColor(Color.white.opacity(0.7))
                     Text("Search for events…")
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(Color.white.opacity(0.6))
                     Spacer()
                 }
@@ -262,7 +262,7 @@ private struct QuickActionsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Actions")
-                .font(.system(size: 16, weight: .bold))
+                .font(.callout.bold())
                 .foregroundColor(colorTextPrimary)
 
             HStack(spacing: 0) {
@@ -296,12 +296,12 @@ private struct QuickActionItem: View {
                     .shadow(color: action.color.opacity(0.3), radius: 4, x: 0, y: 2)
 
                 Image(systemName: action.icon)
-                    .font(.system(size: 22))
+                    .font(.title2)
                     .foregroundColor(.white)
             }
 
             Text(action.label)
-                .font(.system(size: 12, weight: .medium))
+                .font(.caption)
                 .foregroundColor(colorTextPrimary)
         }
     }
@@ -318,11 +318,11 @@ private struct UpcomingEventsSection: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Upcoming")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.callout.bold())
                     .foregroundColor(colorTextPrimary)
                 Spacer()
                 Button("View All") {}
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundColor(colorPrimaryTeal)
             }
             .padding(.horizontal, 16)
@@ -406,7 +406,7 @@ private struct EventCard: View {
                             .fill(Color.white)
                             .frame(width: 6, height: 6)
                         Text("LIVE")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.caption2.bold())
                             .foregroundColor(.white)
                             .tracking(1)
                     }
@@ -423,7 +423,7 @@ private struct EventCard: View {
                     Spacer()
                     HStack {
                         Text(date)
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
@@ -441,17 +441,17 @@ private struct EventCard: View {
             // Content section
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.callout.bold())
                     .foregroundColor(colorTextPrimary)
                     .lineLimit(1)
 
                 // Maulana row
                 HStack(spacing: 4) {
                     Image(systemName: "person")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorPrimaryTeal)
                     Text(maulana)
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorTextSecondary)
                         .lineLimit(1)
                 }
@@ -459,10 +459,10 @@ private struct EventCard: View {
                 // Location row
                 HStack(spacing: 4) {
                     Image(systemName: "mappin")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorAccentOrange)
                     Text(location)
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorTextSecondary)
                         .lineLimit(1)
                 }
@@ -470,10 +470,10 @@ private struct EventCard: View {
                 // Time row
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorSecondaryGreen)
                     Text(time)
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(colorTextSecondary)
                 }
             }
@@ -500,11 +500,11 @@ private struct FeaturedMaulanaSection: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Featured Maulana")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.callout.bold())
                     .foregroundColor(colorTextPrimary)
                 Spacer()
                 Button("View All") {}
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundColor(colorPrimaryTeal)
             }
             .padding(.horizontal, 16)
@@ -554,24 +554,24 @@ private struct MaulanaChip: View {
                         .frame(width: 56, height: 56)
 
                     Text(String(name.prefix(1)))
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.title2.bold())
                         .foregroundColor(.white)
                 }
 
                 HStack(spacing: 4) {
                     Text(displayName)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundColor(colorTextPrimary)
                         .lineLimit(1)
                     if isVerified {
                         Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundColor(colorVerifiedBadge)
                     }
                 }
 
                 Text(eventCount)
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundColor(colorTextSecondary)
             }
             .frame(width: 160)
@@ -592,7 +592,7 @@ private struct RecentActivitySection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Recent Activity")
-                .font(.system(size: 16, weight: .bold))
+                .font(.callout.bold())
                 .foregroundColor(colorTextPrimary)
 
             ActivityItem(
@@ -637,17 +637,17 @@ private struct ActivityItem: View {
                     .frame(width: 44, height: 44)
 
                 Image(systemName: icon)
-                    .font(.system(size: 18))
+                    .font(.body)
                     .foregroundColor(iconColor)
             }
 
             // Text
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundColor(colorTextPrimary)
                 Text(subtitle)
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundColor(colorTextSecondary)
                     .lineLimit(1)
             }
@@ -655,7 +655,7 @@ private struct ActivityItem: View {
             Spacer()
 
             Text(time)
-                .font(.system(size: 11))
+                .font(.caption)
                 .foregroundColor(colorTextSecondary)
         }
     }
@@ -697,13 +697,14 @@ private struct HomeBottomNavBar: View {
                                     .frame(width: 56, height: 28)
                             }
                             Image(systemName: selectedTab == index ? items[index].selectedIcon : items[index].unselectedIcon)
-                                .font(.system(size: 20))
+                                .font(.title3)
                                 .foregroundColor(selectedTab == index ? colorPrimaryTeal : colorTextSecondary)
                         }
                         .frame(height: 28)
 
                         Text(items[index].label)
-                            .font(.system(size: 11, weight: selectedTab == index ? .bold : .regular))
+                            .font(.caption)
+                            .fontWeight(selectedTab == index ? .bold : .regular)
                             .foregroundColor(selectedTab == index ? colorPrimaryTeal : colorTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
