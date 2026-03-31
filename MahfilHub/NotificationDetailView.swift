@@ -1,5 +1,14 @@
 import SwiftUI
 
+// MARK: - Scroll Offset Key
+
+private struct DetailScrollKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 // MARK: - NotificationDetailView — Collapsing Header
 
 struct NotificationDetailView: View {
@@ -26,6 +35,7 @@ struct NotificationDetailView: View {
     /// 0 = expanded, 1 = collapsed
     private var collapseProgress: CGFloat {
         let maxScroll = expandedHeight - collapsedHeight
+        guard maxScroll > 0 else { return 0 }
         return min(max(-scrollOffset / maxScroll, 0), 1)
     }
     
@@ -35,22 +45,22 @@ struct NotificationDetailView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            Color.appBackgroundCream
-                .ignoresSafeArea()
+            Color.appBackgroundCream.ignoresSafeArea()
             
             // ── Scrollable Content ────────────────────────────────────
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 0) {
-                    GeometryReader { geo in
-                        Color.clear.preference(
-                            key: DetailScrollOffsetKey.self,
-                            value: geo.frame(in: .named("detailScroll")).minY
+                    // Header spacer — drives collapse offset
+                    Color.clear
+                        .frame(height: expandedHeight + 8)
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear.preference(
+                                    key: DetailScrollKey.self,
+                                    value: geo.frame(in: .named("detailScroll")).origin.y
+                                )
+                            }
                         )
-                    }
-                    .frame(height: 0)
-                    
-                    // Spacer for header
-                    Color.clear.frame(height: expandedHeight + 8)
                     
                     VStack(spacing: 16) {
                         // Message Card
@@ -96,7 +106,7 @@ struct NotificationDetailView: View {
                 }
             }
             .coordinateSpace(name: "detailScroll")
-            .onPreferenceChange(DetailScrollOffsetKey.self) { value in
+            .onPreferenceChange(DetailScrollKey.self) { value in
                 scrollOffset = value
             }
             
@@ -157,35 +167,28 @@ struct NotificationDetailView: View {
             .padding(.top, 54)
             
             // ── Animated Title ────────────────────────────────────────
-            let titleSize = lerp(22, 18, collapseProgress)
-            let titleX = lerp(16, 56, collapseProgress)
-            let titleY = lerp(160, 58, collapseProgress)
-            
             Text(notification.title)
-                .font(.system(size: titleSize, weight: .bold))
+                .font(.system(size: lerp(22, 18, collapseProgress), weight: .bold))
                 .foregroundColor(.white)
                 .lineLimit(collapseProgress > 0.5 ? 1 : 2)
-                .padding(.leading, titleX)
+                .padding(.leading, lerp(16, 56, collapseProgress))
                 .padding(.trailing, 16)
-                .padding(.top, titleY)
+                .padding(.top, lerp(160, 58, collapseProgress))
             
-            // ── Expanded-only content ─────────────────────────────────
-            VStack(alignment: .leading, spacing: 8) {
-                // Type icon circle
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.2))
-                        .frame(width: 56, height: 56)
-                    Image(systemName: notificationIcon(for: notification.type))
-                        .font(.system(size: 24))
-                        .foregroundColor(.white)
-                }
-                .padding(.top, 108)
-                .padding(.leading, 16)
+            // ── Expanded-only: type icon ──────────────────────────────
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.2))
+                    .frame(width: 56, height: 56)
+                Image(systemName: notificationIcon(for: notification.type))
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
             }
+            .padding(.top, 108)
+            .padding(.leading, 16)
             .opacity(max(1 - collapseProgress * 2.5, 0))
             
-            // ── Time + type badge at bottom ───────────────────────────
+            // ── Expanded-only: time + type badge at bottom ────────────
             HStack(spacing: 8) {
                 Image(systemName: "clock")
                     .font(.system(size: 12))
@@ -307,15 +310,6 @@ private struct DetailInfoRow: View {
             }
             Spacer()
         }
-    }
-}
-
-// MARK: - Preference Key
-
-private struct DetailScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
 

@@ -45,7 +45,7 @@ let sampleNotifications: [NotificationItemModel] = [
         time: "2 days ago", type: .system, isRead: true)
 ]
 
-// MARK: - Helper
+// MARK: - Helpers
 
 func notificationIcon(for type: NotificationType) -> String {
     switch type {
@@ -69,7 +69,7 @@ func notificationColor(for type: NotificationType) -> Color {
 
 // MARK: - Scroll Offset Preference Key
 
-private struct ScrollOffsetKey: PreferenceKey {
+private struct NotifScrollOffsetKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
@@ -88,7 +88,7 @@ struct NotificationListView: View {
     
     private let filters = ["All", "Events", "Reminders", "System"]
     private let expandedHeight: CGFloat = 310
-    private let collapsedHeight: CGFloat = 100  // includes safe area
+    private let collapsedHeight: CGFloat = 100
     
     private var filteredNotifications: [NotificationItemModel] {
         switch selectedFilter {
@@ -106,39 +106,38 @@ struct NotificationListView: View {
     /// 0 = expanded, 1 = collapsed
     private var collapseProgress: CGFloat {
         let maxScroll = expandedHeight - collapsedHeight
+        guard maxScroll > 0 else { return 0 }
         return min(max(-scrollOffset / maxScroll, 0), 1)
     }
     
     private var currentHeaderHeight: CGFloat {
-        let maxScroll = expandedHeight - collapsedHeight
         return max(expandedHeight + min(scrollOffset, 0), collapsedHeight)
     }
     
     var body: some View {
         ZStack(alignment: .top) {
-            // ── Background ────────────────────────────────────────────
-            Color.appBackgroundCream
-                .ignoresSafeArea()
+            Color.appBackgroundCream.ignoresSafeArea()
             
             // ── Scrollable List ───────────────────────────────────────
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 0) {
-                    // Invisible offset tracker at top
-                    GeometryReader { geo in
-                        Color.clear.preference(
-                            key: ScrollOffsetKey.self,
-                            value: geo.frame(in: .named("notifScroll")).minY
+                    // Header spacer — this drives the collapsing offset
+                    Color.clear
+                        .frame(height: expandedHeight + 8)
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear.preference(
+                                    key: NotifScrollOffsetKey.self,
+                                    value: geo.frame(in: .named("notifScroll")).origin.y
+                                )
+                            }
                         )
-                    }
-                    .frame(height: 0)
-                    
-                    // Spacer for header
-                    Color.clear.frame(height: expandedHeight + 8)
                     
                     // Notification rows
-                    LazyVStack(spacing: 0) {
+                    VStack(spacing: 0) {
                         ForEach(Array(filteredNotifications.enumerated()), id: \.element.id) { index, notification in
                             NotificationRow(notification: notification)
+                                .contentShape(Rectangle())
                                 .onTapGesture {
                                     onNotificationClick?(notification)
                                 }
@@ -149,8 +148,10 @@ struct NotificationListView: View {
                                     value: appearedItems.contains(notification.id)
                                 )
                                 .onAppear {
-                                    let _ = withAnimation {
-                                        appearedItems.insert(notification.id)
+                                    DispatchQueue.main.async {
+                                        withAnimation {
+                                            _ = appearedItems.insert(notification.id)
+                                        }
                                     }
                                 }
                         }
@@ -159,11 +160,11 @@ struct NotificationListView: View {
                 }
             }
             .coordinateSpace(name: "notifScroll")
-            .onPreferenceChange(ScrollOffsetKey.self) { value in
+            .onPreferenceChange(NotifScrollOffsetKey.self) { value in
                 scrollOffset = value
             }
             
-            // ── Collapsing Header ─────────────────────────────────────
+            // ── Collapsing Header (overlay) ───────────────────────────
             collapsingHeader
         }
         .ignoresSafeArea(.container, edges: .top)
@@ -183,7 +184,7 @@ struct NotificationListView: View {
                 endPoint: .bottom
             )
             
-            // Decorative circles
+            // Decorative circles (fade out)
             Canvas { ctx, size in
                 ctx.fill(Circle().path(in: CGRect(x: size.width * 0.75, y: size.height * 0.05, width: 280, height: 280)),
                          with: .color(Color.white.opacity(0.06 * (1 - collapseProgress))))
@@ -207,15 +208,11 @@ struct NotificationListView: View {
             .padding(.top, 54)
             
             // ── Animated Title ────────────────────────────────────────
-            let titleSize = lerp(24, 18, collapseProgress)
-            let titleX = lerp(16, 56, collapseProgress)
-            let titleY = lerp(160, 58, collapseProgress)
-            
             Text("Notifications")
-                .font(.system(size: titleSize, weight: .bold))
+                .font(.system(size: lerp(24, 18, collapseProgress), weight: .bold))
                 .foregroundColor(.white)
-                .padding(.leading, titleX)
-                .padding(.top, titleY)
+                .padding(.leading, lerp(16, 56, collapseProgress))
+                .padding(.top, lerp(160, 58, collapseProgress))
             
             // ── Badge (fades out) ─────────────────────────────────────
             if unreadCount > 0 {
@@ -226,21 +223,18 @@ struct NotificationListView: View {
                     .padding(.vertical, 4)
                     .background(colorAccentOrange)
                     .cornerRadius(12)
-                    .padding(.leading, titleX + 150)
-                    .padding(.top, titleY + 4)
+                    .padding(.leading, lerp(16 + 150, 56 + 130, collapseProgress))
+                    .padding(.top, lerp(164, 62, collapseProgress))
                     .opacity(1 - collapseProgress)
             }
             
-            // ── Expanded-only content ─────────────────────────────────
+            // ── Expanded-only content (subtitle, filters) ─────────────
             VStack(alignment: .leading, spacing: 8) {
-                // Subtitle + Mark all read
                 HStack {
                     Text("Stay updated with events & community")
                         .font(.system(size: 14))
                         .foregroundColor(Color.white.opacity(0.7))
-                    
                     Spacer()
-                    
                     Button(action: {}) {
                         Text("Mark all read")
                             .font(.system(size: 13, weight: .medium))
@@ -272,7 +266,7 @@ struct NotificationListView: View {
         .clipped()
     }
     
-    // MARK: - Lerp helper
+    // MARK: - Lerp
     
     private func lerp(_ a: CGFloat, _ b: CGFloat, _ t: CGFloat) -> CGFloat {
         a + (b - a) * t
@@ -286,7 +280,6 @@ private struct NotificationRow: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // Type icon
             ZStack {
                 Circle()
                     .fill(notificationColor(for: notification.type).opacity(0.12))
@@ -302,9 +295,7 @@ private struct NotificationRow: View {
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(Color.appTextPrimary)
                         .lineLimit(1)
-                    
                     Spacer()
-                    
                     if !notification.isRead {
                         Circle()
                             .fill(notificationColor(for: notification.type))
