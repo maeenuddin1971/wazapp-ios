@@ -48,7 +48,7 @@ struct NotificationDetailView: View {
             Color.appBackgroundCream.ignoresSafeArea()
             
             // ── Scrollable Content ────────────────────────────────────
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical) {
                 VStack(spacing: 0) {
                     // Header spacer — drives collapse offset
                     Color.clear
@@ -67,7 +67,7 @@ struct NotificationDetailView: View {
                         detailCard(title: "Message") {
                             Text(notification.message)
                                 .font(.subheadline)
-                                .foregroundColor(Color.appTextSecondary)
+                                .foregroundStyle(Color.appTextSecondary)
                                 .lineSpacing(6)
                         }
                         
@@ -78,7 +78,7 @@ struct NotificationDetailView: View {
                                     icon: "info.circle",
                                     label: "Type",
                                     value: notification.type.displayName,
-                                    color: notificationColor(for: notification.type)
+                                    color: notification.type.color
                                 )
                                 DetailInfoRow(
                                     icon: "clock",
@@ -105,6 +105,7 @@ struct NotificationDetailView: View {
                     .padding(.horizontal, 16)
                 }
             }
+            .scrollIndicators(.hidden)
             .coordinateSpace(name: "detailScroll")
             .onPreferenceChange(DetailScrollKey.self) { value in
                 scrollOffset = value
@@ -142,11 +143,12 @@ struct NotificationDetailView: View {
             Button(action: onBack) {
                 Image(systemName: "arrow.left")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .frame(width: 40, height: 40)
                     .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                     .clipShape(Circle())
             }
+            .accessibilityLabel("Back")
             .padding(.leading, 12)
             .padding(.top, 54)
             
@@ -156,11 +158,12 @@ struct NotificationDetailView: View {
                 Button(action: {}) {
                     Image(systemName: "trash")
                         .font(.body)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .frame(width: 40, height: 40)
                         .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                         .clipShape(Circle())
                 }
+                .accessibilityLabel("Delete")
                 .opacity(1 - collapseProgress)
             }
             .padding(.trailing, 12)
@@ -169,7 +172,7 @@ struct NotificationDetailView: View {
             // ── Animated Title ────────────────────────────────────────
             Text(notification.title)
                 .font(collapseProgress > 0.5 ? .headline : .title2.bold())
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .lineLimit(collapseProgress > 0.5 ? 1 : 2)
                 .padding(.leading, lerp(16, 56, collapseProgress))
                 .padding(.trailing, 16)
@@ -180,9 +183,9 @@ struct NotificationDetailView: View {
                 Circle()
                     .fill(Color.white.opacity(0.2))
                     .frame(width: 56, height: 56)
-                Image(systemName: notificationIcon(for: notification.type))
+                Image(systemName: notification.type.icon)
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
             }
             .padding(.top, 108)
             .padding(.leading, 16)
@@ -192,18 +195,18 @@ struct NotificationDetailView: View {
             HStack(spacing: 8) {
                 Image(systemName: "clock")
                     .font(.caption)
-                    .foregroundColor(Color.white.opacity(0.7))
+                    .foregroundStyle(Color.white.opacity(0.7))
                 Text(notification.time)
                     .font(.subheadline)
-                    .foregroundColor(Color.white.opacity(0.7))
+                    .foregroundStyle(Color.white.opacity(0.7))
                 
                 Text(notification.type.displayName)
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                     .background(Color.white.opacity(0.2))
-                    .cornerRadius(8)
+                    .clipShape(.rect(cornerRadius: 8))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             .padding(.leading, 16)
@@ -220,13 +223,13 @@ struct NotificationDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.callout.bold())
-                .foregroundColor(Color.appTextPrimary)
+                .foregroundStyle(Color.appTextPrimary)
             content()
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.appCardSurface)
-        .cornerRadius(16)
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.04), radius: 4, y: 2)
     }
     
@@ -266,11 +269,11 @@ struct NotificationDetailView: View {
                     Text(text)
                         .font(.subheadline.bold())
                 }
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
-                .background(notificationColor(for: notification.type))
-                .cornerRadius(14)
+                .background(notification.type.color)
+                .clipShape(.rect(cornerRadius: 14))
             }
         }
     }
@@ -298,15 +301,15 @@ private struct DetailInfoRow: View {
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
                     .font(.subheadline)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             VStack(alignment: .leading, spacing: 1) {
                 Text(label)
                     .font(.caption)
-                    .foregroundColor(Color.appTextSecondary)
+                    .foregroundStyle(Color.appTextSecondary)
                 Text(value)
                     .font(.subheadline)
-                    .foregroundColor(Color.appTextPrimary)
+                    .foregroundStyle(Color.appTextPrimary)
             }
             Spacer()
         }

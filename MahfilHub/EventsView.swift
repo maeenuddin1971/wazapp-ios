@@ -47,15 +47,15 @@ struct EventsView: View {
         sampleEventsPublic.filter { event in
             let matchesFilter = selectedFilter == "All" || event.category == selectedFilter
             let matchesSearch = searchQuery.isEmpty ||
-                event.title.localizedCaseInsensitiveContains(searchQuery) ||
-                event.maulana.localizedCaseInsensitiveContains(searchQuery) ||
-                event.location.localizedCaseInsensitiveContains(searchQuery)
+                event.title.localizedStandardContains(searchQuery) ||
+                event.maulana.localizedStandardContains(searchQuery) ||
+                event.location.localizedStandardContains(searchQuery)
             return matchesFilter && matchesSearch
         }
     }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 EventsHeader(searchQuery: $searchQuery)
                 EventsFilterChips(filters: filters, selectedFilter: $selectedFilter)
@@ -74,6 +74,7 @@ struct EventsView: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
         .background(colorBackgroundCream)
         .ignoresSafeArea(.container, edges: .top)
     }
@@ -123,10 +124,10 @@ private struct EventsHeader: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Events")
                             .font(.title2.bold())
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                         Text("Discover Islamic events near you")
                             .font(.caption)
-                            .foregroundColor(Color.white.opacity(0.7))
+                            .foregroundStyle(Color.white.opacity(0.7))
                     }
 
                     Spacer()
@@ -139,7 +140,7 @@ private struct EventsHeader: View {
                             .overlay(
                                 Image(systemName: "line.3.horizontal.decrease")
                                     .font(.callout)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                             )
                     }
                 }
@@ -151,26 +152,26 @@ private struct EventsHeader: View {
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
                         .font(.callout)
-                        .foregroundColor(Color.white.opacity(0.7))
+                        .foregroundStyle(Color.white.opacity(0.7))
 
                     TextField("", text: $searchQuery, prompt: Text("Search for events…")
-                        .foregroundColor(Color.white.opacity(0.5)))
+                        .foregroundStyle(Color.white.opacity(0.5)))
                         .font(.subheadline)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .tint(.white)
 
                     if !searchQuery.isEmpty {
                         Button(action: { searchQuery = "" }) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.callout)
-                                .foregroundColor(Color.white.opacity(0.7))
+                                .foregroundStyle(Color.white.opacity(0.7))
                         }
                     }
                 }
                 .padding(.horizontal, 16)
                 .frame(height: 48)
                 .background(Color.white.opacity(0.15))
-                .cornerRadius(24)
+                .clipShape(.rect(cornerRadius: 24))
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -193,7 +194,7 @@ private struct EventsFilterChips: View {
     @Binding var selectedFilter: String
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal) {
             HStack(spacing: 8) {
                 ForEach(filters, id: \.self) { filter in
                     let isSelected = filter == selectedFilter
@@ -206,7 +207,7 @@ private struct EventsFilterChips: View {
                         Text(filter)
                             .font(.subheadline)
                             .fontWeight(isSelected ? .bold : .regular)
-                            .foregroundColor(isSelected ? .white : colorTextPrimary)
+                            .foregroundStyle(isSelected ? .white : colorTextPrimary)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(
@@ -218,7 +219,7 @@ private struct EventsFilterChips: View {
                                     }
                                 }
                             )
-                            .cornerRadius(20)
+                            .clipShape(.rect(cornerRadius: 20))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
                                     .stroke(
@@ -236,6 +237,7 @@ private struct EventsFilterChips: View {
             }
             .padding(.horizontal, 16)
         }
+        .scrollIndicators(.hidden)
         .padding(.vertical, 16)
     }
 }
@@ -252,7 +254,7 @@ private struct EventsStatsBar: View {
         HStack {
             Text("\(totalEvents) events found")
                 .font(.caption)
-                .foregroundColor(colorTextSecondary)
+                .foregroundStyle(colorTextSecondary)
 
             Spacer()
 
@@ -263,7 +265,7 @@ private struct EventsStatsBar: View {
                         .frame(width: 8, height: 8)
                     Text("\(liveCount) Live Now")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(colorErrorRed)
+                        .foregroundStyle(colorErrorRed)
                 }
             }
         }
@@ -295,6 +297,7 @@ private struct EventListCard: View {
     }
 
     var body: some View {
+        Button(action: { onTap() }) {
         VStack(spacing: 0) {
             // Top accent strip
             ZStack(alignment: .topLeading) {
@@ -347,24 +350,24 @@ private struct EventListCard: View {
                                     .frame(width: 6, height: 6)
                                 Text("LIVE")
                                     .font(.caption2.bold())
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .tracking(1)
                             }
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
                             .background(Color.white.opacity(0.25))
-                            .cornerRadius(8)
+                            .clipShape(.rect(cornerRadius: 8))
                         }
 
                         HStack(spacing: 0) {
                             Text("Featured")
                                 .font(.caption2.bold())
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(colorAccentOrange)
-                        .cornerRadius(8)
+                        .clipShape(.rect(cornerRadius: 8))
                     }
                     .padding(8)
 
@@ -374,10 +377,10 @@ private struct EventListCard: View {
                         HStack(spacing: 4) {
                             Image(systemName: "person.fill")
                                 .font(.caption)
-                                .foregroundColor(Color.white.opacity(0.8))
+                                .foregroundStyle(Color.white.opacity(0.8))
                             Text("\(event.attendees)")
                                 .font(.caption.weight(.semibold))
-                                .foregroundColor(Color.white.opacity(0.9))
+                                .foregroundStyle(Color.white.opacity(0.9))
                         }
                         .padding(8)
                     }
@@ -390,32 +393,32 @@ private struct EventListCard: View {
                 VStack(spacing: 0) {
                     Text(dayNumber)
                         .font(.title2.bold())
-                        .foregroundColor(colorPrimaryTeal)
+                        .foregroundStyle(colorPrimaryTeal)
                     Text(monthAbbr)
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(colorPrimaryTeal)
+                        .foregroundStyle(colorPrimaryTeal)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
                 .background(colorPrimaryTeal.opacity(0.1))
-                .cornerRadius(12)
+                .clipShape(.rect(cornerRadius: 12))
                 .frame(width: 52)
 
                 // Event details
                 VStack(alignment: .leading, spacing: 6) {
                     Text(event.title)
                         .font(.callout.bold())
-                        .foregroundColor(colorTextPrimary)
+                        .foregroundStyle(colorTextPrimary)
                         .lineLimit(1)
 
                     // Maulana
                     HStack(spacing: 4) {
                         Image(systemName: "person")
                             .font(.caption)
-                            .foregroundColor(colorPrimaryTeal)
+                            .foregroundStyle(colorPrimaryTeal)
                         Text(event.maulana)
                             .font(.caption)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .lineLimit(1)
                     }
 
@@ -423,10 +426,10 @@ private struct EventListCard: View {
                     HStack(spacing: 4) {
                         Image(systemName: "mappin")
                             .font(.caption)
-                            .foregroundColor(colorAccentOrange)
+                            .foregroundStyle(colorAccentOrange)
                         Text(event.location)
                             .font(.caption)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .lineLimit(1)
                     }
 
@@ -434,10 +437,10 @@ private struct EventListCard: View {
                     HStack(spacing: 4) {
                         Image(systemName: "clock")
                             .font(.caption)
-                            .foregroundColor(colorSecondaryGreen)
+                            .foregroundStyle(colorSecondaryGreen)
                         Text(event.time)
                             .font(.caption)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                     }
                 }
 
@@ -448,13 +451,13 @@ private struct EventListCard: View {
                     Button(action: {}) {
                         Image(systemName: "heart")
                             .font(.body)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .frame(width: 36, height: 36)
                     }
                     Button(action: {}) {
                         Image(systemName: "square.and.arrow.up")
                             .font(.callout)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .frame(width: 36, height: 36)
                     }
                 }
@@ -462,9 +465,10 @@ private struct EventListCard: View {
             .padding(16)
         }
         .background(Color.appCardSurface)
-        .cornerRadius(16)
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
-        .onTapGesture { onTap() }
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -483,16 +487,16 @@ private struct EmptyEventsPlaceholder: View {
                     .frame(width: 80, height: 80)
                 Image(systemName: "calendar")
                     .font(.largeTitle)
-                    .foregroundColor(colorPrimaryTeal)
+                    .foregroundStyle(colorPrimaryTeal)
             }
 
             Text("No events found")
                 .font(.callout.weight(.semibold))
-                .foregroundColor(colorTextPrimary)
+                .foregroundStyle(colorTextPrimary)
 
             Text("There are no events matching your criteria")
                 .font(.subheadline)
-                .foregroundColor(colorTextSecondary)
+                .foregroundStyle(colorTextSecondary)
 
             Spacer().frame(height: 40)
         }

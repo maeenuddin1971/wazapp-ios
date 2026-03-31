@@ -45,25 +45,25 @@ let sampleNotifications: [NotificationItemModel] = [
         time: "2 days ago", type: .system, isRead: true)
 ]
 
-// MARK: - Helpers
-
-func notificationIcon(for type: NotificationType) -> String {
-    switch type {
-    case .event:     return "calendar"
-    case .maulana:   return "person.fill"
-    case .system:    return "info.circle.fill"
-    case .reminder:  return "bell.fill"
-    case .community: return "heart.fill"
+extension NotificationType {
+    var icon: String {
+        switch self {
+        case .event:     return "calendar"
+        case .maulana:   return "person.fill"
+        case .system:    return "info.circle.fill"
+        case .reminder:  return "bell.fill"
+        case .community: return "heart.fill"
+        }
     }
-}
 
-func notificationColor(for type: NotificationType) -> Color {
-    switch type {
-    case .event:     return colorPrimaryTeal
-    case .maulana:   return colorInfoBlue
-    case .system:    return colorAccentOrange
-    case .reminder:  return colorSecondaryGreen
-    case .community: return colorErrorRed
+    var color: Color {
+        switch self {
+        case .event:     return colorPrimaryTeal
+        case .maulana:   return colorVerifiedBadge
+        case .system:    return colorInfoBlue
+        case .reminder:  return colorAccentOrange
+        case .community: return colorErrorRed
+        }
     }
 }
 
@@ -119,7 +119,7 @@ struct NotificationListView: View {
             Color.appBackgroundCream.ignoresSafeArea()
             
             // ── Scrollable List ───────────────────────────────────────
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical) {
                 VStack(spacing: 0) {
                     // Header spacer — this drives the collapsing offset
                     Color.clear
@@ -136,11 +136,10 @@ struct NotificationListView: View {
                     // Notification rows
                     VStack(spacing: 0) {
                         ForEach(Array(filteredNotifications.enumerated()), id: \.element.id) { index, notification in
-                            NotificationRow(notification: notification)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    onNotificationClick?(notification)
-                                }
+                            Button(action: { onNotificationClick?(notification) }) {
+                                NotificationRow(notification: notification)
+                            }
+                            .buttonStyle(.plain)
                                 .opacity(appearedItems.contains(notification.id) ? 1 : 0)
                                 .offset(y: appearedItems.contains(notification.id) ? 0 : 40)
                                 .animation(
@@ -148,7 +147,7 @@ struct NotificationListView: View {
                                     value: appearedItems.contains(notification.id)
                                 )
                                 .onAppear {
-                                    DispatchQueue.main.async {
+                                    Task { @MainActor in
                                         withAnimation {
                                             _ = appearedItems.insert(notification.id)
                                         }
@@ -159,6 +158,7 @@ struct NotificationListView: View {
                     .padding(.bottom, 20)
                 }
             }
+            .scrollIndicators(.hidden)
             .coordinateSpace(name: "notifScroll")
             .onPreferenceChange(NotifScrollOffsetKey.self) { value in
                 scrollOffset = value
@@ -168,7 +168,7 @@ struct NotificationListView: View {
             collapsingHeader
         }
         .ignoresSafeArea(.container, edges: .top)
-        .onChange(of: selectedFilter) { _ in
+        .onChange(of: selectedFilter) {
             appearedItems.removeAll()
         }
     }
@@ -199,18 +199,19 @@ struct NotificationListView: View {
             Button(action: onBack) {
                 Image(systemName: "arrow.left")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .frame(width: 40, height: 40)
                     .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                     .clipShape(Circle())
             }
+            .accessibilityLabel("Back")
             .padding(.leading, 12)
             .padding(.top, 54)
             
             // ── Animated Title ────────────────────────────────────────
             Text("Notifications")
                 .font(collapseProgress > 0.5 ? .headline : .title2.bold())
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(.leading, lerp(16, 56, collapseProgress))
                 .padding(.top, lerp(160, 58, collapseProgress))
             
@@ -218,11 +219,11 @@ struct NotificationListView: View {
             if unreadCount > 0 {
                 Text("\(unreadCount) new")
                     .font(.caption.bold())
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(colorAccentOrange)
-                    .cornerRadius(12)
+                    .clipShape(.rect(cornerRadius: 12))
                     .padding(.leading, lerp(16 + 150, 56 + 130, collapseProgress))
                     .padding(.top, lerp(164, 62, collapseProgress))
                     .opacity(1 - collapseProgress)
@@ -233,12 +234,12 @@ struct NotificationListView: View {
                 HStack {
                     Text("Stay updated with events & community")
                         .font(.subheadline)
-                        .foregroundColor(Color.white.opacity(0.7))
+                        .foregroundStyle(Color.white.opacity(0.7))
                     Spacer()
                     Button(action: {}) {
                         Text("Mark all read")
                             .font(.footnote)
-                            .foregroundColor(Color.white.opacity(0.8))
+                            .foregroundStyle(Color.white.opacity(0.8))
                     }
                 }
                 
@@ -248,11 +249,11 @@ struct NotificationListView: View {
                         Button(action: { selectedFilter = filter }) {
                             Text(filter)
                                 .font(.footnote)
-                                .foregroundColor(filter == selectedFilter ? colorPrimaryTealDark : .white)
+                                .foregroundStyle(filter == selectedFilter ? colorPrimaryTealDark : .white)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 7)
                                 .background(filter == selectedFilter ? Color.white : Color.white.opacity(0.15))
-                                .cornerRadius(20)
+                                .clipShape(.rect(cornerRadius: 20))
                         }
                     }
                 }
@@ -282,35 +283,35 @@ private struct NotificationRow: View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(notificationColor(for: notification.type).opacity(0.12))
+                    .fill(notification.type.color.opacity(0.12))
                     .frame(width: 44, height: 44)
-                Image(systemName: notificationIcon(for: notification.type))
+                Image(systemName: notification.type.icon)
                     .font(.body)
-                    .foregroundColor(notificationColor(for: notification.type))
+                    .foregroundStyle(notification.type.color)
             }
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(notification.title)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(Color.appTextPrimary)
+                        .foregroundStyle(Color.appTextPrimary)
                         .lineLimit(1)
                     Spacer()
                     if !notification.isRead {
                         Circle()
-                            .fill(notificationColor(for: notification.type))
+                            .fill(notification.type.color)
                             .frame(width: 8, height: 8)
                     }
                 }
                 
                 Text(notification.message)
                     .font(.footnote)
-                    .foregroundColor(Color.appTextSecondary)
+                    .foregroundStyle(Color.appTextSecondary)
                     .lineLimit(2)
                 
                 Text(notification.time)
                     .font(.caption)
-                    .foregroundColor(Color.appTextSecondary.opacity(0.7))
+                    .foregroundStyle(Color.appTextSecondary.opacity(0.7))
                     .padding(.top, 2)
             }
         }
@@ -319,7 +320,7 @@ private struct NotificationRow: View {
         .background(
             notification.isRead
                 ? Color.clear
-                : notificationColor(for: notification.type).opacity(0.04)
+                : notification.type.color.opacity(0.04)
         )
     }
 }

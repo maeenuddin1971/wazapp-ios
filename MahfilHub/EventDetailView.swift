@@ -18,7 +18,7 @@ struct EventDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             // ── Scrollable Content ───────────────────────────────────
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical) {
                 VStack(spacing: 0) {
 
                     // ── Hero Header ──────────────────────────────────
@@ -45,11 +45,12 @@ struct EventDetailView: View {
                                 Button(action: onBack) {
                                     Image(systemName: "arrow.left")
                                         .font(.headline)
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
                                         .clipShape(Circle())
                                 }
+                                .accessibilityLabel("Back")
 
                                 Spacer()
 
@@ -57,19 +58,21 @@ struct EventDetailView: View {
                                     Button(action: { isSaved.toggle() }) {
                                         Image(systemName: isSaved ? "heart.fill" : "heart")
                                             .font(.body)
-                                            .foregroundColor(isSaved ? colorErrorRed : .white)
+                                            .foregroundStyle(isSaved ? colorErrorRed : .white)
                                             .frame(width: 40, height: 40)
                                             .background(Color.white.opacity(0.15))
                                             .clipShape(Circle())
                                     }
+                                    .accessibilityLabel(isSaved ? "Remove from Saved" : "Save Event")
                                     Button(action: {}) {
                                         Image(systemName: "square.and.arrow.up")
                                             .font(.body)
-                                            .foregroundColor(.white)
+                                            .foregroundStyle(.white)
                                             .frame(width: 40, height: 40)
                                             .background(Color.white.opacity(0.15))
                                             .clipShape(Circle())
                                     }
+                                    .accessibilityLabel("Share")
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -92,7 +95,7 @@ struct EventDetailView: View {
 
                             Text(event.title)
                                 .font(.title.bold())
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                                 .lineLimit(2)
                                 .padding(.horizontal, 16)
 
@@ -101,10 +104,10 @@ struct EventDetailView: View {
                             HStack(spacing: 6) {
                                 Image(systemName: "person.fill")
                                     .font(.footnote)
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .foregroundStyle(.white.opacity(0.8))
                                 Text("\(event.attendees) attending")
                                     .font(.subheadline)
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .foregroundStyle(.white.opacity(0.8))
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 20)
@@ -148,17 +151,17 @@ struct EventDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("About This Event")
                             .font(.headline)
-                            .foregroundColor(colorTextPrimary)
+                            .foregroundStyle(colorTextPrimary)
 
                         Text("Join us for an enlightening session of \(event.title) led by \(event.maulana). This event brings together the Muslim community for spiritual growth, knowledge sharing, and strengthening of faith. Everyone is welcome to attend and benefit from this blessed gathering.\n\nThe program will include recitation of the Holy Quran, an insightful lecture, and a Q&A session. Light refreshments will be provided after the event.")
                             .font(.subheadline)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .lineSpacing(6)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
                     .background(Color.appCardSurface)
-                    .cornerRadius(16)
+                    .clipShape(.rect(cornerRadius: 16))
                     .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                     .padding(.horizontal, 16)
 
@@ -193,11 +196,11 @@ struct EventDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 8) {
                             Image(systemName: "info.circle")
-                                .foregroundColor(colorPrimaryTeal)
+                                .foregroundStyle(colorPrimaryTeal)
                                 .font(.body)
                             Text("Event Guidelines")
                                 .font(.callout.bold())
-                                .foregroundColor(colorPrimaryTeal)
+                                .foregroundStyle(colorPrimaryTeal)
                         }
 
                         let guidelines = [
@@ -210,10 +213,10 @@ struct EventDetailView: View {
                             HStack(alignment: .top, spacing: 8) {
                                 Text("•")
                                     .font(.subheadline.bold())
-                                    .foregroundColor(colorPrimaryTeal)
+                                    .foregroundStyle(colorPrimaryTeal)
                                 Text(g)
                                     .font(.footnote)
-                                    .foregroundColor(colorTextSecondary)
+                                    .foregroundStyle(colorTextSecondary)
                                     .lineSpacing(4)
                             }
                         }
@@ -221,12 +224,13 @@ struct EventDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
                     .background(colorPrimaryTeal.opacity(0.08))
-                    .cornerRadius(16)
+                    .clipShape(.rect(cornerRadius: 16))
                     .padding(.horizontal, 16)
 
                     Spacer().frame(height: 100)
                 }
             }
+            .scrollIndicators(.hidden)
 
             // ── Bottom Action Bar ────────────────────────────────────
             HStack(spacing: 12) {
@@ -239,7 +243,7 @@ struct EventDetailView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .foregroundColor(colorPrimaryTeal)
+                    .foregroundStyle(colorPrimaryTeal)
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .stroke(colorPrimaryTeal, lineWidth: 1.5)
@@ -255,9 +259,9 @@ struct EventDetailView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .background(colorPrimaryTeal)
-                    .cornerRadius(14)
+                    .clipShape(.rect(cornerRadius: 14))
                 }
             }
             .padding(.horizontal, 16)
@@ -280,11 +284,11 @@ private struct EventBadge: View {
     var body: some View {
         Text(text)
             .font(.caption.bold())
-            .foregroundColor(fg)
+            .foregroundStyle(fg)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
             .background(bg)
-            .cornerRadius(8)
+            .clipShape(.rect(cornerRadius: 8))
     }
 }
 
@@ -303,27 +307,27 @@ private struct EventInfoCard: View {
                     .frame(width: 48, height: 48)
                 Image(systemName: icon)
                     .font(.title3)
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(colorTextSecondary)
+                    .foregroundStyle(colorTextSecondary)
                 Text(primaryText)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(colorTextPrimary)
+                    .foregroundStyle(colorTextPrimary)
                 Text(secondaryText)
                     .font(.caption)
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
             }
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.subheadline)
-                .foregroundColor(colorTextSecondary.opacity(0.4))
+                .foregroundStyle(colorTextSecondary.opacity(0.4))
         }
         .padding(16)
         .background(Color.appCardSurface)
-        .cornerRadius(16)
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
@@ -342,21 +346,21 @@ private struct EventQuickStatCard: View {
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
                     .font(.callout)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             Text(value)
                 .font(.footnote.bold())
-                .foregroundColor(colorTextPrimary)
+                .foregroundStyle(colorTextPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
                 .font(.caption)
-                .foregroundColor(colorTextSecondary)
+                .foregroundStyle(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .background(Color.appCardSurface)
-        .cornerRadius(14)
+        .clipShape(.rect(cornerRadius: 14))
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }

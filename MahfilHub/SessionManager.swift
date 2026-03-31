@@ -3,6 +3,7 @@ import Foundation
 /// Simple session manager backed by UserDefaults.
 /// Stores login state and basic user info.
 /// Replace static values with real API data later.
+@MainActor
 final class SessionManager {
     
     static let shared = SessionManager()

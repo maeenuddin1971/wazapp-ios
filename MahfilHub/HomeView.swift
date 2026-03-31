@@ -1,22 +1,15 @@
 import SwiftUI
 
-// MARK: - Extended Colors (aliases to Asset Catalog)
-let colorPrimaryTealLight = Color.appPrimaryTealLight
-let colorSecondaryGreen   = Color.appSecondaryGreen
-let colorInfoBlue         = Color.appInfoBlue
-let colorSuccessGreen     = Color.appSuccessGreen
-let colorErrorRed         = Color.appErrorRed
-let colorVerifiedBadge    = Color.appVerifiedBadge
-let colorBackgroundCream  = Color.appBackgroundCream
-let colorTextSecondary    = Color.appTextSecondary
-let colorTextPrimary      = Color.appTextPrimary
-
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - HomeView
 // ══════════════════════════════════════════════════════════════════════════
 
+enum HomeTab: Int, CaseIterable {
+    case home, events, maulana, profile
+}
+
 struct HomeView: View {
-    @State private var selectedTab = 0
+    @State private var selectedTab: HomeTab = .home
     @State private var selectedEvent: EventItemModel? = nil
     @State private var selectedMaulana: MaulanaItemModel? = nil
     @State private var showNotificationList = false
@@ -27,8 +20,8 @@ struct HomeView: View {
             // ── Main tabbed content ──────────────────────────────────
             VStack(spacing: 0) {
                 switch selectedTab {
-                case 0:
-                    ScrollView(.vertical, showsIndicators: false) {
+                case .home:
+                    ScrollView(.vertical) {
                         VStack(spacing: 0) {
                             HomeHeader(onNotificationTap: {
                                 withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = true }
@@ -44,31 +37,19 @@ struct HomeView: View {
                             Spacer().frame(height: 16)
                         }
                     }
-                case 1:
+                    .scrollIndicators(.hidden)
+                case .events:
                     EventsView(onEventClick: { event in
                         withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
                     })
-                case 2:
+                case .maulana:
                     MaulanaView(
                         onMaulanaClick: { maulana in
                             withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = maulana }
                         }
                     )
-                case 3:
+                case .profile:
                     ProfileView()
-                default:
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 0) {
-                            HomeHeader(onNotificationTap: {
-                                withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = true }
-                            })
-                            QuickActionsSection()
-                            UpcomingEventsSection()
-                            FeaturedMaulanaSection()
-                            RecentActivitySection()
-                            Spacer().frame(height: 16)
-                        }
-                    }
                 }
                 HomeBottomNavBar(selectedTab: $selectedTab)
             }
@@ -182,10 +163,10 @@ private struct HomeHeader: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Assalamu Alaikum")
                             .font(.subheadline)
-                            .foregroundColor(Color.white.opacity(0.8))
+                            .foregroundStyle(Color.white.opacity(0.8))
                         Text("Welcome Back 👋")
                             .font(.title2.bold())
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
 
                     Spacer()
@@ -199,19 +180,20 @@ private struct HomeHeader: View {
                                 .overlay(
                                     Image(systemName: "bell")
                                         .font(.body)
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                 )
 
                             // Badge
                             Text("3")
                                 .font(.caption2.bold())
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                                 .frame(width: 18, height: 18)
                                 .background(colorAccentOrange)
                                 .clipShape(Circle())
                                 .offset(x: 2, y: -2)
                         }
                     }
+                    .accessibilityLabel("Notifications")
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 52) // approximate safe area top
@@ -222,16 +204,16 @@ private struct HomeHeader: View {
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
                         .font(.callout)
-                        .foregroundColor(Color.white.opacity(0.7))
+                        .foregroundStyle(Color.white.opacity(0.7))
                     Text("Search for events…")
                         .font(.subheadline)
-                        .foregroundColor(Color.white.opacity(0.6))
+                        .foregroundStyle(Color.white.opacity(0.6))
                     Spacer()
                 }
                 .padding(.horizontal, 16)
                 .frame(height: 48)
                 .background(Color.white.opacity(0.15))
-                .cornerRadius(24)
+                .clipShape(.rect(cornerRadius: 24))
                 .padding(.horizontal, 16)
 
                 Spacer().frame(height: 12)
@@ -263,7 +245,7 @@ private struct QuickActionsSection: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Actions")
                 .font(.callout.bold())
-                .foregroundColor(colorTextPrimary)
+                .foregroundStyle(colorTextPrimary)
 
             HStack(spacing: 0) {
                 ForEach(0..<actions.count, id: \.self) { index in
@@ -297,12 +279,12 @@ private struct QuickActionItem: View {
 
                 Image(systemName: action.icon)
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
             }
 
             Text(action.label)
                 .font(.caption)
-                .foregroundColor(colorTextPrimary)
+                .foregroundStyle(colorTextPrimary)
         }
     }
 }
@@ -319,15 +301,15 @@ private struct UpcomingEventsSection: View {
             HStack {
                 Text("Upcoming")
                     .font(.callout.bold())
-                    .foregroundColor(colorTextPrimary)
+                    .foregroundStyle(colorTextPrimary)
                 Spacer()
                 Button("View All") {}
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(colorPrimaryTeal)
+                    .foregroundStyle(colorPrimaryTeal)
             }
             .padding(.horizontal, 16)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                     ForEach(sampleEventsPublic.prefix(5)) { event in
                         EventCard(
@@ -343,6 +325,7 @@ private struct UpcomingEventsSection: View {
                 }
                 .padding(.horizontal, 16)
             }
+            .scrollIndicators(.hidden)
         }
         .padding(.vertical, 8)
     }
@@ -407,13 +390,13 @@ private struct EventCard: View {
                             .frame(width: 6, height: 6)
                         Text("LIVE")
                             .font(.caption2.bold())
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .tracking(1)
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(colorErrorRed)
-                    .cornerRadius(12)
+                    .clipShape(.rect(cornerRadius: 12))
                     .shadow(radius: 2)
                     .padding(8)
                 }
@@ -424,11 +407,11 @@ private struct EventCard: View {
                     HStack {
                         Text(date)
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
                             .background(colorAccentOrange)
-                            .cornerRadius(8)
+                            .clipShape(.rect(cornerRadius: 8))
                             .shadow(radius: 2)
                             .padding(.leading, 8)
                             .offset(y: 12)
@@ -442,17 +425,17 @@ private struct EventCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .font(.callout.bold())
-                    .foregroundColor(colorTextPrimary)
+                    .foregroundStyle(colorTextPrimary)
                     .lineLimit(1)
 
                 // Maulana row
                 HStack(spacing: 4) {
                     Image(systemName: "person")
                         .font(.caption)
-                        .foregroundColor(colorPrimaryTeal)
+                        .foregroundStyle(colorPrimaryTeal)
                     Text(maulana)
                         .font(.caption)
-                        .foregroundColor(colorTextSecondary)
+                        .foregroundStyle(colorTextSecondary)
                         .lineLimit(1)
                 }
 
@@ -460,10 +443,10 @@ private struct EventCard: View {
                 HStack(spacing: 4) {
                     Image(systemName: "mappin")
                         .font(.caption)
-                        .foregroundColor(colorAccentOrange)
+                        .foregroundStyle(colorAccentOrange)
                     Text(location)
                         .font(.caption)
-                        .foregroundColor(colorTextSecondary)
+                        .foregroundStyle(colorTextSecondary)
                         .lineLimit(1)
                 }
 
@@ -471,10 +454,10 @@ private struct EventCard: View {
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
                         .font(.caption)
-                        .foregroundColor(colorSecondaryGreen)
+                        .foregroundStyle(colorSecondaryGreen)
                     Text(time)
                         .font(.caption)
-                        .foregroundColor(colorTextSecondary)
+                        .foregroundStyle(colorTextSecondary)
                 }
             }
             .padding(16)
@@ -482,7 +465,7 @@ private struct EventCard: View {
         }
                 .frame(width: 280)
                 .background(Color.appCardSurface)
-                .cornerRadius(16)
+                .clipShape(.rect(cornerRadius: 16))
                 .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
         }
         .buttonStyle(.plain)
@@ -501,15 +484,15 @@ private struct FeaturedMaulanaSection: View {
             HStack {
                 Text("Featured Maulana")
                     .font(.callout.bold())
-                    .foregroundColor(colorTextPrimary)
+                    .foregroundStyle(colorTextPrimary)
                 Spacer()
                 Button("View All") {}
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(colorPrimaryTeal)
+                    .foregroundStyle(colorPrimaryTeal)
             }
             .padding(.horizontal, 16)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                     ForEach(sampleMaulanasPublic.prefix(5)) { maulana in
                         MaulanaChip(
@@ -522,6 +505,7 @@ private struct FeaturedMaulanaSection: View {
                 }
                 .padding(.horizontal, 16)
             }
+            .scrollIndicators(.hidden)
         }
         .padding(.vertical, 16)
     }
@@ -555,29 +539,29 @@ private struct MaulanaChip: View {
 
                     Text(String(name.prefix(1)))
                         .font(.title2.bold())
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                 }
 
                 HStack(spacing: 4) {
                     Text(displayName)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(colorTextPrimary)
+                        .foregroundStyle(colorTextPrimary)
                         .lineLimit(1)
                     if isVerified {
                         Image(systemName: "checkmark.seal.fill")
                             .font(.caption)
-                            .foregroundColor(colorVerifiedBadge)
+                            .foregroundStyle(colorVerifiedBadge)
                     }
                 }
 
                 Text(eventCount)
                     .font(.caption)
-                    .foregroundColor(colorTextSecondary)
+                    .foregroundStyle(colorTextSecondary)
             }
             .frame(width: 160)
             .padding(16)
             .background(Color.appCardSurface)
-            .cornerRadius(16)
+            .clipShape(.rect(cornerRadius: 16))
             .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)
@@ -593,7 +577,7 @@ private struct RecentActivitySection: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Recent Activity")
                 .font(.callout.bold())
-                .foregroundColor(colorTextPrimary)
+                .foregroundStyle(colorTextPrimary)
 
             ActivityItem(
                 icon: "checkmark",
@@ -638,17 +622,17 @@ private struct ActivityItem: View {
 
                 Image(systemName: icon)
                     .font(.body)
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
             }
 
             // Text
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(colorTextPrimary)
+                    .foregroundStyle(colorTextPrimary)
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(colorTextSecondary)
+                    .foregroundStyle(colorTextSecondary)
                     .lineLimit(1)
             }
 
@@ -656,7 +640,7 @@ private struct ActivityItem: View {
 
             Text(time)
                 .font(.caption)
-                .foregroundColor(colorTextSecondary)
+                .foregroundStyle(colorTextSecondary)
         }
     }
 }
@@ -665,47 +649,42 @@ private struct ActivityItem: View {
 // MARK: - Bottom Navigation Bar
 // ══════════════════════════════════════════════════════════════════════════
 
-private struct NavItem {
-    let label: String
-    let selectedIcon: String
-    let unselectedIcon: String
-}
 
 private struct HomeBottomNavBar: View {
-    @Binding var selectedTab: Int
+    @Binding var selectedTab: HomeTab
 
-    private let items = [
-        NavItem(label: "Home", selectedIcon: "house.fill", unselectedIcon: "house"),
-        NavItem(label: "Events", selectedIcon: "calendar", unselectedIcon: "calendar"),
-        NavItem(label: "Maulana", selectedIcon: "person.fill", unselectedIcon: "person"),
-        NavItem(label: "Profile", selectedIcon: "person.circle.fill", unselectedIcon: "person.circle")
+    private let items: [(tab: HomeTab, label: String, selectedIcon: String, unselectedIcon: String)] = [
+        (.home, "Home", "house.fill", "house"),
+        (.events, "Events", "calendar", "calendar"),
+        (.maulana, "Maulana", "person.fill", "person"),
+        (.profile, "Profile", "person.circle.fill", "person.circle")
     ]
 
     var body: some View {
         HStack {
-            ForEach(0..<items.count, id: \.self) { index in
+            ForEach(items, id: \.tab) { item in
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        selectedTab = index
+                        selectedTab = item.tab
                     }
                 }) {
                     VStack(spacing: 4) {
                         ZStack {
-                            if selectedTab == index {
+                            if selectedTab == item.tab {
                                 Capsule()
                                     .fill(colorPrimaryTeal.opacity(0.12))
                                     .frame(width: 56, height: 28)
                             }
-                            Image(systemName: selectedTab == index ? items[index].selectedIcon : items[index].unselectedIcon)
+                            Image(systemName: selectedTab == item.tab ? item.selectedIcon : item.unselectedIcon)
                                 .font(.title3)
-                                .foregroundColor(selectedTab == index ? colorPrimaryTeal : colorTextSecondary)
+                                .foregroundStyle(selectedTab == item.tab ? colorPrimaryTeal : colorTextSecondary)
                         }
                         .frame(height: 28)
 
-                        Text(items[index].label)
+                        Text(item.label)
                             .font(.caption)
-                            .fontWeight(selectedTab == index ? .bold : .regular)
-                            .foregroundColor(selectedTab == index ? colorPrimaryTeal : colorTextSecondary)
+                            .fontWeight(selectedTab == item.tab ? .bold : .regular)
+                            .foregroundStyle(selectedTab == item.tab ? colorPrimaryTeal : colorTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                 }

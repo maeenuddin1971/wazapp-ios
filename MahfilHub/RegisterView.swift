@@ -25,7 +25,7 @@ struct RegisterView: View {
     private let inpBdr   = Color.appInputBorder
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical) {
             VStack(spacing: 0) {
                 Spacer().frame(height: 36)
 
@@ -37,20 +37,20 @@ struct RegisterView: View {
                 // ── Bismillah ────────────────────────────────────
                 Text("بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ")
                     .font(.body)
-                    .foregroundColor(gold)
+                    .foregroundStyle(gold)
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 16)
 
                 Text("Join the Ummah")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
 
                 Spacer().frame(height: 4)
 
                 Text("Create your account to explore Islamic events")
                     .font(.footnote)
-                    .foregroundColor(subtle)
+                    .foregroundStyle(subtle)
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 28)
@@ -79,32 +79,32 @@ struct RegisterView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Password")
                         .font(.footnote.weight(.semibold))
-                        .foregroundColor(subtle)
+                        .foregroundStyle(subtle)
                         .padding(.leading, 4)
 
                     HStack(spacing: 10) {
                         Image(systemName: "lock")
-                            .foregroundColor(gold)
+                            .foregroundStyle(gold)
                             .font(.callout)
                             .frame(width: 20)
                         Group {
                             if isSecure {
-                                SecureField("", text: $password, prompt: Text("Enter password").foregroundColor(muted))
+                                SecureField("", text: $password, prompt: Text("Enter password").foregroundStyle(muted))
                             } else {
-                                TextField("", text: $password, prompt: Text("Enter password").foregroundColor(muted))
+                                TextField("", text: $password, prompt: Text("Enter password").foregroundStyle(muted))
                             }
                         }
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
 
                         Button(action: { isSecure.toggle() }) {
                             Image(systemName: isSecure ? "eye.slash" : "eye")
-                                .foregroundColor(muted)
+                                .foregroundStyle(muted)
                                 .font(.subheadline)
                         }
                     }
                     .padding(14)
                     .background(inpBg)
-                    .cornerRadius(14)
+                    .clipShape(.rect(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .stroke(inpBdr, lineWidth: 1)
@@ -117,14 +117,15 @@ struct RegisterView: View {
                 HStack(alignment: .center, spacing: 8) {
                     Button(action: { agreeTerms.toggle() }) {
                         Image(systemName: agreeTerms ? "checkmark.square.fill" : "square")
-                            .foregroundColor(agreeTerms ? colorPrimaryTealLight : muted)
+                            .foregroundStyle(agreeTerms ? colorPrimaryTealLight : muted)
                             .font(.title3)
                     }
-                    Text("I agree to the Terms of Service and Privacy Policy")
-                        .font(.caption)
-                        .foregroundColor(subtle)
-                        .lineSpacing(2)
-                        .onTapGesture { agreeTerms.toggle() }
+                    Button(action: { agreeTerms.toggle() }) {
+                        Text("I agree to the Terms of Service and Privacy Policy")
+                            .font(.caption)
+                            .foregroundStyle(subtle)
+                            .lineSpacing(2)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -146,11 +147,11 @@ struct RegisterView: View {
                             startPoint: .leading,
                             endPoint: .trailing
                         )
-                        .cornerRadius(14)
+                        .clipShape(.rect(cornerRadius: 14))
 
                         Text("Create Account")
                             .font(.callout.bold())
-                            .foregroundColor(agreeTerms ? .white : Color.white.opacity(0.4))
+                            .foregroundStyle(agreeTerms ? .white : Color.white.opacity(0.4))
                             .tracking(0.5)
                     }
                     .frame(height: 54)
@@ -177,15 +178,15 @@ struct RegisterView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "g.circle.fill")
                             .font(.body)
-                            .foregroundColor(.appGoogleRed)
+                            .foregroundStyle(Color.appGoogleRed)
                         Text("Sign up with Google")
                             .font(.subheadline)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(glassBg)
-                    .cornerRadius(14)
+                    .clipShape(.rect(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .stroke(glassBdr, lineWidth: 1)
@@ -204,10 +205,10 @@ struct RegisterView: View {
                     HStack(spacing: 4) {
                         Text("Already have an account?")
                             .font(.subheadline)
-                            .foregroundColor(subtle)
+                            .foregroundStyle(subtle)
                         Text("Sign In")
                             .font(.subheadline.bold())
-                            .foregroundColor(goldLight)
+                            .foregroundStyle(goldLight)
                     }
                     .padding(.vertical, 14)
                     .padding(.horizontal, 20)
@@ -217,6 +218,7 @@ struct RegisterView: View {
             }
             .padding(.horizontal, 28)
         }
+        .scrollIndicators(.hidden)
         .background(
             ZStack {
                 LinearGradient(
@@ -245,22 +247,22 @@ struct RegisterView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.footnote.weight(.semibold))
-                .foregroundColor(subtle)
+                .foregroundStyle(subtle)
                 .padding(.leading, 4)
 
             HStack(spacing: 10) {
                 Image(systemName: icon)
-                    .foregroundColor(gold)
+                    .foregroundStyle(gold)
                     .font(.callout)
                     .frame(width: 20)
-                TextField("", text: text, prompt: Text(placeholder).foregroundColor(muted))
-                    .foregroundColor(.white)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
+                TextField("", text: text, prompt: Text(placeholder).foregroundStyle(muted))
+                    .foregroundStyle(.white)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
             }
             .padding(14)
             .background(inpBg)
-            .cornerRadius(14)
+            .clipShape(.rect(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(inpBdr, lineWidth: 1)

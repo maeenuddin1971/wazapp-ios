@@ -1,9 +1,22 @@
 import SwiftUI
 
+enum OnboardingIcon {
+    case mosque, community, reminder
+
+    @ViewBuilder
+    var view: some View {
+        switch self {
+        case .mosque:     OnboardingMosqueIcon()
+        case .community:  OnboardingCommunityIcon()
+        case .reminder:   OnboardingReminderIcon()
+        }
+    }
+}
+
 struct OnboardingPageModel {
     let title: String
     let description: String
-    let iconContent: AnyView
+    let icon: OnboardingIcon
 }
 
 struct OnboardingView: View {
@@ -19,15 +32,15 @@ struct OnboardingView: View {
     private var pages: [OnboardingPageModel] {
         if isEnglish {
             return [
-                OnboardingPageModel(title: "Discover Islamic Events", description: "Find and attend Mahfil events happening near you", iconContent: AnyView(OnboardingMosqueIcon())),
-                OnboardingPageModel(title: "Connect with Community", description: "Join the community and enrich your spiritual journey", iconContent: AnyView(OnboardingCommunityIcon())),
-                OnboardingPageModel(title: "Never Miss an Event", description: "Set reminders and stay updated with upcoming events", iconContent: AnyView(OnboardingReminderIcon()))
+                OnboardingPageModel(title: "Discover Islamic Events", description: "Find and attend Mahfil events happening near you", icon: .mosque),
+                OnboardingPageModel(title: "Connect with Community", description: "Join the community and enrich your spiritual journey", icon: .community),
+                OnboardingPageModel(title: "Never Miss an Event", description: "Set reminders and stay updated with upcoming events", icon: .reminder)
             ]
         } else {
             return [
-                OnboardingPageModel(title: "ইসলামিক ইভেন্ট আবিষ্কার করুন", description: "আপনার কাছাকাছি মাহফিল ইভেন্ট খুঁজুন এবং অংশগ্রহণ করুন", iconContent: AnyView(OnboardingMosqueIcon())),
-                OnboardingPageModel(title: "সম্প্রদায়ের সাথে সংযুক্ত হন", description: "সম্প্রদায়ে যোগ দিন এবং আপনার আধ্যাত্মিক যাত্রা সমৃদ্ধ করুন", iconContent: AnyView(OnboardingCommunityIcon())),
-                OnboardingPageModel(title: "কোন ইভেন্ট মিস করবেন না", description: "রিমাইন্ডার সেট করুন এবং আসন্ন ইভেন্টগুলির সাথে আপডেট থাকুন", iconContent: AnyView(OnboardingReminderIcon()))
+                OnboardingPageModel(title: "ইসলামিক ইভেন্ট আবিষ্কার করুন", description: "আপনার কাছাকাছি মাহফিল ইভেন্ট খুঁজুন এবং অংশগ্রহণ করুন", icon: .mosque),
+                OnboardingPageModel(title: "সম্প্রদায়ের সাথে সংযুক্ত হন", description: "সম্প্রদায়ে যোগ দিন এবং আপনার আধ্যাত্মিক যাত্রা সমৃদ্ধ করুন", icon: .community),
+                OnboardingPageModel(title: "কোন ইভেন্ট মিস করবেন না", description: "রিমাইন্ডার সেট করুন এবং আসন্ন ইভেন্টগুলির সাথে আপডেট থাকুন", icon: .reminder)
             ]
         }
     }
@@ -50,7 +63,7 @@ struct OnboardingView: View {
                         Button(action: onFinished) {
                             Text(isEnglish ? "Skip" : "এড়িয়ে যান")
                                 .font(.callout.weight(.semibold))
-                                .foregroundColor(colorWhite.opacity(0.8))
+                                .foregroundStyle(colorWhite.opacity(0.8))
                         }
                     } else {
                         Spacer().frame(width: 40)
@@ -84,11 +97,11 @@ struct OnboardingView: View {
                         Button(action: { onFinished() }) {
                             Text(isEnglish ? "Get Started" : "শুরু করুন")
                                 .font(.headline)
-                                .foregroundColor(colorWhite)
+                                .foregroundStyle(colorWhite)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 56)
                                 .background(colorAccentOrange)
-                                .cornerRadius(28)
+                                .clipShape(.rect(cornerRadius: 28))
                                 .shadow(color: colorAccentOrange.opacity(0.3), radius: 8, x: 0, y: 4)
                         }
                         .transition(.opacity)
@@ -98,11 +111,11 @@ struct OnboardingView: View {
                         }) {
                             Text(isEnglish ? "Next" : "পরবর্তী")
                                 .font(.headline)
-                                .foregroundColor(colorWhite)
+                                .foregroundStyle(colorWhite)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 56)
                                 .background(colorWhite.opacity(0.2))
-                                .cornerRadius(28)
+                                .clipShape(.rect(cornerRadius: 28))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 28)
                                         .stroke(colorWhite.opacity(0.4), lineWidth: 1)
@@ -148,7 +161,7 @@ struct OnboardingPageContent: View {
                     .frame(width: 200, height: 200)
 
                 // Dynamic Icon
-                page.iconContent
+                page.icon.view
                     .frame(width: 140, height: 140)
             }
             // Continuous floating effect: Maps 0..1 to -6..+6
@@ -160,7 +173,7 @@ struct OnboardingPageContent: View {
             // Title
             Text(page.title)
                 .font(.title2.bold())
-                .foregroundColor(colorWhite)
+                .foregroundStyle(colorWhite)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
@@ -170,7 +183,7 @@ struct OnboardingPageContent: View {
             // Description
             Text(page.description)
                 .font(.callout)
-                .foregroundColor(colorWhite.opacity(0.8))
+                .foregroundStyle(colorWhite.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
                 .padding(.horizontal, 32)
@@ -243,30 +256,32 @@ struct LanguageToggle: View {
     var body: some View {
         HStack(spacing: 0) {
             // English Option
-            Text("English")
-                .font(.subheadline)
-                .fontWeight(isEnglish ? .bold : .regular)
-                .foregroundColor(isEnglish ? colorWhite : colorWhite.opacity(0.6))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(isEnglish ? colorAccentOrange : Color.clear)
-                .cornerRadius(16)
-                .onTapGesture {
-                    withAnimation { isEnglish = true }
-                }
+            Button(action: {
+                withAnimation { isEnglish = true }
+            }) {
+                Text("English")
+                    .font(.subheadline)
+                    .fontWeight(isEnglish ? .bold : .regular)
+                    .foregroundStyle(isEnglish ? colorWhite : colorWhite.opacity(0.6))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(isEnglish ? colorAccentOrange : Color.clear)
+                    .clipShape(.rect(cornerRadius: 16))
+            }
 
             // Bangla Option
-            Text("বাংলা")
-                .font(.subheadline)
-                .fontWeight(!isEnglish ? .bold : .regular)
-                .foregroundColor(!isEnglish ? colorWhite : colorWhite.opacity(0.6))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(!isEnglish ? colorAccentOrange : Color.clear)
-                .cornerRadius(16)
-                .onTapGesture {
-                    withAnimation { isEnglish = false }
-                }
+            Button(action: {
+                withAnimation { isEnglish = false }
+            }) {
+                Text("বাংলা")
+                    .font(.subheadline)
+                    .fontWeight(!isEnglish ? .bold : .regular)
+                    .foregroundStyle(!isEnglish ? colorWhite : colorWhite.opacity(0.6))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(!isEnglish ? colorAccentOrange : Color.clear)
+                    .clipShape(.rect(cornerRadius: 16))
+            }
         }
         .padding(4)
         .overlay(

@@ -24,7 +24,7 @@ struct LoginView: View {
     @State private var showPasswordReset = false
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical) {
             VStack(spacing: 0) {
                 Spacer().frame(height: 50)
 
@@ -36,20 +36,20 @@ struct LoginView: View {
                 // ── Bismillah ────────────────────────────────────
                 Text("بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ")
                     .font(.title3)
-                    .foregroundColor(islamicGold)
+                    .foregroundStyle(islamicGold)
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 24)
 
                 Text("Assalamu Alaikum")
                     .font(.title.bold())
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
 
                 Spacer().frame(height: 4)
 
                 Text("Sign in to discover Islamic events near you")
                     .font(.subheadline)
-                    .foregroundColor(subtleText)
+                    .foregroundStyle(subtleText)
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 36)
@@ -79,31 +79,25 @@ struct LoginView: View {
                         showPasswordReset = true
                     }
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(islamicGoldLight)
+                    .foregroundStyle(islamicGoldLight)
                 }
                 .padding(.top, 8)
 
                 Spacer().frame(height: 28)
 
                 // ── Login Button ─────────────────────────────────
-                Button {
-                    print("Sign In tapped! Setting currentScreen = .main")
-                    SessionManager.shared.login(name: "Bipul Ahmed", email: "bipul@mahfilhub.com")
-                    withAnimation(.easeInOut(duration: 0.35)) {
-                        currentScreen = .main
-                    }
-                } label: {
+                Button(action: performLogin) {
                     ZStack {
                         LinearGradient(
                             colors: [colorPrimaryTeal, colorPrimaryTealLight],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
-                        .cornerRadius(14)
+                        .clipShape(.rect(cornerRadius: 14))
 
                         Text("Sign In")
                             .font(.callout.bold())
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .tracking(0.5)
                     }
                     .frame(height: 54)
@@ -135,7 +129,7 @@ struct LoginView: View {
                 } label: {
                     Text("Continue as Guest")
                         .font(.subheadline)
-                        .foregroundColor(mutedText)
+                        .foregroundStyle(mutedText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                         .contentShape(Rectangle())
@@ -153,10 +147,10 @@ struct LoginView: View {
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
                             .font(.subheadline)
-                            .foregroundColor(subtleText)
+                            .foregroundStyle(subtleText)
                         Text("Register")
                             .font(.subheadline.bold())
-                            .foregroundColor(islamicGoldLight)
+                            .foregroundStyle(islamicGoldLight)
                     }
                     .padding(.vertical, 14)
                     .padding(.horizontal, 20)
@@ -166,6 +160,7 @@ struct LoginView: View {
             }
             .padding(.horizontal, 28)
         }
+        .scrollIndicators(.hidden)
         .background(
             ZStack {
                 LinearGradient(
@@ -188,6 +183,13 @@ struct LoginView: View {
     private var isFormValid: Bool {
         !email.trimmingCharacters(in: .whitespaces).isEmpty && !password.isEmpty
     }
+
+    private func performLogin() {
+        SessionManager.shared.login(name: "Bipul Ahmed", email: "bipul@mahfilhub.com")
+        withAnimation(.easeInOut(duration: 0.35)) {
+            currentScreen = .main
+        }
+    }
 }
 
 // MARK: - Reusable Islamic Components
@@ -203,22 +205,22 @@ private struct IslamicTextField: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.footnote.weight(.semibold))
-                .foregroundColor(subtleText)
+                .foregroundStyle(subtleText)
                 .padding(.leading, 4)
 
             HStack(spacing: 10) {
                 Image(systemName: icon)
-                    .foregroundColor(islamicGold)
+                    .foregroundStyle(islamicGold)
                     .font(.callout)
                     .frame(width: 20)
-                TextField("", text: $text, prompt: Text(placeholder).foregroundColor(mutedText))
-                    .foregroundColor(.white)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
+                TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(mutedText))
+                    .foregroundStyle(.white)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
             }
             .padding(14)
             .background(inputBackground)
-            .cornerRadius(14)
+            .clipShape(.rect(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(inputBorder, lineWidth: 1)
@@ -238,32 +240,32 @@ private struct IslamicPasswordField: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.footnote.weight(.semibold))
-                .foregroundColor(subtleText)
+                .foregroundStyle(subtleText)
                 .padding(.leading, 4)
 
             HStack(spacing: 10) {
                 Image(systemName: "lock")
-                    .foregroundColor(islamicGold)
+                    .foregroundStyle(islamicGold)
                     .font(.callout)
                     .frame(width: 20)
                 Group {
                     if isSecure {
-                        SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(mutedText))
+                        SecureField("", text: $text, prompt: Text(placeholder).foregroundStyle(mutedText))
                     } else {
-                        TextField("", text: $text, prompt: Text(placeholder).foregroundColor(mutedText))
+                        TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(mutedText))
                     }
                 }
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
 
                 Button(action: { isSecure.toggle() }) {
                     Image(systemName: isSecure ? "eye.slash" : "eye")
-                        .foregroundColor(mutedText)
+                        .foregroundStyle(mutedText)
                         .font(.subheadline)
                 }
             }
             .padding(14)
             .background(inputBackground)
-            .cornerRadius(14)
+            .clipShape(.rect(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(inputBorder, lineWidth: 1)
@@ -283,15 +285,15 @@ private struct SocialGlassButton: View {
             HStack(spacing: 8) {
                 Image(systemName: iconName)
                     .font(.body)
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
                 Text(title)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background(glassBackground)
-            .cornerRadius(14)
+            .clipShape(.rect(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(glassBorder, lineWidth: 1)
@@ -467,7 +469,7 @@ private struct PasswordResetSheet: View {
                 VStack(spacing: 16) {
                     Text("Enter your email to reset your password.")
                         .font(.subheadline)
-                        .foregroundColor(subtleText)
+                        .foregroundStyle(subtleText)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     IslamicTextField(
@@ -482,14 +484,14 @@ private struct PasswordResetSheet: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 48)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .background(
                         LinearGradient(
                             colors: [colorPrimaryTeal, colorPrimaryTealLight],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
-                    .cornerRadius(14)
+                    .clipShape(.rect(cornerRadius: 14))
 
                     Spacer()
                 }
@@ -501,7 +503,7 @@ private struct PasswordResetSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .foregroundColor(islamicGoldLight)
+                        .foregroundStyle(islamicGoldLight)
                 }
             }
         }

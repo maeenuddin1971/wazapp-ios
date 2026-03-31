@@ -17,7 +17,12 @@ struct MaulanaDetailView: View {
     }
 
     private var initial: String {
-        maulana.name.split(separator: " ").last.map(String.init)?.first.map(String.init) ?? "M"
+        if let lastWord = maulana.name.split(separator: " ").last,
+           let firstChar = lastWord.first {
+            String(firstChar)
+        } else {
+            "M"
+        }
     }
 
     private var maulanaEvents: [EventItemModel] {
@@ -27,7 +32,7 @@ struct MaulanaDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             // ── Scrollable Content ───────────────────────────────────
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical) {
                 VStack(spacing: 0) {
 
                     // ── Hero Header ──────────────────────────────────
@@ -54,20 +59,22 @@ struct MaulanaDetailView: View {
                                 Button(action: onBack) {
                                     Image(systemName: "arrow.left")
                                         .font(.headline)
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
                                         .clipShape(Circle())
                                 }
+                                .accessibilityLabel("Back")
                                 Spacer()
                                 Button(action: {}) {
                                     Image(systemName: "square.and.arrow.up")
                                         .font(.body)
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
                                         .clipShape(Circle())
                                 }
+                                .accessibilityLabel("Share")
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 54)
@@ -83,7 +90,7 @@ struct MaulanaDetailView: View {
                                 )
                                 Text(initial)
                                     .font(.largeTitle.bold())
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                             }
                             .frame(width: 96, height: 96)
                             .clipShape(Circle())
@@ -94,17 +101,17 @@ struct MaulanaDetailView: View {
                             HStack(spacing: 6) {
                                 Text(maulana.name)
                                     .font(.title2.bold())
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                 if maulana.isVerified {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                         .font(.body)
                                 }
                             }
 
                             Text(maulana.title)
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundStyle(.white.opacity(0.8))
 
                             Spacer().frame(height: 6)
 
@@ -112,15 +119,15 @@ struct MaulanaDetailView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "star.fill")
                                     .font(.caption)
-                                    .foregroundColor(colorAccentOrange)
-                                Text(String(format: "%.1f", maulana.rating))
+                                    .foregroundStyle(colorAccentOrange)
+                                Text(maulana.rating.formatted(.number.precision(.fractionLength(1))))
                                     .font(.footnote.bold())
-                                    .foregroundColor(colorAccentOrange)
+                                    .foregroundStyle(colorAccentOrange)
                             }
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
                             .background(colorAccentOrange.opacity(0.25))
-                            .cornerRadius(12)
+                            .clipShape(.rect(cornerRadius: 12))
 
                             Spacer().frame(height: 16)
                         }
@@ -142,7 +149,7 @@ struct MaulanaDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("About")
                             .font(.headline)
-                            .foregroundColor(colorTextPrimary)
+                            .foregroundStyle(colorTextPrimary)
 
                         MaulanaInfoRow(icon: "info.circle", label: "Specialization", value: maulana.specialization, color: colorAccentOrange)
                         MaulanaInfoRow(icon: "location.fill", label: "Location", value: maulana.location, color: colorSecondaryGreen)
@@ -153,13 +160,13 @@ struct MaulanaDetailView: View {
 
                         Text("\(maulana.name) is a renowned Islamic scholar specializing in \(maulana.specialization). Based in \(maulana.location), they have conducted \(maulana.totalEvents) events and have a community of \(formatMaulanaFollowers(maulana.followers)) devoted followers. Known for their eloquent delivery and deep knowledge, they continue to inspire and educate communities across the region.")
                             .font(.subheadline)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .lineSpacing(6)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
                     .background(Color.appCardSurface)
-                    .cornerRadius(16)
+                    .clipShape(.rect(cornerRadius: 16))
                     .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                     .padding(.horizontal, 16)
 
@@ -168,7 +175,7 @@ struct MaulanaDetailView: View {
                     // ── Events by Maulana ────────────────────────────
                     Text("Events by \(maulana.name.split(separator: " ").last.map(String.init) ?? maulana.name)")
                         .font(.headline)
-                        .foregroundColor(colorTextPrimary)
+                        .foregroundStyle(colorTextPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 16)
 
@@ -179,15 +186,15 @@ struct MaulanaDetailView: View {
                         VStack(spacing: 8) {
                             Image(systemName: "calendar")
                                 .font(.largeTitle)
-                                .foregroundColor(colorPrimaryTeal.opacity(0.5))
+                                .foregroundStyle(colorPrimaryTeal.opacity(0.5))
                             Text("No upcoming events")
                                 .font(.subheadline)
-                                .foregroundColor(colorTextSecondary)
+                                .foregroundStyle(colorTextSecondary)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(32)
                         .background(Color.appCardSurface)
-                        .cornerRadius(16)
+                        .clipShape(.rect(cornerRadius: 16))
                         .padding(.horizontal, 16)
                     } else {
                         ForEach(maulanaEvents) { event in
@@ -200,6 +207,7 @@ struct MaulanaDetailView: View {
                     Spacer().frame(height: 100)
                 }
             }
+            .scrollIndicators(.hidden)
 
             // ── Bottom Action Bar ────────────────────────────────────
             HStack(spacing: 12) {
@@ -207,10 +215,10 @@ struct MaulanaDetailView: View {
                     HStack(spacing: 6) {
                         Image(systemName: isFollowing ? "heart.fill" : "heart")
                             .font(.subheadline)
-                            .foregroundColor(isFollowing ? colorErrorRed : colorTextPrimary)
+                            .foregroundStyle(isFollowing ? colorErrorRed : colorTextPrimary)
                         Text(isFollowing ? "Following" : "Follow")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(isFollowing ? colorPrimaryTeal : colorTextPrimary)
+                            .foregroundStyle(isFollowing ? colorPrimaryTeal : colorTextPrimary)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
@@ -229,9 +237,9 @@ struct MaulanaDetailView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .background(colorPrimaryTeal)
-                    .cornerRadius(14)
+                    .clipShape(.rect(cornerRadius: 14))
                 }
             }
             .padding(.horizontal, 16)
@@ -249,7 +257,7 @@ struct MaulanaDetailView: View {
 // MARK: - Helper functions
 
 private func formatMaulanaFollowers(_ count: Int) -> String {
-    count >= 1000 ? String(format: "%.1fK", Double(count) / 1000.0) : "\(count)"
+    count >= 1000 ? "\((Double(count) / 1000.0).formatted(.number.precision(.fractionLength(1))))K" : "\(count)"
 }
 
 // MARK: - Sub-components
@@ -260,15 +268,15 @@ private struct MaulanaStatCard: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.title2.bold())
-                .foregroundColor(color)
+                .foregroundStyle(color)
             Text(label)
                 .font(.caption)
-                .foregroundColor(colorTextSecondary)
+                .foregroundStyle(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .background(Color.appCardSurface)
-        .cornerRadius(14)
+        .clipShape(.rect(cornerRadius: 14))
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
@@ -283,15 +291,15 @@ private struct MaulanaInfoRow: View {
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
                     .font(.subheadline)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             VStack(alignment: .leading, spacing: 1) {
                 Text(label)
                     .font(.caption)
-                    .foregroundColor(colorTextSecondary)
+                    .foregroundStyle(colorTextSecondary)
                 Text(value)
                     .font(.subheadline)
-                    .foregroundColor(colorTextPrimary)
+                    .foregroundStyle(colorTextPrimary)
             }
             Spacer()
         }
@@ -314,48 +322,48 @@ private struct MaulanaEventMiniCard: View {
                 VStack(spacing: 0) {
                     Text(day)
                         .font(.headline)
-                        .foregroundColor(colorPrimaryTeal)
+                        .foregroundStyle(colorPrimaryTeal)
                     Text(month)
                         .font(.caption2.weight(.semibold))
-                        .foregroundColor(colorPrimaryTeal)
+                        .foregroundStyle(colorPrimaryTeal)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
                 .background(colorPrimaryTeal.opacity(0.1))
-                .cornerRadius(10)
+                .clipShape(.rect(cornerRadius: 10))
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         Text(event.title)
                             .font(.subheadline.bold())
-                            .foregroundColor(colorTextPrimary)
+                            .foregroundStyle(colorTextPrimary)
                             .lineLimit(1)
                         if event.isLive {
                             Text("LIVE")
                                 .font(.caption2.bold())
-                                .foregroundColor(colorErrorRed)
+                                .foregroundStyle(colorErrorRed)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 2)
                                 .background(colorErrorRed.opacity(0.15))
-                                .cornerRadius(4)
+                                .clipShape(.rect(cornerRadius: 4))
                         }
                     }
                     HStack(spacing: 4) {
                         Image(systemName: "location.fill")
                             .font(.caption)
-                            .foregroundColor(colorAccentOrange)
+                            .foregroundStyle(colorAccentOrange)
                         Text(event.location)
                             .font(.caption)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                             .lineLimit(1)
                     }
                     HStack(spacing: 4) {
                         Image(systemName: "clock")
                             .font(.caption)
-                            .foregroundColor(colorSecondaryGreen)
+                            .foregroundStyle(colorSecondaryGreen)
                         Text(event.time)
                             .font(.caption)
-                            .foregroundColor(colorTextSecondary)
+                            .foregroundStyle(colorTextSecondary)
                     }
                 }
 
@@ -363,11 +371,11 @@ private struct MaulanaEventMiniCard: View {
 
                 Image(systemName: "chevron.right")
                     .font(.subheadline)
-                    .foregroundColor(colorTextSecondary.opacity(0.4))
+                    .foregroundStyle(colorTextSecondary.opacity(0.4))
             }
             .padding(14)
             .background(Color.appCardSurface)
-            .cornerRadius(14)
+            .clipShape(.rect(cornerRadius: 14))
             .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
         .padding(.horizontal, 16)

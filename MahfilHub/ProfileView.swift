@@ -6,7 +6,7 @@ import SwiftUI
 
 struct ProfileView: View {
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 // ── Header ─────────────────────────────────────
                 ProfileHeader()
@@ -105,11 +105,12 @@ struct ProfileView: View {
                 // ── Version ────────────────────────────────────
                 Text("MahfilHub v1.0.0")
                     .font(.caption)
-                    .foregroundColor(colorTextSecondary)
+                    .foregroundStyle(colorTextSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
             }
         }
+        .scrollIndicators(.hidden)
         .background(colorBackgroundCream)
         .ignoresSafeArea(.container, edges: .top)
     }
@@ -164,7 +165,7 @@ private struct ProfileHeader: View {
                 HStack {
                     Text("Profile")
                         .font(.title2.bold())
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
 
                     Spacer()
 
@@ -175,9 +176,10 @@ private struct ProfileHeader: View {
                             .overlay(
                                 Image(systemName: "gearshape")
                                     .font(.callout)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                             )
                     }
+                    .accessibilityLabel("Settings")
                 }
                 .padding(.horizontal, 16)
 
@@ -199,7 +201,7 @@ private struct ProfileHeader: View {
 
                         Text("A")
                             .font(.largeTitle.bold())
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
 
                     // Camera edit badge
@@ -211,7 +213,7 @@ private struct ProfileHeader: View {
 
                         Image(systemName: "pencil")
                             .font(.caption.bold())
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
                     .offset(x: -2, y: -2)
                 }
@@ -219,16 +221,16 @@ private struct ProfileHeader: View {
                 Spacer().frame(height: 16)
 
                 // Name
-                Text("Abdullah Ahmed")
+                Text(SessionManager.shared.userName)
                     .font(.title3.bold())
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
 
                 Spacer().frame(height: 4)
 
                 // Email
-                Text("abdullah.ahmed@email.com")
+                Text(SessionManager.shared.userEmail)
                     .font(.subheadline)
-                    .foregroundColor(Color.white.opacity(0.7))
+                    .foregroundStyle(Color.white.opacity(0.7))
 
                 Spacer().frame(height: 8)
 
@@ -236,15 +238,15 @@ private struct ProfileHeader: View {
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
                         .font(.caption)
-                        .foregroundColor(colorAccentOrange)
+                        .foregroundStyle(colorAccentOrange)
                     Text("Premium Member")
                         .font(.caption.bold())
-                        .foregroundColor(colorAccentOrange)
+                        .foregroundStyle(colorAccentOrange)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 4)
                 .background(colorAccentOrange.opacity(0.2))
-                .cornerRadius(16)
+                .clipShape(.rect(cornerRadius: 16))
 
                 Spacer().frame(height: 20)
             }
@@ -283,19 +285,19 @@ private struct ProfileStatCard: View {
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
                     .font(.subheadline)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             Text(value)
                 .font(.title2.bold())
-                .foregroundColor(colorTextPrimary)
+                .foregroundStyle(colorTextPrimary)
             Text(label)
                 .font(.caption)
-                .foregroundColor(colorTextSecondary)
+                .foregroundStyle(colorTextSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(16)
         .background(Color.appCardSurface)
-        .cornerRadius(14)
+        .clipShape(.rect(cornerRadius: 14))
         .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
     }
 }
@@ -310,7 +312,7 @@ private struct ProfileSectionTitle: View {
     var body: some View {
         Text(title)
             .font(.footnote.bold())
-            .foregroundColor(colorTextSecondary)
+            .foregroundStyle(colorTextSecondary)
             .tracking(0.5)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
@@ -347,7 +349,7 @@ private struct ProfileMenuGroup: View {
             }
         }
         .background(Color.appCardSurface)
-        .cornerRadius(16)
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.04), radius: 1, x: 0, y: 1)
         .padding(.horizontal, 16)
     }
@@ -367,17 +369,17 @@ private struct ProfileMenuRow: View {
 
                     Image(systemName: item.icon)
                         .font(.body)
-                        .foregroundColor(item.color)
+                        .foregroundStyle(item.color)
                 }
 
                 // Text content
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.title)
                         .font(.subheadline)
-                        .foregroundColor(colorTextPrimary)
+                        .foregroundStyle(colorTextPrimary)
                     Text(item.subtitle)
                         .font(.caption)
-                        .foregroundColor(colorTextSecondary)
+                        .foregroundStyle(colorTextSecondary)
                 }
 
                 Spacer()
@@ -386,17 +388,17 @@ private struct ProfileMenuRow: View {
                 if let badge = item.badge {
                     Text(badge)
                         .font(.caption.bold())
-                        .foregroundColor(item.color)
+                        .foregroundStyle(item.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
                         .background(item.color.opacity(0.12))
-                        .cornerRadius(10)
+                        .clipShape(.rect(cornerRadius: 10))
                 }
 
                 // Chevron
                 Image(systemName: "chevron.right")
                     .font(.footnote)
-                    .foregroundColor(colorTextSecondary.opacity(0.5))
+                    .foregroundStyle(colorTextSecondary.opacity(0.5))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -419,7 +421,7 @@ private struct ProfileLogoutButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 48)
-            .foregroundColor(colorErrorRed)
+            .foregroundStyle(colorErrorRed)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(colorErrorRed.opacity(0.5), lineWidth: 1.5)

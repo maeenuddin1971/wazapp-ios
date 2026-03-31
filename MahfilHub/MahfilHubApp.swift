@@ -11,6 +11,7 @@ let kSplashTeal = UIColor.appSplashTeal
 let kSplashTealSUI = Color.appSplashTeal
 
 // MARK: - AppDelegate
+@MainActor
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,

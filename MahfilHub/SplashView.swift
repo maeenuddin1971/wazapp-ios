@@ -1,11 +1,8 @@
 import SwiftUI
 
-// MARK: - Brand Colors (aliases to Asset Catalog)
-let colorPrimaryTeal     = Color.appPrimaryTeal
-let colorPrimaryTealDark = Color.appPrimaryTealDark
-let colorDeepTeal        = Color.appDeepTeal
-let colorAccentOrange    = Color.appAccentOrange
-let colorWhite           = Color.white
+// ══════════════════════════════════════════════════════════════════════════
+// MARK: - SplashView
+// ══════════════════════════════════════════════════════════════════════════
 
 struct SplashView: View {
     var onFinished: () -> Void
@@ -62,12 +59,12 @@ struct SplashView: View {
                     Text("MahfilHub")
                         .font(.largeTitle.bold())
                         .fontDesign(.rounded)
-                        .foregroundColor(colorWhite)
+                        .foregroundStyle(colorWhite)
                         .tracking(2.0)
 
                     Text("Your Islamic Events Compass") // Matches Android strings_bn fallback or splash_tagline
                         .font(.subheadline)
-                        .foregroundColor(colorWhite.opacity(0.7))
+                        .foregroundStyle(colorWhite.opacity(0.7))
                 }
                 .opacity(brandingAlpha)
                 .offset(y: brandingOffset)
@@ -89,7 +86,8 @@ struct SplashView: View {
         withAnimation(SplashAnimations.bgRotationAnimation) { bgRotation = 360.0 }
 
         // Transition Timeout
-        DispatchQueue.main.asyncAfter(deadline: .now() + SplashAnimations.splashDisplayDuration) {
+        Task {
+            try? await Task.sleep(for: .seconds(SplashAnimations.splashDisplayDuration))
             onFinished()
         }
     }
