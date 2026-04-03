@@ -257,11 +257,12 @@ private struct IslamicPasswordField: View {
                 }
                 .foregroundStyle(.white)
 
-                Button(action: { isSecure.toggle() }) {
-                    Image(systemName: isSecure ? "eye.slash" : "eye")
-                        .foregroundStyle(mutedText)
-                        .font(.subheadline)
-                }
+                Button(isSecure ? "Show Password" : "Hide Password",
+                       systemImage: isSecure ? "eye.slash" : "eye",
+                       action: { isSecure.toggle() })
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(mutedText)
+                    .font(.subheadline)
             }
             .padding(14)
             .background(inputBackground)

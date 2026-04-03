@@ -105,7 +105,7 @@ struct MaulanaView: View {
                         .font(.caption)
                         .foregroundStyle(colorTextSecondary)
                     Spacer()
-                    Text("\(sampleMaulanas.filter { $0.isVerified }.count) Verified")
+                    Text("\(sampleMaulanas.count(where: { $0.isVerified })) Verified")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(colorVerifiedBadge)
                 }
@@ -190,16 +190,12 @@ private struct MaulanaHeader: View {
                     Spacer()
 
                     // Sort button
-                    Button(action: {}) {
-                        Circle()
-                            .fill(Color.white.opacity(0.15))
-                            .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: "list.bullet")
-                                    .font(.callout)
-                                    .foregroundStyle(.white)
-                            )
-                    }
+                    Button("Sort", systemImage: "list.bullet", action: {})
+                        .labelStyle(.iconOnly)
+                        .font(.callout)
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
                 }
                 .padding(.horizontal, 16)
 
@@ -218,11 +214,10 @@ private struct MaulanaHeader: View {
                         .tint(.white)
 
                     if !searchQuery.isEmpty {
-                        Button(action: { searchQuery = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.callout)
-                                .foregroundStyle(Color.white.opacity(0.7))
-                        }
+                        Button("Clear", systemImage: "xmark.circle.fill", action: { searchQuery = "" })
+                            .labelStyle(.iconOnly)
+                            .font(.callout)
+                            .foregroundStyle(Color.white.opacity(0.7))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -256,7 +251,7 @@ private struct MaulanaStatsRow: View {
                 color: colorPrimaryTeal
             )
             MaulanaStatCard(
-                value: "\(sampleMaulanas.filter { $0.isVerified }.count)",
+                value: "\(sampleMaulanas.count(where: { $0.isVerified }))",
                 label: "Verified",
                 icon: "checkmark.seal.fill",
                 color: colorVerifiedBadge
@@ -410,10 +405,10 @@ private struct MaulanaProfileCard: View {
                         if maulana.isVerified {
                             HStack(spacing: 4) {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .font(.caption2)
+                                    .font(.caption)
                                     .foregroundStyle(.white)
                                 Text("Verified")
-                                    .font(.caption2.bold())
+                                    .font(.caption.bold())
                                     .foregroundStyle(.white)
                             }
                             .padding(.horizontal, 8)
@@ -425,10 +420,10 @@ private struct MaulanaProfileCard: View {
                         // Rating badge
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.white)
                             Text(maulana.rating.formatted(.number.precision(.fractionLength(1))))
-                                .font(.caption2.bold())
+                                .font(.caption.bold())
                                 .foregroundStyle(.white)
                         }
                         .padding(.horizontal, 8)
@@ -600,29 +595,12 @@ private struct MaulanaInlineStat: View {
 
 private struct MaulanaEmptyPlaceholder: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer().frame(height: 40)
-
-            ZStack {
-                Circle()
-                    .fill(colorPrimaryTeal.opacity(0.1))
-                    .frame(width: 80, height: 80)
-                Image(systemName: "person")
-                    .font(.largeTitle)
-                    .foregroundStyle(colorPrimaryTeal)
-            }
-
-            Text("No results found")
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(colorTextPrimary)
-
-            Text("Try adjusting your search or filters")
-                .font(.subheadline)
-                .foregroundStyle(colorTextSecondary)
-
-            Spacer().frame(height: 40)
-        }
-        .frame(maxWidth: .infinity)
+        ContentUnavailableView(
+            "No results found",
+            systemImage: "person",
+            description: Text("Try adjusting your search or filters")
+        )
+        .padding(.vertical, 40)
     }
 }
 

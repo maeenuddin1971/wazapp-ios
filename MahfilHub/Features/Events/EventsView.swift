@@ -61,7 +61,7 @@ struct EventsView: View {
                 EventsFilterChips(filters: filters, selectedFilter: $selectedFilter)
                 EventsStatsBar(
                     totalEvents: filteredEvents.count,
-                    liveCount: filteredEvents.filter { $0.isLive }.count
+                    liveCount: filteredEvents.count(where: { $0.isLive })
                 )
                 if filteredEvents.isEmpty {
                     EmptyEventsPlaceholder()
@@ -133,16 +133,12 @@ private struct EventsHeader: View {
                     Spacer()
 
                     // Filter icon
-                    Button(action: {}) {
-                        Circle()
-                            .fill(Color.white.opacity(0.15))
-                            .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: "line.3.horizontal.decrease")
-                                    .font(.callout)
-                                    .foregroundStyle(.white)
-                            )
-                    }
+                    Button("Filter", systemImage: "line.3.horizontal.decrease", action: {})
+                        .labelStyle(.iconOnly)
+                        .font(.callout)
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
                 }
                 .padding(.horizontal, 16)
 
@@ -161,11 +157,10 @@ private struct EventsHeader: View {
                         .tint(.white)
 
                     if !searchQuery.isEmpty {
-                        Button(action: { searchQuery = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.callout)
-                                .foregroundStyle(Color.white.opacity(0.7))
-                        }
+                        Button("Clear", systemImage: "xmark.circle.fill", action: { searchQuery = "" })
+                            .labelStyle(.iconOnly)
+                            .font(.callout)
+                            .foregroundStyle(Color.white.opacity(0.7))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -288,7 +283,7 @@ private struct EventListCard: View {
 
     private var dayNumber: String {
         guard dateParts.count >= 2 else { return "" }
-        return dateParts[1].replacingOccurrences(of: ",", with: "")
+        return dateParts[1].replacing(",", with: "")
     }
 
     private var monthAbbr: String {
@@ -349,7 +344,7 @@ private struct EventListCard: View {
                                     .fill(Color.white)
                                     .frame(width: 6, height: 6)
                                 Text("LIVE")
-                                    .font(.caption2.bold())
+                                    .font(.caption.bold())
                                     .foregroundStyle(.white)
                                     .tracking(1)
                             }
@@ -361,7 +356,7 @@ private struct EventListCard: View {
 
                         HStack(spacing: 0) {
                             Text("Featured")
-                                .font(.caption2.bold())
+                                .font(.caption.bold())
                                 .foregroundStyle(.white)
                         }
                         .padding(.horizontal, 8)
@@ -448,18 +443,16 @@ private struct EventListCard: View {
 
                 // Action buttons
                 VStack(spacing: 4) {
-                    Button(action: {}) {
-                        Image(systemName: "heart")
-                            .font(.body)
-                            .foregroundStyle(colorTextSecondary)
-                            .frame(width: 36, height: 36)
-                    }
-                    Button(action: {}) {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.callout)
-                            .foregroundStyle(colorTextSecondary)
-                            .frame(width: 36, height: 36)
-                    }
+                    Button("Save", systemImage: "heart", action: {})
+                        .labelStyle(.iconOnly)
+                        .font(.body)
+                        .foregroundStyle(colorTextSecondary)
+                        .frame(width: 36, height: 36)
+                    Button("Share", systemImage: "square.and.arrow.up", action: {})
+                        .labelStyle(.iconOnly)
+                        .font(.callout)
+                        .foregroundStyle(colorTextSecondary)
+                        .frame(width: 36, height: 36)
                 }
             }
             .padding(16)
@@ -478,29 +471,12 @@ private struct EventListCard: View {
 
 private struct EmptyEventsPlaceholder: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer().frame(height: 40)
-
-            ZStack {
-                Circle()
-                    .fill(colorPrimaryTeal.opacity(0.1))
-                    .frame(width: 80, height: 80)
-                Image(systemName: "calendar")
-                    .font(.largeTitle)
-                    .foregroundStyle(colorPrimaryTeal)
-            }
-
-            Text("No events found")
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(colorTextPrimary)
-
-            Text("There are no events matching your criteria")
-                .font(.subheadline)
-                .foregroundStyle(colorTextSecondary)
-
-            Spacer().frame(height: 40)
-        }
-        .frame(maxWidth: .infinity)
+        ContentUnavailableView(
+            "No events found",
+            systemImage: "calendar",
+            description: Text("There are no events matching your criteria")
+        )
+        .padding(.vertical, 40)
     }
 }
 

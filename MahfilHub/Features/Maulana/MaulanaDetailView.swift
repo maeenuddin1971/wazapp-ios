@@ -56,25 +56,21 @@ struct MaulanaDetailView: View {
                         VStack(spacing: 0) {
                             // ── Top Bar ──────────────────────────────
                             HStack {
-                                Button(action: onBack) {
-                                    Image(systemName: "arrow.left")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 40, height: 40)
-                                        .background(Color.white.opacity(0.15))
-                                        .clipShape(Circle())
-                                }
-                                .accessibilityLabel("Back")
+                                Button("Back", systemImage: "arrow.left", action: onBack)
+                                    .labelStyle(.iconOnly)
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                    .frame(width: 40, height: 40)
+                                    .background(Color.white.opacity(0.15))
+                                    .clipShape(Circle())
                                 Spacer()
-                                Button(action: {}) {
-                                    Image(systemName: "square.and.arrow.up")
-                                        .font(.body)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 40, height: 40)
-                                        .background(Color.white.opacity(0.15))
-                                        .clipShape(Circle())
-                                }
-                                .accessibilityLabel("Share")
+                                Button("Share", systemImage: "square.and.arrow.up", action: {})
+                                    .labelStyle(.iconOnly)
+                                    .font(.body)
+                                    .foregroundStyle(.white)
+                                    .frame(width: 40, height: 40)
+                                    .background(Color.white.opacity(0.15))
+                                    .clipShape(Circle())
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 54)
@@ -317,14 +313,14 @@ private struct MaulanaEventMiniCard: View {
                 // Date Pill
                 let parts = event.date.split(separator: " ")
                 let month = parts.first.map(String.init) ?? ""
-                let day = parts.dropFirst().first.map(String.init)?.replacingOccurrences(of: ",", with: "") ?? ""
+                let day = parts.dropFirst().first.map(String.init)?.replacing(",", with: "") ?? ""
 
                 VStack(spacing: 0) {
                     Text(day)
                         .font(.headline)
                         .foregroundStyle(colorPrimaryTeal)
                     Text(month)
-                        .font(.caption2.weight(.semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(colorPrimaryTeal)
                 }
                 .padding(.horizontal, 10)
@@ -340,7 +336,7 @@ private struct MaulanaEventMiniCard: View {
                             .lineLimit(1)
                         if event.isLive {
                             Text("LIVE")
-                                .font(.caption2.bold())
+                                .font(.caption.bold())
                                 .foregroundStyle(colorErrorRed)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 2)

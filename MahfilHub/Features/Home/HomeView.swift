@@ -185,7 +185,7 @@ private struct HomeHeader: View {
 
                             // Badge
                             Text("3")
-                                .font(.caption2.bold())
+                                .font(.caption.bold())
                                 .foregroundStyle(.white)
                                 .frame(width: 18, height: 18)
                                 .background(colorAccentOrange)
@@ -193,7 +193,7 @@ private struct HomeHeader: View {
                                 .offset(x: 2, y: -2)
                         }
                     }
-                    .accessibilityLabel("Notifications")
+                    .accessibilityLabel("Notifications, 3 unread")
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 52) // approximate safe area top

@@ -67,14 +67,6 @@ extension NotificationType {
     }
 }
 
-// MARK: - Scroll Offset Preference Key
-
-private struct NotifScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
 
 // MARK: - NotificationListView
 
@@ -84,6 +76,7 @@ struct NotificationListView: View {
     
     @State private var selectedFilter = "All"
     @State private var scrollOffset: CGFloat = 0
+    @State private var initialOffset: CGFloat? = nil
     @State private var appearedItems: Set<Int> = []
     
     private let filters = ["All", "Events", "Reminders", "System"]
@@ -100,7 +93,7 @@ struct NotificationListView: View {
     }
     
     private var unreadCount: Int {
-        sampleNotifications.filter { !$0.isRead }.count
+        sampleNotifications.count(where: { !$0.isRead })
     }
     
     /// 0 = expanded, 1 = collapsed
@@ -122,20 +115,20 @@ struct NotificationListView: View {
             ScrollView(.vertical) {
                 VStack(spacing: 0) {
                     // Header spacer — this drives the collapsing offset
-                    Color.clear
-                        .frame(height: expandedHeight + 8)
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear.preference(
-                                    key: NotifScrollOffsetKey.self,
-                                    value: geo.frame(in: .named("notifScroll")).origin.y
-                                )
+                    GeometryReader { geo in
+                        Color.clear
+                            .onAppear {
+                                initialOffset = geo.frame(in: .global).origin.y
                             }
-                        )
+                            .onChange(of: geo.frame(in: .global).origin.y) { _, newValue in
+                                scrollOffset = newValue - (initialOffset ?? newValue)
+                            }
+                    }
+                    .frame(height: expandedHeight + 8)
                     
                     // Notification rows
                     VStack(spacing: 0) {
-                        ForEach(Array(filteredNotifications.enumerated()), id: \.element.id) { index, notification in
+                        ForEach(filteredNotifications.enumerated(), id: \.element.id) { index, notification in
                             Button(action: { onNotificationClick?(notification) }) {
                                 NotificationRow(notification: notification)
                             }
@@ -147,10 +140,8 @@ struct NotificationListView: View {
                                     value: appearedItems.contains(notification.id)
                                 )
                                 .onAppear {
-                                    Task { @MainActor in
-                                        withAnimation {
-                                            _ = appearedItems.insert(notification.id)
-                                        }
+                                    withAnimation {
+                                        _ = appearedItems.insert(notification.id)
                                     }
                                 }
                         }
@@ -159,10 +150,6 @@ struct NotificationListView: View {
                 }
             }
             .scrollIndicators(.hidden)
-            .coordinateSpace(name: "notifScroll")
-            .onPreferenceChange(NotifScrollOffsetKey.self) { value in
-                scrollOffset = value
-            }
             
             // ── Collapsing Header (overlay) ───────────────────────────
             collapsingHeader
@@ -196,15 +183,13 @@ struct NotificationListView: View {
             .allowsHitTesting(false)
             
             // ── Back button (always visible) ──────────────────────────
-            Button(action: onBack) {
-                Image(systemName: "arrow.left")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(width: 40, height: 40)
-                    .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
-                    .clipShape(Circle())
-            }
-            .accessibilityLabel("Back")
+            Button("Back", systemImage: "arrow.left", action: onBack)
+                .labelStyle(.iconOnly)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(width: 40, height: 40)
+                .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
+                .clipShape(Circle())
             .padding(.leading, 12)
             .padding(.top, 54)
             
@@ -269,7 +254,7 @@ struct NotificationListView: View {
     
     // MARK: - Lerp
     
-    private func lerp(_ a: CGFloat, _ b: CGFloat, _ t: CGFloat) -> CGFloat {
+    private func lerp(_ a: Double, _ b: Double, _ t: Double) -> Double {
         a + (b - a) * t
     }
 }

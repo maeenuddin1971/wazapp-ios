@@ -42,37 +42,31 @@ struct EventDetailView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             // ── Top Bar ──────────────────────────────
                             HStack {
-                                Button(action: onBack) {
-                                    Image(systemName: "arrow.left")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 40, height: 40)
-                                        .background(Color.white.opacity(0.15))
-                                        .clipShape(Circle())
-                                }
-                                .accessibilityLabel("Back")
+                                Button("Back", systemImage: "arrow.left", action: onBack)
+                                    .labelStyle(.iconOnly)
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                    .frame(width: 40, height: 40)
+                                    .background(Color.white.opacity(0.15))
+                                    .clipShape(Circle())
 
                                 Spacer()
 
                                 HStack(spacing: 8) {
-                                    Button(action: { isSaved.toggle() }) {
-                                        Image(systemName: isSaved ? "heart.fill" : "heart")
-                                            .font(.body)
-                                            .foregroundStyle(isSaved ? colorErrorRed : .white)
-                                            .frame(width: 40, height: 40)
-                                            .background(Color.white.opacity(0.15))
-                                            .clipShape(Circle())
-                                    }
-                                    .accessibilityLabel(isSaved ? "Remove from Saved" : "Save Event")
-                                    Button(action: {}) {
-                                        Image(systemName: "square.and.arrow.up")
-                                            .font(.body)
-                                            .foregroundStyle(.white)
-                                            .frame(width: 40, height: 40)
-                                            .background(Color.white.opacity(0.15))
-                                            .clipShape(Circle())
-                                    }
-                                    .accessibilityLabel("Share")
+                                    Button(isSaved ? "Remove from Saved" : "Save Event", systemImage: isSaved ? "heart.fill" : "heart", action: { isSaved.toggle() })
+                                        .labelStyle(.iconOnly)
+                                        .font(.body)
+                                        .foregroundStyle(isSaved ? colorErrorRed : .white)
+                                        .frame(width: 40, height: 40)
+                                        .background(Color.white.opacity(0.15))
+                                        .clipShape(Circle())
+                                    Button("Share", systemImage: "square.and.arrow.up", action: {})
+                                        .labelStyle(.iconOnly)
+                                        .font(.body)
+                                        .foregroundStyle(.white)
+                                        .frame(width: 40, height: 40)
+                                        .background(Color.white.opacity(0.15))
+                                        .clipShape(Circle())
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -234,13 +228,8 @@ struct EventDetailView: View {
 
             // ── Bottom Action Bar ────────────────────────────────────
             HStack(spacing: 12) {
-                Button(action: {}) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "bell")
-                            .font(.subheadline)
-                        Text("Remind Me")
-                            .font(.subheadline.weight(.semibold))
-                    }
+                Button("Remind Me", systemImage: "bell", action: {})
+                    .font(.subheadline.weight(.semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .foregroundStyle(colorPrimaryTeal)
@@ -248,21 +237,14 @@ struct EventDetailView: View {
                         RoundedRectangle(cornerRadius: 14)
                             .stroke(colorPrimaryTeal, lineWidth: 1.5)
                     )
-                }
 
-                Button(action: {}) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.subheadline)
-                        Text("Attend")
-                            .font(.subheadline.bold())
-                    }
+                Button("Attend", systemImage: "checkmark.circle.fill", action: {})
+                    .font(.subheadline.bold())
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .foregroundStyle(.white)
                     .background(colorPrimaryTeal)
                     .clipShape(.rect(cornerRadius: 14))
-                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)

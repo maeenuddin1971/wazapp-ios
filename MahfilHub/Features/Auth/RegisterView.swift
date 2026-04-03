@@ -96,11 +96,12 @@ struct RegisterView: View {
                         }
                         .foregroundStyle(.white)
 
-                        Button(action: { isSecure.toggle() }) {
-                            Image(systemName: isSecure ? "eye.slash" : "eye")
-                                .foregroundStyle(muted)
-                                .font(.subheadline)
-                        }
+                        Button(isSecure ? "Show Password" : "Hide Password",
+                               systemImage: isSecure ? "eye.slash" : "eye",
+                               action: { isSecure.toggle() })
+                            .labelStyle(.iconOnly)
+                            .foregroundStyle(muted)
+                            .font(.subheadline)
                     }
                     .padding(14)
                     .background(inpBg)

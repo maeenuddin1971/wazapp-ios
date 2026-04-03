@@ -169,17 +169,12 @@ private struct ProfileHeader: View {
 
                     Spacer()
 
-                    Button(action: {}) {
-                        Circle()
-                            .fill(Color.white.opacity(0.15))
-                            .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: "gearshape")
-                                    .font(.callout)
-                                    .foregroundStyle(.white)
-                            )
-                    }
-                    .accessibilityLabel("Settings")
+                    Button("Settings", systemImage: "gearshape", action: {})
+                        .labelStyle(.iconOnly)
+                        .font(.callout)
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
                 }
                 .padding(.horizontal, 16)
 
@@ -339,7 +334,7 @@ private struct ProfileMenuGroup: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+            ForEach(items.enumerated(), id: \.element.id) { index, item in
                 ProfileMenuRow(item: item)
                 if index < items.count - 1 {
                     Divider()
@@ -412,13 +407,8 @@ private struct ProfileMenuRow: View {
 
 private struct ProfileLogoutButton: View {
     var body: some View {
-        Button(action: {}) {
-            HStack(spacing: 8) {
-                Image(systemName: "rectangle.portrait.and.arrow.right")
-                    .font(.callout)
-                Text("Logout")
-                    .font(.subheadline.weight(.semibold))
-            }
+        Button("Logout", systemImage: "rectangle.portrait.and.arrow.right", action: {})
+            .font(.subheadline.weight(.semibold))
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .foregroundStyle(colorErrorRed)
@@ -426,9 +416,8 @@ private struct ProfileLogoutButton: View {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(colorErrorRed.opacity(0.5), lineWidth: 1.5)
             )
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
     }
 }
 
