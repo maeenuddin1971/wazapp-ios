@@ -159,7 +159,7 @@ private struct ProfileHeader: View {
             }
 
             VStack(spacing: 0) {
-                Spacer().frame(height: 52)
+                Spacer().frame(height: 52) // Matches status bar height under .ignoresSafeArea
 
                 // Title row with settings
                 HStack {
@@ -175,6 +175,7 @@ private struct ProfileHeader: View {
                         .foregroundStyle(.white)
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(Color.white.opacity(0.15)))
+                        .accessibilityLabel("Settings")
                 }
                 .padding(.horizontal, 16)
 
@@ -297,6 +298,8 @@ private struct ProfileStatCard: View {
     }
 }
 
+// TODO: #11 — Stats and "Premium Member" badge are currently hardcoded.
+// Wire to SessionManager or a ProfileViewModel when user profile API is available.
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - Section Title
 // ══════════════════════════════════════════════════════════════════════════
@@ -334,7 +337,7 @@ private struct ProfileMenuGroup: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(items.enumerated(), id: \.element.id) { index, item in
+            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                 ProfileMenuRow(item: item)
                 if index < items.count - 1 {
                     Divider()
@@ -398,6 +401,7 @@ private struct ProfileMenuRow: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -425,8 +429,11 @@ private struct ProfileLogoutButton: View {
 // MARK: - Previews
 // ══════════════════════════════════════════════════════════════════════════
 
-#Preview {
+#Preview("Light") {
     ProfileView()
-        //.preferredColorScheme(.dark)
 }
 
+#Preview("Dark") {
+    ProfileView()
+        .preferredColorScheme(.dark)
+}

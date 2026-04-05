@@ -49,8 +49,7 @@ struct OnboardingMosqueIcon: View {
                 control1: CGPoint(x: centerX - w * 0.08, y: h * 0.35),
                 control2: CGPoint(x: centerX + w * 0.08, y: h * 0.35)
             )
-            var style = StrokeStyle(lineWidth: 3)
-            ctx.stroke(archPath, with: .color(orange.opacity(0.4)), style: style)
+            ctx.stroke(archPath, with: .color(orange.opacity(0.4)), style: StrokeStyle(lineWidth: 3))
         }
     }
 }

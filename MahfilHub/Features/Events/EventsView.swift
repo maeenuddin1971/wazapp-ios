@@ -4,6 +4,8 @@ import SwiftUI
 // MARK: - Sample Event Data
 // ──────────────────────────────────────────────────────────────────────────
 
+// NOTE: Using Int IDs with seed data. Migrate to UUID or String when
+// connecting to a backend API to avoid collision risks.
 struct EventItemModel: Identifiable, Hashable {
     let id: Int
     let title: String
@@ -104,64 +106,66 @@ private struct EventsHeader: View {
             }
 
             VStack(spacing: 0) {
-                Spacer().frame(height: 52)
+                    Spacer().frame(height: topSafeAreaInset + 4)
 
-                // Title row
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Events")
-                            .font(.title2.bold())
-                            .foregroundStyle(.white)
-                        Text("Discover Islamic events near you")
-                            .font(.caption)
-                            .foregroundStyle(Color.white.opacity(0.7))
-                    }
+                    // Title row
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Events")
+                                .font(.title2.bold())
+                                .foregroundStyle(.white)
+                            Text("Discover Islamic events near you")
+                                .font(.caption)
+                                .foregroundStyle(Color.white.opacity(0.7))
+                        }
 
-                    Spacer()
+                        Spacer()
 
-                    // Filter icon
-                    Button("Filter", systemImage: "line.3.horizontal.decrease", action: {})
-                        .labelStyle(.iconOnly)
-                        .font(.callout)
-                        .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.white.opacity(0.15)))
-                }
-                .padding(.horizontal, 16)
-
-                Spacer().frame(height: 16)
-
-                // Search bar
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.callout)
-                        .foregroundStyle(Color.white.opacity(0.7))
-
-                    TextField("", text: $searchQuery, prompt: Text("Search for events…")
-                        .foregroundStyle(Color.white.opacity(0.5)))
-                        .font(.subheadline)
-                        .foregroundStyle(.white)
-                        .tint(.white)
-
-                    if !searchQuery.isEmpty {
-                        Button("Clear", systemImage: "xmark.circle.fill", action: { searchQuery = "" })
+                        // Filter icon
+                        Button("Filter", systemImage: "line.3.horizontal.decrease", action: {})
                             .labelStyle(.iconOnly)
                             .font(.callout)
-                            .foregroundStyle(Color.white.opacity(0.7))
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Circle().fill(Color.white.opacity(0.15)))
+                            .accessibilityLabel("Filter events")
                     }
-                }
-                .padding(.horizontal, 16)
-                .frame(height: 48)
-                .background(Color.white.opacity(0.15))
-                .clipShape(.rect(cornerRadius: 24))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                )
-                .padding(.horizontal, 16)
+                    .padding(.horizontal, 16)
 
-                Spacer().frame(height: 12)
-            }
+                    Spacer().frame(height: 16)
+
+                    // Search bar
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.callout)
+                            .foregroundStyle(Color.white.opacity(0.7))
+
+                        TextField("", text: $searchQuery, prompt: Text("Search for events…")
+                            .foregroundStyle(Color.white.opacity(0.5)))
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                            .tint(.white)
+
+                        if !searchQuery.isEmpty {
+                            Button("Clear", systemImage: "xmark.circle.fill", action: { searchQuery = "" })
+                                .labelStyle(.iconOnly)
+                                .font(.callout)
+                                .foregroundStyle(Color.white.opacity(0.7))
+                                .accessibilityLabel("Clear search")
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .frame(height: 48)
+                    .background(Color.white.opacity(0.15))
+                    .clipShape(.rect(cornerRadius: 24))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 16)
+
+                    Spacer().frame(height: 12)
+                }
         }
         .frame(height: 200)
     }
@@ -471,9 +475,14 @@ private struct EmptyEventsPlaceholder: View {
 // MARK: - Previews
 // ══════════════════════════════════════════════════════════════════════════
 
-#Preview {
+#Preview("Light") {
     EventsView()
         .environment(EventsViewModel())
-        //.preferredColorScheme(.dark)
+}
+
+#Preview("Dark") {
+    EventsView()
+        .environment(EventsViewModel())
+        .preferredColorScheme(.dark)
 }
 

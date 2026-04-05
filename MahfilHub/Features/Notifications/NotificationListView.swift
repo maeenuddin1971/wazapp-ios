@@ -8,6 +8,8 @@ enum NotificationType: String, CaseIterable {
     var displayName: String { rawValue.capitalized }
 }
 
+// NOTE: Using Int IDs with seed data. Migrate to UUID or String when
+// connecting to a backend API to avoid collision risks.
 struct NotificationItemModel: Identifiable, Hashable {
     let id: Int
     let title: String
@@ -72,6 +74,10 @@ struct NotificationListView: View {
             Color.appBackgroundCream.ignoresSafeArea()
             
             // ── Scrollable List ───────────────────────────────────────
+            // NOTE (#12): Using GeometryReader + onChange for scroll offset tracking
+            // because this view needs a custom collapsing header effect.
+            // Consider migrating to ScrollView + .scrollPosition() (iOS 17+)
+            // if the collapsing behaviour can be simplified.
             ScrollView(.vertical) {
                 VStack(spacing: 0) {
                     // Header spacer — this drives the collapsing offset
@@ -151,6 +157,7 @@ struct NotificationListView: View {
                 .frame(width: 40, height: 40)
                 .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                 .clipShape(Circle())
+                .accessibilityLabel("Go back")
             .padding(.leading, 12)
             .padding(.top, 54)
             
@@ -268,6 +275,8 @@ private struct NotificationRow: View {
                 ? Color.clear
                 : notification.type.color.opacity(0.04)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(notification.title), \(notification.message), \(notification.time)\(notification.isRead ? "" : ", unread")")
     }
 }
 

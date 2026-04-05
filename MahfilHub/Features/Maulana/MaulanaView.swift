@@ -4,6 +4,8 @@ import SwiftUI
 // MARK: - Sample Maulana Data
 // ──────────────────────────────────────────────────────────────────────────
 
+// NOTE: Using Int IDs with seed data. Migrate to UUID or String when
+// connecting to a backend API to avoid collision risks.
 struct MaulanaItemModel: Identifiable, Hashable {
     let id: Int
     let name: String
@@ -136,64 +138,66 @@ private struct MaulanaHeader: View {
             }
 
             VStack(spacing: 0) {
-                Spacer().frame(height: 52)
+                    Spacer().frame(height: topSafeAreaInset + 4)
 
-                // Title row
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Maulana")
-                            .font(.title2.bold())
-                            .foregroundStyle(.white)
-                        Text("Find renowned Islamic scholars")
-                            .font(.caption)
-                            .foregroundStyle(Color.white.opacity(0.7))
-                    }
+                    // Title row
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Maulana")
+                                .font(.title2.bold())
+                                .foregroundStyle(.white)
+                            Text("Find renowned Islamic scholars")
+                                .font(.caption)
+                                .foregroundStyle(Color.white.opacity(0.7))
+                        }
 
-                    Spacer()
+                        Spacer()
 
-                    // Sort button
-                    Button("Sort", systemImage: "list.bullet", action: {})
-                        .labelStyle(.iconOnly)
-                        .font(.callout)
-                        .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.white.opacity(0.15)))
-                }
-                .padding(.horizontal, 16)
-
-                Spacer().frame(height: 16)
-
-                // Search bar
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.callout)
-                        .foregroundStyle(Color.white.opacity(0.7))
-
-                    TextField("", text: $searchQuery, prompt: Text("Search scholars…")
-                        .foregroundStyle(Color.white.opacity(0.5)))
-                        .font(.subheadline)
-                        .foregroundStyle(.white)
-                        .tint(.white)
-
-                    if !searchQuery.isEmpty {
-                        Button("Clear", systemImage: "xmark.circle.fill", action: { searchQuery = "" })
+                        // Sort button
+                        Button("Sort", systemImage: "list.bullet", action: {})
                             .labelStyle(.iconOnly)
                             .font(.callout)
-                            .foregroundStyle(Color.white.opacity(0.7))
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Circle().fill(Color.white.opacity(0.15)))
+                            .accessibilityLabel("Sort scholars")
                     }
-                }
-                .padding(.horizontal, 16)
-                .frame(height: 48)
-                .background(Color.white.opacity(0.15))
-                .clipShape(.rect(cornerRadius: 24))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                )
-                .padding(.horizontal, 16)
+                    .padding(.horizontal, 16)
 
-                Spacer().frame(height: 12)
-            }
+                    Spacer().frame(height: 16)
+
+                    // Search bar
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.callout)
+                            .foregroundStyle(Color.white.opacity(0.7))
+
+                        TextField("", text: $searchQuery, prompt: Text("Search scholars…")
+                            .foregroundStyle(Color.white.opacity(0.5)))
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                            .tint(.white)
+
+                        if !searchQuery.isEmpty {
+                            Button("Clear", systemImage: "xmark.circle.fill", action: { searchQuery = "" })
+                                .labelStyle(.iconOnly)
+                                .font(.callout)
+                                .foregroundStyle(Color.white.opacity(0.7))
+                                .accessibilityLabel("Clear search")
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .frame(height: 48)
+                    .background(Color.white.opacity(0.15))
+                    .clipShape(.rect(cornerRadius: 24))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 16)
+
+                    Spacer().frame(height: 12)
+                }
         }
         .frame(height: 200)
     }
@@ -229,37 +233,6 @@ private struct MaulanaStatsRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
-    }
-}
-
-private struct MaulanaStatCard: View {
-    let value: String
-    let label: String
-    let icon: String
-    let color: Color
-
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle()
-                    .fill(color.opacity(0.12))
-                    .frame(width: 36, height: 36)
-                Image(systemName: icon)
-                    .font(.subheadline)
-                    .foregroundStyle(color)
-            }
-            Text(value)
-                .font(.title2.bold())
-                .foregroundStyle(colorTextPrimary)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(colorTextSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(16)
-        .background(Color.appCardSurface)
-        .clipShape(.rect(cornerRadius: 14))
-        .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 1)
     }
 }
 
@@ -572,9 +545,13 @@ private struct MaulanaEmptyPlaceholder: View {
 // MARK: - Previews
 // ══════════════════════════════════════════════════════════════════════════
 
-#Preview {
+#Preview("Light") {
     MaulanaView()
         .environment(MaulanaViewModel())
-        //.preferredColorScheme(.dark)
 }
 
+#Preview("Dark") {
+    MaulanaView()
+        .environment(MaulanaViewModel())
+        .preferredColorScheme(.dark)
+}

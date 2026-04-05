@@ -48,6 +48,7 @@ struct EventDetailView: View {
                                     .frame(width: 40, height: 40)
                                     .background(Color.white.opacity(0.15))
                                     .clipShape(Circle())
+                                    .accessibilityLabel("Go back")
 
                                 Spacer()
 
@@ -59,6 +60,7 @@ struct EventDetailView: View {
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
                                         .clipShape(Circle())
+                                        .accessibilityLabel(isSaved ? "Remove from saved" : "Save event")
                                     Button("Share", systemImage: "square.and.arrow.up", action: {})
                                         .labelStyle(.iconOnly)
                                         .font(.body)
@@ -66,10 +68,11 @@ struct EventDetailView: View {
                                         .frame(width: 40, height: 40)
                                         .background(Color.white.opacity(0.15))
                                         .clipShape(Circle())
+                                        .accessibilityLabel("Share event")
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.top, 54)
+                            .padding(.top, 54) // Matches status bar height under .ignoresSafeArea
 
                             Spacer()
 
@@ -310,6 +313,7 @@ private struct EventInfoCard: View {
         .background(Color.appCardSurface)
         .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .accessibilityElement(children: .combine)
     }
 }
 

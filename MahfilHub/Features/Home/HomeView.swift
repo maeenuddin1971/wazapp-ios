@@ -33,9 +33,15 @@ struct HomeView: View {
                 case .home:
                     ScrollView(.vertical) {
                         VStack(spacing: 0) {
-                            HomeHeader(onNotificationTap: {
-                                navigationPath.append(HomeRoute.notificationList)
-                            })
+                            HomeHeader(
+                                unreadCount: notificationsViewModel.unreadCount,
+                                onNotificationTap: {
+                                    navigationPath.append(HomeRoute.notificationList)
+                                },
+                                onSearchTap: {
+                                    selectedTab = .events
+                                }
+                            )
                             QuickActionsSection()
                             UpcomingEventsSection(
                                 events: eventsViewModel.upcomingEvents,
@@ -107,7 +113,10 @@ struct HomeView: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct HomeHeader: View {
+    var unreadCount: Int = 0
     var onNotificationTap: () -> Void = {}
+    var onSearchTap: () -> Void = {}
+
     var body: some View {
         ZStack {
             // Gradient background
@@ -138,10 +147,6 @@ private struct HomeHeader: View {
             }
 
             VStack(spacing: 0) {
-                // Safe area spacer
-                Color.clear.frame(height: 0)
-                    .safeAreaInset(edge: .top) { Color.clear.frame(height: 0) }
-
                 // Top row: Greeting + Notification
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
@@ -155,7 +160,7 @@ private struct HomeHeader: View {
 
                     Spacer()
 
-                    // Notification bell with badge
+                    // Notification bell with dynamic badge
                     Button(action: onNotificationTap) {
                         ZStack(alignment: .topTrailing) {
                             Circle()
@@ -167,37 +172,42 @@ private struct HomeHeader: View {
                                         .foregroundStyle(.white)
                                 )
 
-                            // Badge
-                            Text("3")
-                                .font(.caption.bold())
-                                .foregroundStyle(.white)
-                                .frame(width: 18, height: 18)
-                                .background(colorAccentOrange)
-                                .clipShape(Circle())
-                                .offset(x: 2, y: -2)
+                            if unreadCount > 0 {
+                                Text("\(unreadCount)")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.white)
+                                    .frame(width: 18, height: 18)
+                                    .background(colorAccentOrange)
+                                    .clipShape(Circle())
+                                    .offset(x: 2, y: -2)
+                            }
                         }
                     }
-                    .accessibilityLabel("Notifications, 3 unread")
+                    .accessibilityLabel("Notifications\(unreadCount > 0 ? ", \(unreadCount) unread" : "")")
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 52) // approximate safe area top
+                .padding(.top, topSafeAreaInset + 8)
 
                 Spacer().frame(height: 16)
 
-                // Search bar
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.callout)
-                        .foregroundStyle(Color.white.opacity(0.7))
-                    Text("Search for events…")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.white.opacity(0.6))
-                    Spacer()
+                // Search bar — tappable, navigates to Events tab
+                Button(action: onSearchTap) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.callout)
+                            .foregroundStyle(Color.white.opacity(0.7))
+                        Text("Search for events…")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.white.opacity(0.6))
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .frame(height: 48)
+                    .background(Color.white.opacity(0.15))
+                    .clipShape(.rect(cornerRadius: 24))
                 }
-                .padding(.horizontal, 16)
-                .frame(height: 48)
-                .background(Color.white.opacity(0.15))
-                .clipShape(.rect(cornerRadius: 24))
+                .accessibilityLabel("Search for events")
+                .accessibilityHint("Switches to Events tab to search")
                 .padding(.horizontal, 16)
 
                 Spacer().frame(height: 12)
@@ -211,7 +221,8 @@ private struct HomeHeader: View {
 // MARK: - Quick Actions
 // ══════════════════════════════════════════════════════════════════════════
 
-private struct QuickActionModel {
+private struct QuickActionModel: Identifiable {
+    let id = UUID()
     let icon: String
     let label: String
     let color: Color
@@ -232,9 +243,10 @@ private struct QuickActionsSection: View {
                 .foregroundStyle(colorTextPrimary)
 
             HStack(spacing: 0) {
-                ForEach(0..<actions.count, id: \.self) { index in
+                ForEach(actions) { action in
                     Spacer()
-                    QuickActionItem(action: actions[index])
+                    QuickActionItem(action: action)
+                        .accessibilityLabel(action.label)
                     Spacer()
                 }
             }
@@ -633,8 +645,11 @@ private struct ActivityItem: View {
 
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - Bottom Navigation Bar
+// NOTE: Intentionally uses a custom nav bar instead of SwiftUI TabView/Tab
+// to support the app's custom Islamic-themed visual design (gradient
+// highlights, capsule indicators). If standard tab behaviour is needed
+// later (e.g. badge API, haptics), consider migrating to the Tab API.
 // ══════════════════════════════════════════════════════════════════════════
-
 
 private struct HomeBottomNavBar: View {
     @Binding var selectedTab: HomeTab
@@ -674,6 +689,7 @@ private struct HomeBottomNavBar: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
+                .accessibilityLabel("\(item.label) tab\(selectedTab == item.tab ? ", selected" : "")")
             }
         }
         .padding(.top, 8)
@@ -689,11 +705,17 @@ private struct HomeBottomNavBar: View {
 // MARK: - Previews
 // ══════════════════════════════════════════════════════════════════════════
 
-#Preview {
+#Preview("Light") {
     HomeView()
         .environment(EventsViewModel())
         .environment(MaulanaViewModel())
         .environment(NotificationsViewModel())
-         //.preferredColorScheme(.dark)
 }
 
+#Preview("Dark") {
+    HomeView()
+        .environment(EventsViewModel())
+        .environment(MaulanaViewModel())
+        .environment(NotificationsViewModel())
+        .preferredColorScheme(.dark)
+}

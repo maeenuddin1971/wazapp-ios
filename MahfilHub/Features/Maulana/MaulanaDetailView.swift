@@ -63,6 +63,7 @@ struct MaulanaDetailView: View {
                                     .frame(width: 40, height: 40)
                                     .background(Color.white.opacity(0.15))
                                     .clipShape(Circle())
+                                    .accessibilityLabel("Go back")
                                 Spacer()
                                 Button("Share", systemImage: "square.and.arrow.up", action: {})
                                     .labelStyle(.iconOnly)
@@ -71,9 +72,10 @@ struct MaulanaDetailView: View {
                                     .frame(width: 40, height: 40)
                                     .background(Color.white.opacity(0.15))
                                     .clipShape(Circle())
+                                    .accessibilityLabel("Share scholar profile")
                             }
                             .padding(.horizontal, 16)
-                            .padding(.top, 54)
+                            .padding(.top, 54) // Matches status bar height under .ignoresSafeArea
 
                             Spacer().frame(height: 12)
 
@@ -251,25 +253,6 @@ struct MaulanaDetailView: View {
 }
 
 // MARK: - Sub-components
-
-private struct MaulanaStatCard: View {
-    let value: String; let label: String; let color: Color
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(.title2.bold())
-                .foregroundStyle(color)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(colorTextSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(Color.appCardSurface)
-        .clipShape(.rect(cornerRadius: 14))
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-    }
-}
 
 private struct MaulanaInfoRow: View {
     let icon: String; let label: String; let value: String; let color: Color
