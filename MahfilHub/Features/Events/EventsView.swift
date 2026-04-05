@@ -37,36 +37,23 @@ struct EventItemModel: Identifiable, Hashable {
 // ══════════════════════════════════════════════════════════════════════════
 
 struct EventsView: View {
-    @State private var selectedFilter = "All"
-    @State private var searchQuery = ""
+    @Environment(EventsViewModel.self) private var viewModel
     var onEventClick: ((EventItemModel) -> Void)? = nil
 
-    private let filters = ["All", "Today", "This Week", "This Month"]
-
-    private var filteredEvents: [EventItemModel] {
-        sampleEventsPublic.filter { event in
-            let matchesFilter = selectedFilter == "All" || event.category == selectedFilter
-            let matchesSearch = searchQuery.isEmpty ||
-                event.title.localizedStandardContains(searchQuery) ||
-                event.maulana.localizedStandardContains(searchQuery) ||
-                event.location.localizedStandardContains(searchQuery)
-            return matchesFilter && matchesSearch
-        }
-    }
-
     var body: some View {
+        @Bindable var vm = viewModel
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
-                EventsHeader(searchQuery: $searchQuery)
-                EventsFilterChips(filters: filters, selectedFilter: $selectedFilter)
+                EventsHeader(searchQuery: $vm.searchQuery)
+                EventsFilterChips(filters: vm.filters, selectedFilter: $vm.selectedFilter)
                 EventsStatsBar(
-                    totalEvents: filteredEvents.count,
-                    liveCount: filteredEvents.count(where: { $0.isLive })
+                    totalEvents: vm.filteredEvents.count,
+                    liveCount: vm.liveCount
                 )
-                if filteredEvents.isEmpty {
+                if vm.filteredEvents.isEmpty {
                     EmptyEventsPlaceholder()
                 } else {
-                    ForEach(filteredEvents) { event in
+                    ForEach(vm.filteredEvents) { event in
                         EventListCard(event: event, onTap: { onEventClick?(event) })
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
@@ -486,6 +473,7 @@ private struct EmptyEventsPlaceholder: View {
 
 #Preview {
     EventsView()
+        .environment(EventsViewModel())
         //.preferredColorScheme(.dark)
 }
 

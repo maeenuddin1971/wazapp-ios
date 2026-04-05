@@ -37,75 +37,37 @@ struct MaulanaItemModel: Identifiable, Hashable {
     }
 }
 
-private let sampleMaulanas = [
-    MaulanaItemModel(id: 1, name: "Maulana Abdul Karim", title: "Senior Scholar", specialization: "Tafseer & Hadith", location: "Dhaka, Bangladesh", totalEvents: 120, upcomingEvents: 3, followers: 4520, rating: 4.9, isVerified: true, category: "Popular"),
-    MaulanaItemModel(id: 2, name: "Maulana Tariq Jameel", title: "International Speaker", specialization: "Dawah & Islah", location: "Lahore, Pakistan", totalEvents: 85, upcomingEvents: 2, followers: 12800, rating: 4.8, isVerified: true, category: "Popular"),
-    MaulanaItemModel(id: 3, name: "Maulana Hassan Ali", title: "Quran Teacher", specialization: "Tafseer Al-Quran", location: "Chittagong, Bangladesh", totalEvents: 64, upcomingEvents: 1, followers: 2150, rating: 4.7, category: "Popular"),
-    MaulanaItemModel(id: 4, name: "Maulana Ibrahim Khalil", title: "Youth Mentor", specialization: "Youth & Contemporary Issues", location: "Sylhet, Bangladesh", totalEvents: 42, upcomingEvents: 2, followers: 1800, rating: 4.6, category: "New"),
-    MaulanaItemModel(id: 5, name: "Qari Muhammad Yusuf", title: "Hafiz & Qari", specialization: "Quran Recitation & Tajweed", location: "Rajshahi, Bangladesh", totalEvents: 35, upcomingEvents: 1, followers: 980, rating: 4.9, isVerified: true, category: "New"),
-    MaulanaItemModel(id: 6, name: "Mufti Abdul Rahman", title: "Islamic Finance Expert", specialization: "Fiqh & Islamic Finance", location: "Dhaka, Bangladesh", totalEvents: 28, upcomingEvents: 0, followers: 1450, rating: 4.5, isVerified: true, category: "Popular"),
-    MaulanaItemModel(id: 7, name: "Maulana Shah Ahmed", title: "Community Leader", specialization: "Seerah & History", location: "Khulna, Bangladesh", totalEvents: 55, upcomingEvents: 2, followers: 3200, rating: 4.7, category: "Popular"),
-    MaulanaItemModel(id: 8, name: "Maulana Noor Islam", title: "Spiritual Guide", specialization: "Tasawwuf & Zikr", location: "Comilla, Bangladesh", totalEvents: 30, upcomingEvents: 1, followers: 890, rating: 4.4, category: "New"),
-    MaulanaItemModel(id: 9, name: "Maulana Fazlur Rahman", title: "Hadith Scholar", specialization: "Sahih Bukhari & Muslim", location: "Barisal, Bangladesh", totalEvents: 48, upcomingEvents: 0, followers: 2600, rating: 4.8, isVerified: true, category: "Popular"),
-    MaulanaItemModel(id: 10, name: "Maulana Yusuf Ali", title: "Education Specialist", specialization: "Islamic Education & Tarbiyah", location: "Rangpur, Bangladesh", totalEvents: 22, upcomingEvents: 1, followers: 720, rating: 4.3, category: "New")
-]
-
-private func formatFollowers(_ count: Int) -> String {
-    if count >= 1000 {
-        return "\((Double(count) / 1000.0).formatted(.number.precision(.fractionLength(1))))K"
-    }
-    return "\(count)"
-}
-
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - MaulanaView
 // ══════════════════════════════════════════════════════════════════════════
 
 struct MaulanaView: View {
-    @State private var selectedFilter = "All"
-    @State private var searchQuery = ""
+    @Environment(MaulanaViewModel.self) private var viewModel
     var onMaulanaClick: ((MaulanaItemModel) -> Void)? = nil
 
-    private let filters = ["All", "Popular", "New", "Verified"]
-
-    private var filteredMaulanas: [MaulanaItemModel] {
-        sampleMaulanas.filter { maulana in
-            let matchesFilter: Bool
-            switch selectedFilter {
-            case "All": matchesFilter = true
-            case "Verified": matchesFilter = maulana.isVerified
-            default: matchesFilter = maulana.category == selectedFilter
-            }
-            let matchesSearch = searchQuery.isEmpty ||
-                maulana.name.localizedStandardContains(searchQuery) ||
-                maulana.specialization.localizedStandardContains(searchQuery) ||
-                maulana.location.localizedStandardContains(searchQuery)
-            return matchesFilter && matchesSearch
-        }
-    }
-
     var body: some View {
+        @Bindable var vm = viewModel
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 // ── Header ─────────────────────────────────────
-                MaulanaHeader(searchQuery: $searchQuery)
+                MaulanaHeader(searchQuery: $vm.searchQuery)
 
                 // ── Stats Row ──────────────────────────────────
                 MaulanaStatsRow()
 
                 // ── Filter Chips ───────────────────────────────
                 MaulanaFilterChips(
-                    filters: filters,
-                    selectedFilter: $selectedFilter
+                    filters: vm.filters,
+                    selectedFilter: $vm.selectedFilter
                 )
 
                 // ── Results Count ──────────────────────────────
                 HStack {
-                    Text("\(filteredMaulanas.count) scholars found")
+                    Text("\(vm.filteredMaulanas.count) scholars found")
                         .font(.caption)
                         .foregroundStyle(colorTextSecondary)
                     Spacer()
-                    Text("\(sampleMaulanas.count(where: { $0.isVerified })) Verified")
+                    Text("\(vm.verifiedCount) Verified")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(colorVerifiedBadge)
                 }
@@ -113,10 +75,10 @@ struct MaulanaView: View {
                 .padding(.bottom, 8)
 
                 // ── Maulana Cards ──────────────────────────────
-                if filteredMaulanas.isEmpty {
+                if vm.filteredMaulanas.isEmpty {
                     MaulanaEmptyPlaceholder()
                 } else {
-                    ForEach(filteredMaulanas) { maulana in
+                    ForEach(vm.filteredMaulanas) { maulana in
                         MaulanaProfileCard(maulana: maulana, onTap: { onMaulanaClick?(maulana) })
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
@@ -242,22 +204,24 @@ private struct MaulanaHeader: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct MaulanaStatsRow: View {
+    @Environment(MaulanaViewModel.self) private var viewModel
+
     var body: some View {
         HStack(spacing: 16) {
             MaulanaStatCard(
-                value: "\(sampleMaulanas.count)",
+                value: "\(viewModel.totalCount)",
                 label: "Total",
                 icon: "person.fill",
                 color: colorPrimaryTeal
             )
             MaulanaStatCard(
-                value: "\(sampleMaulanas.count(where: { $0.isVerified }))",
+                value: "\(viewModel.verifiedCount)",
                 label: "Verified",
                 icon: "checkmark.seal.fill",
                 color: colorVerifiedBadge
             )
             MaulanaStatCard(
-                value: "\(sampleMaulanas.map { $0.upcomingEvents }.reduce(0, +))",
+                value: "\(viewModel.totalUpcomingEvents)",
                 label: "Upcoming",
                 icon: "calendar",
                 color: colorAccentOrange
@@ -515,7 +479,7 @@ private struct MaulanaProfileCard: View {
                 Divider()
                     .frame(height: 36)
                 MaulanaInlineStat(
-                    value: formatFollowers(maulana.followers),
+                    value: formatFollowerCount(maulana.followers),
                     label: "Followers",
                     color: colorInfoBlue
                 )
@@ -610,6 +574,7 @@ private struct MaulanaEmptyPlaceholder: View {
 
 #Preview {
     MaulanaView()
+        .environment(MaulanaViewModel())
         //.preferredColorScheme(.dark)
 }
 

@@ -36,9 +36,17 @@ struct MahfilHubApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var currentScreen: AppScreen = .splash
 
+    // MARK: - ViewModels (single source of truth)
+    @State private var eventsViewModel = EventsViewModel()
+    @State private var maulanaViewModel = MaulanaViewModel()
+    @State private var notificationsViewModel = NotificationsViewModel()
+
     var body: some Scene {
         WindowGroup {
             AppRootView(currentScreen: $currentScreen)
+                .environment(eventsViewModel)
+                .environment(maulanaViewModel)
+                .environment(notificationsViewModel)
         }
     }
 }

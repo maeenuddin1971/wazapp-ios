@@ -22,6 +22,9 @@ enum HomeTab: Int, CaseIterable {
 struct HomeView: View {
     @State private var selectedTab: HomeTab = .home
     @State private var navigationPath = NavigationPath()
+    @Environment(EventsViewModel.self) private var eventsViewModel
+    @Environment(MaulanaViewModel.self) private var maulanaViewModel
+    @Environment(NotificationsViewModel.self) private var notificationsViewModel
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -34,12 +37,18 @@ struct HomeView: View {
                                 navigationPath.append(HomeRoute.notificationList)
                             })
                             QuickActionsSection()
-                            UpcomingEventsSection(onEventClick: { event in
-                                navigationPath.append(HomeRoute.eventDetail(event))
-                            })
-                            FeaturedMaulanaSection(onMaulanaClick: { maulana in
-                                navigationPath.append(HomeRoute.maulanaDetail(maulana))
-                            })
+                            UpcomingEventsSection(
+                                events: eventsViewModel.upcomingEvents,
+                                onEventClick: { event in
+                                    navigationPath.append(HomeRoute.eventDetail(event))
+                                }
+                            )
+                            FeaturedMaulanaSection(
+                                maulanas: maulanaViewModel.featuredMaulanas,
+                                onMaulanaClick: { maulana in
+                                    navigationPath.append(HomeRoute.maulanaDetail(maulana))
+                                }
+                            )
                             RecentActivitySection()
                             Spacer().frame(height: 16)
                         }
@@ -80,7 +89,7 @@ struct HomeView: View {
                     NotificationDetailView(
                         notification: notification,
                         onEventClick: { eventId in
-                            if let event = sampleEventsPublic.first(where: { $0.id == eventId }) {
+                            if let event = eventsViewModel.event(byId: eventId) {
                                 navigationPath.append(HomeRoute.eventDetail(event))
                             }
                         }
@@ -269,6 +278,7 @@ private struct QuickActionItem: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct UpcomingEventsSection: View {
+    let events: [EventItemModel]
     var onEventClick: ((EventItemModel) -> Void)? = nil
 
     var body: some View {
@@ -286,7 +296,7 @@ private struct UpcomingEventsSection: View {
 
             ScrollView(.horizontal) {
                 HStack(spacing: 16) {
-                    ForEach(sampleEventsPublic.prefix(5)) { event in
+                    ForEach(events) { event in
                         EventCard(
                             title: event.title,
                             maulana: event.maulana,
@@ -452,6 +462,7 @@ private struct EventCard: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct FeaturedMaulanaSection: View {
+    let maulanas: [MaulanaItemModel]
     var onMaulanaClick: ((MaulanaItemModel) -> Void)? = nil
 
     var body: some View {
@@ -469,7 +480,7 @@ private struct FeaturedMaulanaSection: View {
 
             ScrollView(.horizontal) {
                 HStack(spacing: 16) {
-                    ForEach(sampleMaulanasPublic.prefix(5)) { maulana in
+                    ForEach(maulanas) { maulana in
                         MaulanaChip(
                             name: maulana.name,
                             eventCount: "\(maulana.totalEvents) Events",
@@ -680,6 +691,9 @@ private struct HomeBottomNavBar: View {
 
 #Preview {
     HomeView()
+        .environment(EventsViewModel())
+        .environment(MaulanaViewModel())
+        .environment(NotificationsViewModel())
          //.preferredColorScheme(.dark)
 }
 

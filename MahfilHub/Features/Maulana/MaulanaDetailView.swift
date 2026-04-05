@@ -6,6 +6,7 @@ struct MaulanaDetailView: View {
     let maulana: MaulanaItemModel
     var onEventClick: ((EventItemModel) -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
+    @Environment(EventsViewModel.self) private var eventsViewModel
 
     @State private var isFollowing: Bool
 
@@ -25,7 +26,7 @@ struct MaulanaDetailView: View {
     }
 
     private var maulanaEvents: [EventItemModel] {
-        sampleEventsPublic.filter { $0.maulana == maulana.name }
+        eventsViewModel.events(forMaulana: maulana.name)
     }
 
     var body: some View {
@@ -133,7 +134,7 @@ struct MaulanaDetailView: View {
                     HStack(spacing: 12) {
                         MaulanaStatCard(value: "\(maulana.totalEvents)", label: "Total Events", color: colorPrimaryTeal)
                         MaulanaStatCard(value: "\(maulana.upcomingEvents)", label: "Upcoming", color: colorAccentOrange)
-                        MaulanaStatCard(value: formatMaulanaFollowers(maulana.followers), label: "Followers", color: colorInfoBlue)
+                        MaulanaStatCard(value: formatFollowerCount(maulana.followers), label: "Followers", color: colorInfoBlue)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -149,11 +150,11 @@ struct MaulanaDetailView: View {
                         MaulanaInfoRow(icon: "info.circle", label: "Specialization", value: maulana.specialization, color: colorAccentOrange)
                         MaulanaInfoRow(icon: "location.fill", label: "Location", value: maulana.location, color: colorSecondaryGreen)
                         MaulanaInfoRow(icon: "calendar", label: "Events Conducted", value: "\(maulana.totalEvents) events", color: colorPrimaryTeal)
-                        MaulanaInfoRow(icon: "person.2.fill", label: "Followers", value: "\(formatMaulanaFollowers(maulana.followers)) followers", color: colorInfoBlue)
+                        MaulanaInfoRow(icon: "person.2.fill", label: "Followers", value: "\(formatFollowerCount(maulana.followers)) followers", color: colorInfoBlue)
 
                         Spacer().frame(height: 4)
 
-                        Text("\(maulana.name) is a renowned Islamic scholar specializing in \(maulana.specialization). Based in \(maulana.location), they have conducted \(maulana.totalEvents) events and have a community of \(formatMaulanaFollowers(maulana.followers)) devoted followers. Known for their eloquent delivery and deep knowledge, they continue to inspire and educate communities across the region.")
+                        Text("\(maulana.name) is a renowned Islamic scholar specializing in \(maulana.specialization). Based in \(maulana.location), they have conducted \(maulana.totalEvents) events and have a community of \(formatFollowerCount(maulana.followers)) devoted followers. Known for their eloquent delivery and deep knowledge, they continue to inspire and educate communities across the region.")
                             .font(.subheadline)
                             .foregroundStyle(colorTextSecondary)
                             .lineSpacing(6)
@@ -247,12 +248,6 @@ struct MaulanaDetailView: View {
         .ignoresSafeArea(edges: .top)
         .background(colorBackgroundCream)
     }
-}
-
-// MARK: - Helper functions
-
-private func formatMaulanaFollowers(_ count: Int) -> String {
-    count >= 1000 ? "\((Double(count) / 1000.0).formatted(.number.precision(.fractionLength(1))))K" : "\(count)"
 }
 
 // MARK: - Sub-components
@@ -378,30 +373,11 @@ private struct MaulanaEventMiniCard: View {
     }
 }
 
-// MARK: - Public sample data accessor (used by MaulanaDetailView)
-let sampleEventsPublic: [EventItemModel] = [
-    EventItemModel(id: 1, title: "Friday Waz Mahfil", maulana: "Maulana Abdul Karim", location: "Dhaka Central Mosque, Motijheel", date: "Mar 14, 2026", time: "After Jummah", isLive: true, isFeatured: true, attendees: 245, category: "Today"),
-    EventItemModel(id: 2, title: "Tafseer Al-Quran", maulana: "Maulana Tariq Jameel", location: "Baitul Mukarram National Mosque", date: "Mar 15, 2026", time: "After Maghrib", isFeatured: true, attendees: 180, category: "This Week"),
-    EventItemModel(id: 3, title: "Seerah Conference", maulana: "Maulana Hassan Ali", location: "Chittagong Grand Masjid", date: "Mar 18, 2026", time: "10:00 AM", attendees: 320, category: "This Week"),
-    EventItemModel(id: 4, title: "Youth Islamic Seminar", maulana: "Maulana Ibrahim Khalil", location: "Sylhet Central Eidgah", date: "Mar 20, 2026", time: "3:00 PM", attendees: 150, category: "This Month"),
-    EventItemModel(id: 5, title: "Quran Recitation Night", maulana: "Qari Muhammad Yusuf", location: "Rajshahi City Mosque", date: "Mar 22, 2026", time: "After Isha", attendees: 95, category: "This Month"),
-    EventItemModel(id: 6, title: "Islamic Finance Workshop", maulana: "Mufti Abdul Rahman", location: "BICC, Dhaka", date: "Mar 25, 2026", time: "9:00 AM", attendees: 75, category: "This Month"),
-    EventItemModel(id: 7, title: "Milad-un-Nabi Program", maulana: "Maulana Shah Ahmed", location: "Khulna Boro Masjid", date: "Mar 28, 2026", time: "After Asr", isFeatured: true, attendees: 400, category: "This Month"),
-    EventItemModel(id: 8, title: "Dua & Zikr Evening", maulana: "Maulana Noor Islam", location: "Comilla Central Mosque", date: "Mar 14, 2026", time: "After Maghrib", attendees: 60, category: "Today")
-]
-
-let sampleMaulanasPublic: [MaulanaItemModel] = [
-    MaulanaItemModel(id: 1, name: "Maulana Abdul Karim", title: "Senior Scholar", specialization: "Tafseer & Hadith", location: "Dhaka, Bangladesh", totalEvents: 120, upcomingEvents: 3, followers: 4520, rating: 4.9, isVerified: true, category: "Popular"),
-    MaulanaItemModel(id: 2, name: "Maulana Tariq Jameel", title: "International Speaker", specialization: "Dawah & Islah", location: "Lahore, Pakistan", totalEvents: 85, upcomingEvents: 2, followers: 12800, rating: 4.8, isVerified: true, category: "Popular"),
-    MaulanaItemModel(id: 3, name: "Maulana Hassan Ali", title: "Quran Teacher", specialization: "Tafseer Al-Quran", location: "Chittagong, Bangladesh", totalEvents: 64, upcomingEvents: 1, followers: 2150, rating: 4.7, category: "Popular"),
-    MaulanaItemModel(id: 4, name: "Maulana Ibrahim Khalil", title: "Youth Mentor", specialization: "Youth & Contemporary Issues", location: "Sylhet, Bangladesh", totalEvents: 42, upcomingEvents: 2, followers: 1800, rating: 4.6, category: "New"),
-    MaulanaItemModel(id: 5, name: "Qari Muhammad Yusuf", title: "Hafiz & Qari", specialization: "Quran Recitation & Tajweed", location: "Rajshahi, Bangladesh", totalEvents: 35, upcomingEvents: 1, followers: 980, rating: 4.9, isVerified: true, category: "New")
-]
-
 #Preview {
     MaulanaDetailView(maulana: MaulanaItemModel(
         id: 1, name: "Maulana Abdul Karim", title: "Senior Scholar",
         specialization: "Tafseer & Hadith", location: "Dhaka, Bangladesh",
         totalEvents: 120, upcomingEvents: 3, followers: 4520, rating: 4.9, isVerified: true
     ))
+    .environment(EventsViewModel())
 }

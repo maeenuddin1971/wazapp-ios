@@ -306,6 +306,10 @@ private struct DetailInfoRow: View {
 
 #Preview {
     NotificationDetailView(
-        notification: sampleNotifications[0]
+        notification: NotificationItemModel(
+            id: 1, title: "New Event Added",
+            message: "Friday Waz Mahfil by Maulana Abdul Karim has been scheduled at Dhaka Central Mosque.",
+            time: "2 min ago", type: .event, relatedId: 1
+        )
     )
 }
