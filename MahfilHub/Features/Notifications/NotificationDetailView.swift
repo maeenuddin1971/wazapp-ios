@@ -4,9 +4,9 @@ import SwiftUI
 
 struct NotificationDetailView: View {
     let notification: NotificationItemModel
-    var onBack: () -> Void = {}
     var onEventClick: ((Int) -> Void)? = nil
     var onMaulanaClick: ((Int) -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
     
     @State private var scrollOffset: CGFloat = 0
     @State private var initialOffset: CGFloat? = nil
@@ -131,7 +131,7 @@ struct NotificationDetailView: View {
             .allowsHitTesting(false)
             
             // ── Back button (always visible) ──────────────────────────
-            Button("Back", systemImage: "arrow.left", action: onBack)
+            Button("Back", systemImage: "arrow.left", action: { dismiss() })
                 .labelStyle(.iconOnly)
                 .font(.headline)
                 .foregroundStyle(.white)

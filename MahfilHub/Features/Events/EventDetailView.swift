@@ -4,8 +4,7 @@ import SwiftUI
 
 struct EventDetailView: View {
     let event: EventItemModel
-    var onBack: () -> Void = {}
-    var onMaulanaClick: ((Int) -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
 
     @State private var isSaved = false
 
@@ -42,7 +41,7 @@ struct EventDetailView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             // ── Top Bar ──────────────────────────────
                             HStack {
-                                Button("Back", systemImage: "arrow.left", action: onBack)
+                                Button("Back", systemImage: "arrow.left", action: { dismiss() })
                                     .labelStyle(.iconOnly)
                                     .font(.headline)
                                     .foregroundStyle(.white)

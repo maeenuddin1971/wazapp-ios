@@ -1,9 +1,11 @@
 import Foundation
+import Observation
 
 /// Simple session manager backed by UserDefaults.
 /// Stores login state and basic user info.
 /// Replace static values with real API data later.
 @MainActor
+@Observable
 final class SessionManager {
     
     static let shared = SessionManager()
@@ -17,13 +19,17 @@ final class SessionManager {
         static let userEmail  = "mahfilhub_user_email"
     }
     
-    private init() {}
-    
-    // MARK: - Login State
-    
-    var isLoggedIn: Bool {
-        defaults.bool(forKey: Keys.isLoggedIn)
+    private init() {
+        _isLoggedIn = defaults.bool(forKey: Keys.isLoggedIn)
+        _userName = defaults.string(forKey: Keys.userName) ?? "Guest"
+        _userEmail = defaults.string(forKey: Keys.userEmail) ?? ""
     }
+    
+    // MARK: - Observable State
+    
+    private(set) var isLoggedIn: Bool = false
+    private(set) var userName: String = "Guest"
+    private(set) var userEmail: String = ""
     
     /// Save login session. Uses static placeholder values for now.
     /// Replace with real API response data later.
@@ -31,21 +37,17 @@ final class SessionManager {
         defaults.set(true, forKey: Keys.isLoggedIn)
         defaults.set(name, forKey: Keys.userName)
         defaults.set(email, forKey: Keys.userEmail)
+        isLoggedIn = true
+        userName = name
+        userEmail = email
     }
     
     func logout() {
         defaults.set(false, forKey: Keys.isLoggedIn)
         defaults.removeObject(forKey: Keys.userName)
         defaults.removeObject(forKey: Keys.userEmail)
-    }
-    
-    // MARK: - User Info
-    
-    var userName: String {
-        defaults.string(forKey: Keys.userName) ?? "Guest"
-    }
-    
-    var userEmail: String {
-        defaults.string(forKey: Keys.userEmail) ?? ""
+        isLoggedIn = false
+        userName = "Guest"
+        userEmail = ""
     }
 }

@@ -1,6 +1,17 @@
 import SwiftUI
 
 // ══════════════════════════════════════════════════════════════════════════
+// MARK: - Navigation Route
+// ══════════════════════════════════════════════════════════════════════════
+
+enum HomeRoute: Hashable {
+    case eventDetail(EventItemModel)
+    case maulanaDetail(MaulanaItemModel)
+    case notificationList
+    case notificationDetail(NotificationItemModel)
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 // MARK: - HomeView
 // ══════════════════════════════════════════════════════════════════════════
 
@@ -10,28 +21,24 @@ enum HomeTab: Int, CaseIterable {
 
 struct HomeView: View {
     @State private var selectedTab: HomeTab = .home
-    @State private var selectedEvent: EventItemModel? = nil
-    @State private var selectedMaulana: MaulanaItemModel? = nil
-    @State private var showNotificationList = false
-    @State private var selectedNotification: NotificationItemModel? = nil
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
-        ZStack {
-            // ── Main tabbed content ──────────────────────────────────
+        NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
                 switch selectedTab {
                 case .home:
                     ScrollView(.vertical) {
                         VStack(spacing: 0) {
                             HomeHeader(onNotificationTap: {
-                                withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = true }
+                                navigationPath.append(HomeRoute.notificationList)
                             })
                             QuickActionsSection()
                             UpcomingEventsSection(onEventClick: { event in
-                                withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+                                navigationPath.append(HomeRoute.eventDetail(event))
                             })
                             FeaturedMaulanaSection(onMaulanaClick: { maulana in
-                                withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = maulana }
+                                navigationPath.append(HomeRoute.maulanaDetail(maulana))
                             })
                             RecentActivitySection()
                             Spacer().frame(height: 16)
@@ -40,14 +47,12 @@ struct HomeView: View {
                     .scrollIndicators(.hidden)
                 case .events:
                     EventsView(onEventClick: { event in
-                        withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+                        navigationPath.append(HomeRoute.eventDetail(event))
                     })
                 case .maulana:
-                    MaulanaView(
-                        onMaulanaClick: { maulana in
-                            withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = maulana }
-                        }
-                    )
+                    MaulanaView(onMaulanaClick: { maulana in
+                        navigationPath.append(HomeRoute.maulanaDetail(maulana))
+                    })
                 case .profile:
                     ProfileView()
                 }
@@ -55,63 +60,33 @@ struct HomeView: View {
             }
             .background(colorBackgroundCream)
             .ignoresSafeArea(.container, edges: .top)
-
-            // ── Event Detail overlay ─────────────────────────────────
-            if let event = selectedEvent {
-                EventDetailView(
-                    event: event,
-                    onBack: {
-                        withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = nil }
-                    }
-                )
-                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                .zIndex(12)
-            }
-
-            // ── Maulana Detail overlay ───────────────────────────────
-            if let maulana = selectedMaulana {
-                MaulanaDetailView(
-                    maulana: maulana,
-                    onBack: {
-                        withAnimation(.easeInOut(duration: 0.3)) { selectedMaulana = nil }
-                    },
-                    onEventClick: { event in
-                        withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
-                    }
-                )
-                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                .zIndex(11)
-            }
-
-            // ── Notification List overlay ────────────────────────────
-            if showNotificationList {
-                NotificationListView(
-                    onBack: {
-                        withAnimation(.easeInOut(duration: 0.3)) { showNotificationList = false }
-                    },
-                    onNotificationClick: { notification in
-                        withAnimation(.easeInOut(duration: 0.3)) { selectedNotification = notification }
-                    }
-                )
-                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                .zIndex(13)
-            }
-
-            // ── Notification Detail overlay ──────────────────────────
-            if let notification = selectedNotification {
-                NotificationDetailView(
-                    notification: notification,
-                    onBack: {
-                        withAnimation(.easeInOut(duration: 0.3)) { selectedNotification = nil }
-                    },
-                    onEventClick: { eventId in
-                        if let event = sampleEventsPublic.first(where: { $0.id == eventId }) {
-                            withAnimation(.easeInOut(duration: 0.3)) { selectedEvent = event }
+            .navigationBarHidden(true)
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .eventDetail(let event):
+                    EventDetailView(event: event)
+                        .navigationBarHidden(true)
+                case .maulanaDetail(let maulana):
+                    MaulanaDetailView(maulana: maulana, onEventClick: { event in
+                        navigationPath.append(HomeRoute.eventDetail(event))
+                    })
+                    .navigationBarHidden(true)
+                case .notificationList:
+                    NotificationListView(onNotificationClick: { notification in
+                        navigationPath.append(HomeRoute.notificationDetail(notification))
+                    })
+                    .navigationBarHidden(true)
+                case .notificationDetail(let notification):
+                    NotificationDetailView(
+                        notification: notification,
+                        onEventClick: { eventId in
+                            if let event = sampleEventsPublic.first(where: { $0.id == eventId }) {
+                                navigationPath.append(HomeRoute.eventDetail(event))
+                            }
                         }
-                    }
-                )
-                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                .zIndex(14)
+                    )
+                    .navigationBarHidden(true)
+                }
             }
         }
     }

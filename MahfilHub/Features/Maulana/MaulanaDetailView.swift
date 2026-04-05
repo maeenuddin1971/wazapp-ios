@@ -4,14 +4,13 @@ import SwiftUI
 
 struct MaulanaDetailView: View {
     let maulana: MaulanaItemModel
-    var onBack: () -> Void = {}
     var onEventClick: ((EventItemModel) -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
 
     @State private var isFollowing: Bool
 
-    init(maulana: MaulanaItemModel, onBack: @escaping () -> Void = {}, onEventClick: ((EventItemModel) -> Void)? = nil) {
+    init(maulana: MaulanaItemModel, onEventClick: ((EventItemModel) -> Void)? = nil) {
         self.maulana = maulana
-        self.onBack = onBack
         self.onEventClick = onEventClick
         _isFollowing = State(initialValue: maulana.isFollowing)
     }
@@ -56,7 +55,7 @@ struct MaulanaDetailView: View {
                         VStack(spacing: 0) {
                             // ── Top Bar ──────────────────────────────
                             HStack {
-                                Button("Back", systemImage: "arrow.left", action: onBack)
+                                Button("Back", systemImage: "arrow.left", action: { dismiss() })
                                     .labelStyle(.iconOnly)
                                     .font(.headline)
                                     .foregroundStyle(.white)

@@ -4,7 +4,7 @@ import SwiftUI
 // MARK: - Sample Event Data
 // ──────────────────────────────────────────────────────────────────────────
 
-struct EventItemModel: Identifiable {
+struct EventItemModel: Identifiable, Hashable {
     let id: Int
     let title: String
     let maulana: String

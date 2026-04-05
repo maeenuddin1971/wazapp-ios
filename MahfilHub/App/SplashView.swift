@@ -71,6 +71,10 @@ struct SplashView: View {
             }
         }
         .onAppear(perform: startAnimations)
+        .task {
+            try? await Task.sleep(for: .seconds(SplashAnimations.splashDisplayDuration))
+            onFinished()
+        }
     }
 
     private func startAnimations() {
@@ -84,12 +88,6 @@ struct SplashView: View {
         withAnimation(SplashAnimations.glowPulseAnimation) { glowPulse = 1.2 }
         withAnimation(SplashAnimations.logoFloatAnimation) { logoFloat = 12.0 }
         withAnimation(SplashAnimations.bgRotationAnimation) { bgRotation = 360.0 }
-
-        // Transition Timeout
-        Task {
-            try? await Task.sleep(for: .seconds(SplashAnimations.splashDisplayDuration))
-            onFinished()
-        }
     }
 }
 

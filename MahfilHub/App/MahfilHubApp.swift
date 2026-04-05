@@ -4,7 +4,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 // MARK: - Splash teal colour (Asset Catalog backed)
 let kSplashTeal = UIColor.appSplashTeal

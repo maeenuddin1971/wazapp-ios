@@ -8,7 +8,7 @@ enum NotificationType: String, CaseIterable {
     var displayName: String { rawValue.capitalized }
 }
 
-struct NotificationItemModel: Identifiable {
+struct NotificationItemModel: Identifiable, Hashable {
     let id: Int
     let title: String
     let message: String
@@ -71,8 +71,8 @@ extension NotificationType {
 // MARK: - NotificationListView
 
 struct NotificationListView: View {
-    var onBack: () -> Void = {}
     var onNotificationClick: ((NotificationItemModel) -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
     
     @State private var selectedFilter = "All"
     @State private var scrollOffset: CGFloat = 0
@@ -183,7 +183,7 @@ struct NotificationListView: View {
             .allowsHitTesting(false)
             
             // ── Back button (always visible) ──────────────────────────
-            Button("Back", systemImage: "arrow.left", action: onBack)
+            Button("Back", systemImage: "arrow.left", action: { dismiss() })
                 .labelStyle(.iconOnly)
                 .font(.headline)
                 .foregroundStyle(.white)

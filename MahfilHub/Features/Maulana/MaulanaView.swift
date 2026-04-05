@@ -4,7 +4,7 @@ import SwiftUI
 // MARK: - Sample Maulana Data
 // ──────────────────────────────────────────────────────────────────────────
 
-struct MaulanaItemModel: Identifiable {
+struct MaulanaItemModel: Identifiable, Hashable {
     let id: Int
     let name: String
     let title: String
