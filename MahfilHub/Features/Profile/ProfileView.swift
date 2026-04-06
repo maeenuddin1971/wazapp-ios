@@ -6,6 +6,7 @@ import SwiftUI
 
 struct ProfileView: View {
     var onNotificationsTap: (() -> Void)? = nil
+    var onEditProfileTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -22,7 +23,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "person", title: "Edit Profile",
                         subtitle: "Update your information",
-                        color: colorPrimaryTeal
+                        color: colorPrimaryTeal,
+                        action: onEditProfileTap
                     ),
                     ProfileMenuItemModel(
                         icon: "bell", title: "Notifications",

@@ -9,6 +9,7 @@ enum HomeRoute: Hashable {
     case maulanaDetail(MaulanaItemModel)
     case notificationList
     case notificationDetail(NotificationItemModel)
+    case editProfile
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -69,9 +70,14 @@ struct HomeView: View {
                         navigationPath.append(HomeRoute.maulanaDetail(maulana))
                     })
                 case .profile:
-                    ProfileView(onNotificationsTap: {
-                        navigationPath.append(HomeRoute.notificationList)
-                    })
+                    ProfileView(
+                        onNotificationsTap: {
+                            navigationPath.append(HomeRoute.notificationList)
+                        },
+                        onEditProfileTap: {
+                            navigationPath.append(HomeRoute.editProfile)
+                        }
+                    )
                 }
                 HomeBottomNavBar(selectedTab: $selectedTab)
             }
@@ -103,6 +109,9 @@ struct HomeView: View {
                         }
                     )
                     .navigationBarHidden(true)
+                case .editProfile:
+                    EditProfileView()
+                        .navigationBarHidden(true)
                 }
             }
         }
