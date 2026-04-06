@@ -69,7 +69,9 @@ struct HomeView: View {
                         navigationPath.append(HomeRoute.maulanaDetail(maulana))
                     })
                 case .profile:
-                    ProfileView()
+                    ProfileView(onNotificationsTap: {
+                        navigationPath.append(HomeRoute.notificationList)
+                    })
                 }
                 HomeBottomNavBar(selectedTab: $selectedTab)
             }

@@ -9,10 +9,11 @@ struct NotificationDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var scrollOffset: CGFloat = 0
-    @State private var initialOffset: CGFloat? = nil
+    @State private var initialScrollValue: CGFloat?
     
     private let expandedHeight: CGFloat = 300
-    private let collapsedHeight: CGFloat = 120
+    /// Collapsed = status-bar safe area + back button row
+    private var collapsedHeight: CGFloat { topSafeAreaInset + 50 }
     
     private var headerColors: [Color] {
         switch notification.type {
@@ -24,16 +25,20 @@ struct NotificationDetailView: View {
         }
     }
     
-    /// 0 = expanded, 1 = collapsed
+    /// 0 = fully expanded, 1 = fully collapsed
     private var collapseProgress: CGFloat {
-        let maxScroll = expandedHeight - collapsedHeight
-        guard maxScroll > 0 else { return 0 }
-        return min(max(-scrollOffset / maxScroll, 0), 1)
+        let travel = expandedHeight - collapsedHeight
+        guard travel > 0 else { return 0 }
+        return min(max(scrollOffset / travel, 0), 1)
     }
     
     private var currentHeaderHeight: CGFloat {
-        return max(expandedHeight + min(scrollOffset, 0), collapsedHeight)
+        let height = expandedHeight - scrollOffset
+        return max(height, collapsedHeight)
     }
+    
+    /// Top of the back-button row (status bar inset)
+    private var topBarY: CGFloat { topSafeAreaInset + 4 }
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -42,17 +47,9 @@ struct NotificationDetailView: View {
             // ── Scrollable Content ────────────────────────────────────
             ScrollView(.vertical) {
                 VStack(spacing: 0) {
-                    // Header spacer — drives collapse offset
-                    GeometryReader { geo in
-                        Color.clear
-                            .onAppear {
-                                initialOffset = geo.frame(in: .global).origin.y
-                            }
-                            .onChange(of: geo.frame(in: .global).origin.y) { _, newValue in
-                                scrollOffset = newValue - (initialOffset ?? newValue)
-                            }
-                    }
-                    .frame(height: expandedHeight + 8)
+                    // Spacer matching expanded header height
+                    Color.clear
+                        .frame(height: expandedHeight)
                     
                     VStack(spacing: 16) {
                         // Message Card
@@ -100,9 +97,15 @@ struct NotificationDetailView: View {
                     Color.clear.frame(height: expandedHeight)
                 }
             }
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top
+            } action: { _, newValue in
+                if initialScrollValue == nil { initialScrollValue = newValue }
+                scrollOffset = newValue - (initialScrollValue ?? newValue)
+            }
             .scrollIndicators(.hidden)
             
-            // ── Collapsing Header ─────────────────────────────────────
+            // ── Collapsing Header (on top, clips scroll content) ──────
             collapsingHeader
         }
         .ignoresSafeArea(.container, edges: .top)
@@ -138,8 +141,9 @@ struct NotificationDetailView: View {
                 .frame(width: 40, height: 40)
                 .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                 .clipShape(Circle())
-            .padding(.leading, 12)
-            .padding(.top, 60)
+                .accessibilityLabel("Go back")
+                .padding(.leading, 12)
+                .padding(.top, topBarY)
             
             // ── Delete button (fades out) ─────────────────────────────
             HStack {
@@ -152,19 +156,18 @@ struct NotificationDetailView: View {
                     .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                     .clipShape(Circle())
                     .opacity(1 - collapseProgress)
+                    .accessibilityLabel("Delete notification")
             }
             .padding(.trailing, 12)
-            .padding(.top, 60)
+            .padding(.top, topBarY)
             
             // ── Animated Title ────────────────────────────────────────
             Text(notification.title)
                 .font(collapseProgress > 0.5 ? .headline : .title2.bold())
                 .foregroundStyle(.white)
-                .lineLimit(collapseProgress > 0.5 ? 1 : 2)
-                .minimumScaleFactor(0.85)
+                .lineLimit(1)
                 .padding(.leading, lerp(16, 56, collapseProgress))
-                .padding(.trailing, 16)
-                .padding(.top, lerp(160, 64, collapseProgress))
+                .padding(.top, lerp(160, topBarY + 8, collapseProgress))
             
             // ── Expanded-only: type icon ──────────────────────────────
             ZStack {

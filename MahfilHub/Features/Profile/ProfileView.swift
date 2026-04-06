@@ -5,6 +5,8 @@ import SwiftUI
 // ══════════════════════════════════════════════════════════════════════════
 
 struct ProfileView: View {
+    var onNotificationsTap: (() -> Void)? = nil
+
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
@@ -25,7 +27,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "bell", title: "Notifications",
                         subtitle: "Manage notification preferences",
-                        color: colorAccentOrange
+                        color: colorAccentOrange,
+                        action: onNotificationsTap
                     ),
                     ProfileMenuItemModel(
                         icon: "lock", title: "Privacy & Security",
@@ -330,6 +333,7 @@ private struct ProfileMenuItemModel: Identifiable {
     let subtitle: String
     let color: Color
     var badge: String? = nil
+    var action: (() -> Void)? = nil
 }
 
 private struct ProfileMenuGroup: View {
@@ -357,7 +361,7 @@ private struct ProfileMenuRow: View {
     let item: ProfileMenuItemModel
 
     var body: some View {
-        Button(action: {}) {
+        Button(action: { item.action?() }) {
             HStack(spacing: 16) {
                 // Icon container
                 ZStack {

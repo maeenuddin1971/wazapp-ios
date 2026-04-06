@@ -51,21 +51,23 @@ struct NotificationListView: View {
     @Environment(NotificationsViewModel.self) private var viewModel
     
     @State private var scrollOffset: CGFloat = 0
-    @State private var initialOffset: CGFloat? = nil
+    @State private var initialScrollValue: CGFloat?
     @State private var appearedItems: Set<Int> = []
     
     private let expandedHeight: CGFloat = 310
-    private let collapsedHeight: CGFloat = 100
+    /// Collapsed = status-bar safe area + compact title row
+    private var collapsedHeight: CGFloat { topSafeAreaInset + 50 }
     
-    /// 0 = expanded, 1 = collapsed
+    /// 0 = fully expanded, 1 = fully collapsed
     private var collapseProgress: CGFloat {
-        let maxScroll = expandedHeight - collapsedHeight
-        guard maxScroll > 0 else { return 0 }
-        return min(max(-scrollOffset / maxScroll, 0), 1)
+        let travel = expandedHeight - collapsedHeight
+        guard travel > 0 else { return 0 }
+        return min(max(scrollOffset / travel, 0), 1)
     }
     
     private var currentHeaderHeight: CGFloat {
-        return max(expandedHeight + min(scrollOffset, 0), collapsedHeight)
+        let height = expandedHeight - scrollOffset
+        return max(height, collapsedHeight)
     }
     
     var body: some View {
@@ -73,24 +75,12 @@ struct NotificationListView: View {
         ZStack(alignment: .top) {
             Color.appBackgroundCream.ignoresSafeArea()
             
-            // ── Scrollable List ───────────────────────────────────────
-            // NOTE (#12): Using GeometryReader + onChange for scroll offset tracking
-            // because this view needs a custom collapsing header effect.
-            // Consider migrating to ScrollView + .scrollPosition() (iOS 17+)
-            // if the collapsing behaviour can be simplified.
+            // ── Scrollable List (behind the header) ───────────────────
             ScrollView(.vertical) {
                 VStack(spacing: 0) {
-                    // Header spacer — this drives the collapsing offset
-                    GeometryReader { geo in
-                        Color.clear
-                            .onAppear {
-                                initialOffset = geo.frame(in: .global).origin.y
-                            }
-                            .onChange(of: geo.frame(in: .global).origin.y) { _, newValue in
-                                scrollOffset = newValue - (initialOffset ?? newValue)
-                            }
-                    }
-                    .frame(height: expandedHeight + 8)
+                    // Spacer matching expanded header height
+                    Color.clear
+                        .frame(height: expandedHeight)
                     
                     // Notification rows
                     VStack(spacing: 0) {
@@ -99,25 +89,31 @@ struct NotificationListView: View {
                                 NotificationRow(notification: notification)
                             }
                             .buttonStyle(.plain)
-                                .opacity(appearedItems.contains(notification.id) ? 1 : 0)
-                                .offset(y: appearedItems.contains(notification.id) ? 0 : 40)
-                                .animation(
-                                    .easeOut(duration: 0.35).delay(Double(min(index, 6)) * 0.06),
-                                    value: appearedItems.contains(notification.id)
-                                )
-                                .onAppear {
-                                    withAnimation {
-                                        _ = appearedItems.insert(notification.id)
-                                    }
+                            .opacity(appearedItems.contains(notification.id) ? 1 : 0)
+                            .offset(y: appearedItems.contains(notification.id) ? 0 : 40)
+                            .animation(
+                                .easeOut(duration: 0.35).delay(Double(min(index, 6)) * 0.06),
+                                value: appearedItems.contains(notification.id)
+                            )
+                            .onAppear {
+                                withAnimation {
+                                    _ = appearedItems.insert(notification.id)
                                 }
+                            }
                         }
                     }
                     .padding(.bottom, 20)
                 }
             }
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top
+            } action: { _, newValue in
+                if initialScrollValue == nil { initialScrollValue = newValue }
+                scrollOffset = newValue - (initialScrollValue ?? newValue)
+            }
             .scrollIndicators(.hidden)
             
-            // ── Collapsing Header (overlay) ───────────────────────────
+            // ── Collapsing Header (on top, clips scroll content) ──────
             collapsingHeader
         }
         .ignoresSafeArea(.container, edges: .top)
@@ -127,6 +123,9 @@ struct NotificationListView: View {
     }
     
     // MARK: - Collapsing Header
+    
+    /// Top of the back-button row (status bar inset)
+    private var topBarY: CGFloat { topSafeAreaInset + 4 }
     
     @ViewBuilder
     private var collapsingHeader: some View {
@@ -158,15 +157,17 @@ struct NotificationListView: View {
                 .background(Color.white.opacity(0.15 * (1 - collapseProgress)))
                 .clipShape(Circle())
                 .accessibilityLabel("Go back")
-            .padding(.leading, 12)
-            .padding(.top, 54)
+                .padding(.leading, 12)
+                .padding(.top, topBarY)
             
             // ── Animated Title ────────────────────────────────────────
+            // Expanded: large title below the back button row
+            // Collapsed: headline next to the back button
             Text("Notifications")
                 .font(collapseProgress > 0.5 ? .headline : .title2.bold())
                 .foregroundStyle(.white)
                 .padding(.leading, lerp(16, 56, collapseProgress))
-                .padding(.top, lerp(160, 58, collapseProgress))
+                .padding(.top, lerp(160, topBarY + 8, collapseProgress))
             
             // ── Badge (fades out) ─────────────────────────────────
             if viewModel.unreadCount > 0 {
@@ -178,7 +179,7 @@ struct NotificationListView: View {
                     .background(colorAccentOrange)
                     .clipShape(.rect(cornerRadius: 12))
                     .padding(.leading, lerp(16 + 150, 56 + 130, collapseProgress))
-                    .padding(.top, lerp(164, 62, collapseProgress))
+                    .padding(.top, lerp(164, topBarY + 12, collapseProgress))
                     .opacity(1 - collapseProgress)
             }
             
