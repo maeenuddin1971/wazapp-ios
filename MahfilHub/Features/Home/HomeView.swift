@@ -10,6 +10,7 @@ enum HomeRoute: Hashable {
     case notificationList
     case notificationDetail(NotificationItemModel)
     case editProfile
+    case privacySecurity
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -76,6 +77,9 @@ struct HomeView: View {
                         },
                         onEditProfileTap: {
                             navigationPath.append(HomeRoute.editProfile)
+                        },
+                        onPrivacySecurityTap: {
+                            navigationPath.append(HomeRoute.privacySecurity)
                         }
                     )
                 }
@@ -111,6 +115,9 @@ struct HomeView: View {
                     .navigationBarHidden(true)
                 case .editProfile:
                     EditProfileView()
+                        .navigationBarHidden(true)
+                case .privacySecurity:
+                    PrivacySecurityView()
                         .navigationBarHidden(true)
                 }
             }

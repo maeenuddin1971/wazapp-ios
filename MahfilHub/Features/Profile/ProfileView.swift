@@ -7,6 +7,7 @@ import SwiftUI
 struct ProfileView: View {
     var onNotificationsTap: (() -> Void)? = nil
     var onEditProfileTap: (() -> Void)? = nil
+    var onPrivacySecurityTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -35,7 +36,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "lock", title: "Privacy & Security",
                         subtitle: "Password, account security",
-                        color: colorInfoBlue
+                        color: colorInfoBlue,
+                        action: onPrivacySecurityTap
                     )
                 ])
 
