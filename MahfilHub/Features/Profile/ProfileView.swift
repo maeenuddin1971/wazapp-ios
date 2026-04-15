@@ -8,6 +8,8 @@ struct ProfileView: View {
     var onNotificationsTap: (() -> Void)? = nil
     var onEditProfileTap: (() -> Void)? = nil
     var onPrivacySecurityTap: (() -> Void)? = nil
+    var onSavedEventsTap: (() -> Void)? = nil
+    var onFollowingTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -47,12 +49,14 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "heart", title: "Saved Events",
                         subtitle: "12 events saved",
-                        color: colorErrorRed, badge: "12"
+                        color: colorErrorRed, badge: "12",
+                        action: onSavedEventsTap
                     ),
                     ProfileMenuItemModel(
                         icon: "person.2", title: "Following",
                         subtitle: "8 scholars followed",
-                        color: colorPrimaryTeal, badge: "8"
+                        color: colorPrimaryTeal, badge: "8",
+                        action: onFollowingTap
                     ),
                     ProfileMenuItemModel(
                         icon: "calendar", title: "My Reminders",

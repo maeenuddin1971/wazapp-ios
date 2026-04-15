@@ -40,6 +40,8 @@ struct MahfilHubApp: App {
     @State private var eventsViewModel = EventsViewModel()
     @State private var maulanaViewModel = MaulanaViewModel()
     @State private var notificationsViewModel = NotificationsViewModel()
+    @State private var savedEventsViewModel = SavedEventsViewModel()
+    @State private var followingViewModel = FollowingViewModel()
 
     var body: some Scene {
         WindowGroup {
@@ -47,6 +49,8 @@ struct MahfilHubApp: App {
                 .environment(eventsViewModel)
                 .environment(maulanaViewModel)
                 .environment(notificationsViewModel)
+                .environment(savedEventsViewModel)
+                .environment(followingViewModel)
         }
     }
 }

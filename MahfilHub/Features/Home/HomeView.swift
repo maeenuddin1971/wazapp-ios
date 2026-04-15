@@ -11,6 +11,8 @@ enum HomeRoute: Hashable {
     case notificationDetail(NotificationItemModel)
     case editProfile
     case privacySecurity
+    case savedEvents
+    case following
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -80,6 +82,12 @@ struct HomeView: View {
                         },
                         onPrivacySecurityTap: {
                             navigationPath.append(HomeRoute.privacySecurity)
+                        },
+                        onSavedEventsTap: {
+                            navigationPath.append(HomeRoute.savedEvents)
+                        },
+                        onFollowingTap: {
+                            navigationPath.append(HomeRoute.following)
                         }
                     )
                 }
@@ -118,6 +126,12 @@ struct HomeView: View {
                         .navigationBarHidden(true)
                 case .privacySecurity:
                     PrivacySecurityView()
+                        .navigationBarHidden(true)
+                case .savedEvents:
+                    SavedEventsView()
+                        .navigationBarHidden(true)
+                case .following:
+                    FollowingView()
                         .navigationBarHidden(true)
                 }
             }
