@@ -10,6 +10,7 @@ struct ProfileView: View {
     var onPrivacySecurityTap: (() -> Void)? = nil
     var onSavedEventsTap: (() -> Void)? = nil
     var onFollowingTap: (() -> Void)? = nil
+    var onMyRemindersTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -61,7 +62,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "calendar", title: "My Reminders",
                         subtitle: "3 upcoming reminders",
-                        color: colorSecondaryGreen, badge: "3"
+                        color: colorSecondaryGreen, badge: "3",
+                        action: onMyRemindersTap
                     ),
                     ProfileMenuItemModel(
                         icon: "star.fill", title: "Event History",
