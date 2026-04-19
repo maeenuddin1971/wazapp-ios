@@ -11,6 +11,7 @@ struct ProfileView: View {
     var onSavedEventsTap: (() -> Void)? = nil
     var onFollowingTap: (() -> Void)? = nil
     var onMyRemindersTap: (() -> Void)? = nil
+    var onEventHistoryTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -68,7 +69,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "star.fill", title: "Event History",
                         subtitle: "Events you attended",
-                        color: colorAccentOrange
+                        color: colorAccentOrange,
+                        action: onEventHistoryTap
                     )
                 ])
 

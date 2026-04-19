@@ -43,6 +43,7 @@ struct MahfilHubApp: App {
     @State private var savedEventsViewModel = SavedEventsViewModel()
     @State private var followingViewModel = FollowingViewModel()
     @State private var myRemindersViewModel = MyRemindersViewModel()
+    @State private var eventHistoryViewModel = EventHistoryViewModel()
 
     var body: some Scene {
         WindowGroup {
@@ -53,6 +54,7 @@ struct MahfilHubApp: App {
                 .environment(savedEventsViewModel)
                 .environment(followingViewModel)
                 .environment(myRemindersViewModel)
+                .environment(eventHistoryViewModel)
         }
     }
 }
