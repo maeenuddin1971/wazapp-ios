@@ -15,6 +15,7 @@ enum HomeRoute: Hashable {
     case following
     case myReminders
     case eventHistory
+    case about
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -96,6 +97,9 @@ struct HomeView: View {
                         },
                         onEventHistoryTap: {
                             navigationPath.append(HomeRoute.eventHistory)
+                        },
+                        onAboutTap: {
+                            navigationPath.append(HomeRoute.about)
                         }
                     )
                 }
@@ -146,6 +150,9 @@ struct HomeView: View {
                         .navigationBarHidden(true)
                 case .eventHistory:
                     EventHistoryView()
+                        .navigationBarHidden(true)
+                case .about:
+                    AboutView()
                         .navigationBarHidden(true)
                 }
             }

@@ -12,6 +12,7 @@ struct ProfileView: View {
     var onFollowingTap: (() -> Void)? = nil
     var onMyRemindersTap: (() -> Void)? = nil
     var onEventHistoryTap: (() -> Void)? = nil
+    var onAboutTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -100,7 +101,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "info.circle", title: "About",
                         subtitle: "About MahfilHub v1.0",
-                        color: colorPrimaryTeal
+                        color: colorPrimaryTeal,
+                        action: onAboutTap
                     ),
                     ProfileMenuItemModel(
                         icon: "envelope", title: "Help & Feedback",
