@@ -13,6 +13,7 @@ struct ProfileView: View {
     var onMyRemindersTap: (() -> Void)? = nil
     var onEventHistoryTap: (() -> Void)? = nil
     var onAboutTap: (() -> Void)? = nil
+    var onSettingsTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -186,7 +187,7 @@ private struct ProfileHeader: View {
 
                     Spacer()
 
-                    Button("Settings", systemImage: "gearshape", action: {})
+                    Button("Settings", systemImage: "gearshape", action: { onSettingsTap?() })
                         .labelStyle(.iconOnly)
                         .font(.callout)
                         .foregroundStyle(.white)
