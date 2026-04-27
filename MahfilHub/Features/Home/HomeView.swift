@@ -17,6 +17,7 @@ enum HomeRoute: Hashable {
     case eventHistory
     case about
     case settings
+    case helpFeedback
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -104,6 +105,9 @@ struct HomeView: View {
                         },
                         onSettingsTap: {
                             navigationPath.append(HomeRoute.settings)
+                        },
+                        onHelpFeedbackTap: {
+                            navigationPath.append(HomeRoute.helpFeedback)
                         }
                     )
                 }
@@ -174,6 +178,9 @@ struct HomeView: View {
                         }
                     )
                     .navigationBarHidden(true)
+                case .helpFeedback:
+                    HelpFeedbackView()
+                        .navigationBarHidden(true)
                 }
             }
         }

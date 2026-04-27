@@ -14,12 +14,13 @@ struct ProfileView: View {
     var onEventHistoryTap: (() -> Void)? = nil
     var onAboutTap: (() -> Void)? = nil
     var onSettingsTap: (() -> Void)? = nil
+    var onHelpFeedbackTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 // ── Header ─────────────────────────────────────
-                ProfileHeader()
+                ProfileHeader(onSettingsTap: onSettingsTap)
 
                 // ── Stats Row ──────────────────────────────────
                 ProfileStatsRow()
@@ -108,7 +109,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "envelope", title: "Help & Feedback",
                         subtitle: "Contact us, report issues",
-                        color: colorInfoBlue
+                        color: colorInfoBlue,
+                        action: onHelpFeedbackTap
                     ),
                     ProfileMenuItemModel(
                         icon: "square.and.arrow.up", title: "Share App",
@@ -139,6 +141,8 @@ struct ProfileView: View {
 // ══════════════════════════════════════════════════════════════════════════
 
 private struct ProfileHeader: View {
+    var onSettingsTap: (() -> Void)? = nil
+
     var body: some View {
         ZStack {
             // Gradient background
