@@ -18,6 +18,7 @@ enum HomeRoute: Hashable {
     case about
     case settings
     case helpFeedback
+    case language
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -108,6 +109,9 @@ struct HomeView: View {
                         },
                         onHelpFeedbackTap: {
                             navigationPath.append(HomeRoute.helpFeedback)
+                        },
+                        onLanguageTap: {
+                            navigationPath.append(HomeRoute.language)
                         }
                     )
                 }
@@ -180,6 +184,9 @@ struct HomeView: View {
                     .navigationBarHidden(true)
                 case .helpFeedback:
                     HelpFeedbackView()
+                        .navigationBarHidden(true)
+                case .language:
+                    LanguageView()
                         .navigationBarHidden(true)
                 }
             }

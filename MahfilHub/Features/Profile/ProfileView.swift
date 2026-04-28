@@ -15,6 +15,7 @@ struct ProfileView: View {
     var onAboutTap: (() -> Void)? = nil
     var onSettingsTap: (() -> Void)? = nil
     var onHelpFeedbackTap: (() -> Void)? = nil
+    var onLanguageTap: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical) {
@@ -83,7 +84,8 @@ struct ProfileView: View {
                     ProfileMenuItemModel(
                         icon: "globe", title: "Language",
                         subtitle: "English",
-                        color: colorVerifiedBadge
+                        color: colorVerifiedBadge,
+                        action: onLanguageTap
                     ),
                     ProfileMenuItemModel(
                         icon: "paintbrush", title: "Theme",
