@@ -22,6 +22,10 @@ struct LoginView: View {
     @State private var password = ""
     @State private var isSecure = true
     @State private var showPasswordReset = false
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+
+    private let authService = AuthService()
 
     var body: some View {
         ScrollView(.vertical) {
@@ -86,7 +90,9 @@ struct LoginView: View {
                 Spacer().frame(height: 28)
 
                 // ── Login Button ─────────────────────────────────
-                Button(action: performLogin) {
+                Button {
+                    Task { await performLogin() }
+                } label: {
                     ZStack {
                         LinearGradient(
                             colors: [colorPrimaryTeal, colorPrimaryTealLight],
@@ -95,13 +101,27 @@ struct LoginView: View {
                         )
                         .clipShape(.rect(cornerRadius: 14))
 
-                        Text("Sign In")
-                            .font(.callout.bold())
-                            .foregroundStyle(.white)
-                            .tracking(0.5)
+                        if isLoading {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("Sign In")
+                                .font(.callout.bold())
+                                .foregroundStyle(.white)
+                                .tracking(0.5)
+                        }
                     }
                     .frame(height: 54)
                     .contentShape(Rectangle())
+                }
+                .disabled(isLoading)
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.footnote)
+                        .foregroundStyle(Color.appErrorRed)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 10)
                 }
 
                 Spacer().frame(height: 28)
@@ -178,15 +198,41 @@ struct LoginView: View {
         }
     }
 
-    private var isFormValid: Bool {
-        !email.trimmingCharacters(in: .whitespaces).isEmpty && !password.isEmpty
-    }
+    private func performLogin() async {
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        errorMessage = nil
 
-    private func performLogin() {
-        guard isFormValid else { return }
-        SessionManager.shared.login(name: "Bipul Ahmed", email: "bipul@mahfilhub.com")
-        withAnimation(.easeInOut(duration: 0.35)) {
-            currentScreen = .main
+        guard !trimmedEmail.isEmpty else {
+            errorMessage = "Please enter your email"
+            return
+        }
+
+        guard trimmedEmail.contains("@") && trimmedEmail.contains(".") else {
+            errorMessage = "Please enter a valid email"
+            return
+        }
+
+        guard !password.isEmpty else {
+            errorMessage = "Please enter your password"
+            return
+        }
+
+        guard password.count >= 6 else {
+            errorMessage = "Password must be at least 6 characters"
+            return
+        }
+
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let response = try await authService.login(email: trimmedEmail, password: password)
+            SessionManager.shared.login(email: trimmedEmail, token: response.token, role: response.role)
+            withAnimation(.easeInOut(duration: 0.35)) {
+                currentScreen = .main
+            }
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 }
