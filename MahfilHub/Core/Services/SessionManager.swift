@@ -1,8 +1,8 @@
 import Foundation
 import Observation
 
-/// Simple session manager backed by UserDefaults.
-/// Stores login state, token, role and basic user info.
+/// Simple session manager backed by UserDefaults and Keychain.
+/// Stores auth token in Keychain, and login state, role and basic user info in UserDefaults.
 @MainActor
 @Observable
 final class SessionManager {
@@ -21,10 +21,11 @@ final class SessionManager {
     }
     
     private init() {
+        migrateTokenFromUserDefaultsIfNeeded()
         _isLoggedIn = defaults.bool(forKey: Keys.isLoggedIn)
         _userName = defaults.string(forKey: Keys.userName) ?? "Guest"
         _userEmail = defaults.string(forKey: Keys.userEmail) ?? ""
-        _authToken = defaults.string(forKey: Keys.authToken)
+        _authToken = KeychainStore.string(forKey: Keys.authToken)
         _userRole = defaults.string(forKey: Keys.userRole) ?? ""
     }
     
@@ -46,7 +47,7 @@ final class SessionManager {
         defaults.set(true, forKey: Keys.isLoggedIn)
         defaults.set(name, forKey: Keys.userName)
         defaults.set(email, forKey: Keys.userEmail)
-        defaults.set(token, forKey: Keys.authToken)
+        KeychainStore.setString(token, forKey: Keys.authToken)
         defaults.set(role, forKey: Keys.userRole)
         isLoggedIn = true
         userName = name
@@ -59,12 +60,18 @@ final class SessionManager {
         defaults.set(false, forKey: Keys.isLoggedIn)
         defaults.removeObject(forKey: Keys.userName)
         defaults.removeObject(forKey: Keys.userEmail)
-        defaults.removeObject(forKey: Keys.authToken)
+        KeychainStore.deleteValue(forKey: Keys.authToken)
         defaults.removeObject(forKey: Keys.userRole)
         isLoggedIn = false
         userName = "Guest"
         userEmail = ""
         authToken = nil
         userRole = ""
+    }
+
+    private func migrateTokenFromUserDefaultsIfNeeded() {
+        guard let token = defaults.string(forKey: Keys.authToken), !token.isEmpty else { return }
+        KeychainStore.setString(token, forKey: Keys.authToken)
+        defaults.removeObject(forKey: Keys.authToken)
     }
 }
