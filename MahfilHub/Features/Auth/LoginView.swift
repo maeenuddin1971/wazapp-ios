@@ -18,16 +18,12 @@ private let mutedText         = Color.appMutedText
 // MARK: - LoginView
 struct LoginView: View {
     @Binding var currentScreen: AppScreen
-    @State private var email = ""
-    @State private var password = ""
+    @State private var viewModel = LoginViewModel()
     @State private var isSecure = true
     @State private var showPasswordReset = false
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-
-    private let authService = AuthService()
 
     var body: some View {
+        @Bindable var vm = viewModel
         ScrollView(.vertical) {
             VStack(spacing: 0) {
                 Spacer().frame(height: 50)
@@ -63,7 +59,7 @@ struct LoginView: View {
                     label: "Email Address",
                     placeholder: "Enter your email",
                     icon: "envelope",
-                    text: $email
+                    text: $vm.email
                 )
 
                 Spacer().frame(height: 16)
@@ -72,7 +68,7 @@ struct LoginView: View {
                 IslamicPasswordField(
                     label: "Password",
                     placeholder: "Enter password",
-                    text: $password,
+                    text: $vm.password,
                     isSecure: $isSecure
                 )
 
@@ -91,7 +87,13 @@ struct LoginView: View {
 
                 // ── Login Button ─────────────────────────────────
                 Button {
-                    Task { await performLogin() }
+                    Task {
+                        if await viewModel.login() {
+                            withAnimation(.easeInOut(duration: 0.35)) {
+                                currentScreen = .main
+                            }
+                        }
+                    }
                 } label: {
                     ZStack {
                         LinearGradient(
@@ -101,7 +103,7 @@ struct LoginView: View {
                         )
                         .clipShape(.rect(cornerRadius: 14))
 
-                        if isLoading {
+                        if vm.isLoading {
                             ProgressView()
                                 .tint(.white)
                         } else {
@@ -114,9 +116,9 @@ struct LoginView: View {
                     .frame(height: 54)
                     .contentShape(Rectangle())
                 }
-                .disabled(isLoading)
+                .disabled(vm.isLoading)
 
-                if let errorMessage {
+                if let errorMessage = vm.errorMessage {
                     Text(errorMessage)
                         .font(.footnote)
                         .foregroundStyle(Color.appErrorRed)
@@ -198,43 +200,6 @@ struct LoginView: View {
         }
     }
 
-    private func performLogin() async {
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        errorMessage = nil
-
-        guard !trimmedEmail.isEmpty else {
-            errorMessage = "Please enter your email"
-            return
-        }
-
-        guard trimmedEmail.contains("@") && trimmedEmail.contains(".") else {
-            errorMessage = "Please enter a valid email"
-            return
-        }
-
-        guard !password.isEmpty else {
-            errorMessage = "Please enter your password"
-            return
-        }
-
-        guard password.count >= 6 else {
-            errorMessage = "Password must be at least 6 characters"
-            return
-        }
-
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            let response = try await authService.login(email: trimmedEmail, password: password)
-            SessionManager.shared.login(email: trimmedEmail, token: response.token, role: response.role)
-            withAnimation(.easeInOut(duration: 0.35)) {
-                currentScreen = .main
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
 }
 
 // MARK: - Reusable Islamic Components
