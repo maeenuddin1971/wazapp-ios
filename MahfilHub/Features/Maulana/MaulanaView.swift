@@ -1,43 +1,5 @@
 import SwiftUI
 
-// ──────────────────────────────────────────────────────────────────────────
-// MARK: - Sample Maulana Data
-// ──────────────────────────────────────────────────────────────────────────
-
-// NOTE: Using Int IDs with seed data. Migrate to UUID or String when
-// connecting to a backend API to avoid collision risks.
-struct MaulanaItemModel: Identifiable, Hashable {
-    let id: Int
-    let name: String
-    let title: String
-    let specialization: String
-    let location: String
-    let totalEvents: Int
-    let upcomingEvents: Int
-    let followers: Int
-    let rating: Float
-    let isVerified: Bool
-    let isFollowing: Bool
-    let category: String
-
-    init(id: Int, name: String, title: String, specialization: String,
-         location: String, totalEvents: Int, upcomingEvents: Int,
-         followers: Int, rating: Float, isVerified: Bool = false,
-         isFollowing: Bool = false, category: String = "All") {
-        self.id = id
-        self.name = name
-        self.title = title
-        self.specialization = specialization
-        self.location = location
-        self.totalEvents = totalEvents
-        self.upcomingEvents = upcomingEvents
-        self.followers = followers
-        self.rating = rating
-        self.isVerified = isVerified
-        self.isFollowing = isFollowing
-        self.category = category
-    }
-}
 
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - MaulanaView

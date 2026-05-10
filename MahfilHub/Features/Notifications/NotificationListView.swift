@@ -1,47 +1,5 @@
 import SwiftUI
 
-// MARK: - Data Models
-
-enum NotificationType: String, CaseIterable {
-    case event, maulana, system, reminder, community
-    
-    var displayName: String { rawValue.capitalized }
-}
-
-// NOTE: Using Int IDs with seed data. Migrate to UUID or String when
-// connecting to a backend API to avoid collision risks.
-struct NotificationItemModel: Identifiable, Hashable {
-    let id: Int
-    let title: String
-    let message: String
-    let time: String
-    let type: NotificationType
-    var isRead: Bool = false
-    var relatedId: Int? = nil
-}
-
-extension NotificationType {
-    var icon: String {
-        switch self {
-        case .event:     return "calendar"
-        case .maulana:   return "person.fill"
-        case .system:    return "info.circle.fill"
-        case .reminder:  return "bell.fill"
-        case .community: return "heart.fill"
-        }
-    }
-
-    var color: Color {
-        switch self {
-        case .event:     return colorPrimaryTeal
-        case .maulana:   return colorVerifiedBadge
-        case .system:    return colorInfoBlue
-        case .reminder:  return colorAccentOrange
-        case .community: return colorErrorRed
-        }
-    }
-}
-
 
 // MARK: - NotificationListView
 

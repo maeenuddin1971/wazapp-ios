@@ -1,38 +1,5 @@
 import SwiftUI
 
-// ──────────────────────────────────────────────────────────────────────────
-// MARK: - Sample Event Data
-// ──────────────────────────────────────────────────────────────────────────
-
-// NOTE: Using Int IDs with seed data. Migrate to UUID or String when
-// connecting to a backend API to avoid collision risks.
-struct EventItemModel: Identifiable, Hashable {
-    let id: Int
-    let title: String
-    let maulana: String
-    let location: String
-    let date: String
-    let time: String
-    let isLive: Bool
-    let isFeatured: Bool
-    let attendees: Int
-    let category: String
-
-    init(id: Int, title: String, maulana: String, location: String,
-         date: String, time: String, isLive: Bool = false,
-         isFeatured: Bool = false, attendees: Int = 0, category: String = "All") {
-        self.id = id
-        self.title = title
-        self.maulana = maulana
-        self.location = location
-        self.date = date
-        self.time = time
-        self.isLive = isLive
-        self.isFeatured = isFeatured
-        self.attendees = attendees
-        self.category = category
-    }
-}
 
 // ══════════════════════════════════════════════════════════════════════════
 // MARK: - EventsView
